@@ -1,0 +1,18 @@
+<manifest package="com.ttc.sdk"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.REORDER_TASKS"/>
+
+    <application>
+
+        <activity
+            android:name=".ui.BindActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+    </application>
+
+</manifest>

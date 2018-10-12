@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bind">绑定</string>
+    <string name="auto_import">自动导入TTC</string>
+    <string name="bind_success">绑定成功</string>
+    <string name="bind_failed">绑定失败</string>
+    <string name="ttc_wallet">TTC Connect</string>
+</resources>

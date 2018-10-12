@@ -1,0 +1,4 @@
+/build/*
+!/build/outputs/
+/build/outputs/*
+!/build/outputs/aar/
