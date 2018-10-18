@@ -1,4 +1,4 @@
-package com.ttc.sdk.util;
+package com.ttc.sdk;
 
 public class TTCConfigure {
 

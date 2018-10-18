@@ -6,11 +6,15 @@ import android.os.Looper;
 import com.ttc.biz.http.BizApi;
 import com.ttc.biz.http.BizCallback;
 import com.ttc.biz.model.BaseInfo;
+import com.ttc.sdk.IManager;
 import com.ttc.sdk.TTCAgent;
 import com.ttc.sdk.command.AppBalanceCommand;
 import com.ttc.sdk.command.EventCommand;
 import com.ttc.sdk.command.WalletBalanceCommand;
 import com.ttc.sdk.command.base.Command;
+import com.ttc.sdk.util.CommonType;
+import com.ttc.sdk.util.Constants;
+import com.ttc.sdk.util.TTCSp;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -214,8 +218,19 @@ public class Repo {
     }
 
     public void onEvent(int behaviorType, String extra) {
+        if (behaviorType == CommonType.OPEN_DAPP) {
+            if (!isNeedUploadOpenBehavior()) {
+                return;
+            }
+        }
         Command command = new EventCommand(behaviorType, extra);
         command.execute(TTCAgent.getClient().getEventExecutorService());
+    }
+
+    private boolean isNeedUploadOpenBehavior() {
+        int lastOpenDay = (int) (TTCSp.getLastOpenTimestamp() / Constants.ONE_DAY_MILLISECOND);
+        long currentDay = (int) (System.currentTimeMillis() / Constants.ONE_DAY_MILLISECOND);
+        return currentDay > lastOpenDay;
     }
 
 }

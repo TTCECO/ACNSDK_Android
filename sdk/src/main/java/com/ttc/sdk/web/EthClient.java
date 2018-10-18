@@ -1,7 +1,7 @@
 package com.ttc.sdk.web;
 
-import com.ttc.sdk.TTCAgent;
 import com.ttc.sdk.model.TransactionResult;
+import com.ttc.sdk.util.Constants;
 import com.ttc.sdk.util.TTCLogger;
 import com.ttc.sdk.util.TTCSp;
 
@@ -11,15 +11,19 @@ import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.protocol.core.methods.response.Transaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.exceptions.ClientConnectionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
@@ -27,21 +31,35 @@ import java.math.BigInteger;
  */
 public class EthClient {
 
-    private static Web3j web3j;
+    public static BigDecimal getBalance(String address) {
+        BigDecimal res = new BigDecimal("0");
 
-    private static Web3j web3(String rpcUrl) {
-        if (web3j == null) {
-            web3j = Web3jFactory.build(new HttpService(rpcUrl));
+        EthGetBalance send = null;
+        try {
+            Web3j web3 = Web3jFactory.build(new HttpService(Constants.TOKEN_RPC_URL));
+            send = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
+            BigInteger balance = send.getBalance();  //Wei
+            res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return web3j;
+        return res;
+
     }
 
+
     public static BigInteger getNonce(String rpcUrl, String from) throws IOException {
-        Web3j web3 = web3(rpcUrl);
-//        // get the next available nonce
-        EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(from, DefaultBlockParameterName
-                .LATEST).send();
-        return ethGetTransactionCount.getTransactionCount();
+        Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
+        try {
+            EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(from,
+                    DefaultBlockParameterName.LATEST).send();
+            if (ethGetTransactionCount != null) {
+                return ethGetTransactionCount.getTransactionCount();
+            }
+        } catch (ClientConnectionException e) {
+            e.printStackTrace();
+        }
+        return new BigInteger("0");
     }
 
     /**
@@ -58,10 +76,10 @@ public class EthClient {
                                                     String gasPrice, int gasLimit, String data) {
 
         data = stringToHex(data);
-        Web3j web3 = web3(rpcUrl);
+        Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
         Credentials credentials = Credentials.create(fromPrivateKey);
         BigInteger nonce = null;
-        BigInteger nextNonce = TTCSp.getNextNonce(TTCAgent.getClient().getContext());
+        BigInteger nextNonce = TTCSp.getNextNonce();
         try {
             nonce = getNonce(rpcUrl, from);
         } catch (IOException e) {
@@ -81,64 +99,24 @@ public class EthClient {
         // sign & send our transaction
         byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
         String hexValue = Numeric.toHexString(signedMessage);
-        EthSendTransaction ethSendTransaction = null;
-
-        String transactionHash = null;
         try {
-            ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
-
-            transactionHash = ethSendTransaction.getTransactionHash();
+            EthSendTransaction ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
+            if (ethSendTransaction != null) {
+                String transactionHash = ethSendTransaction.getTransactionHash();
+                if (transactionHash == null) {
+                    Response.Error error = ethSendTransaction.getError();
+                    if (error != null) {
+                        TTCLogger.e(error.getMessage());
+                    }
+                    return null;
+                }
+                TTCSp.setNextNonce(nonce.add(new BigInteger("1")));
+                return new TransactionResult(transactionHash, nonce);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        if (transactionHash == null) {
-            Response.Error error = ethSendTransaction.getError();
-            if (error != null) {
-                TTCLogger.e(error.getMessage());
-            }
-            return null;
-        }
-        TTCSp.setNextNonce(TTCAgent.getClient().getContext(), nonce.add(new BigInteger("1")));
-        return new TransactionResult(transactionHash, nonce);
-    }
-
-    public static TransactionResult sendTransaction(String rpcUrl, String from, String to, String fromPrivateKey,
-                                                    String gasPrice, int gasLimit, String data, BigInteger nonce)
-            throws IOException {
-
-        data = stringToHex(data);
-        TTCLogger.e("data=" + data);
-        Web3j web3 = web3(rpcUrl);
-        Credentials credentials = Credentials.create(fromPrivateKey);
-        TTCLogger.e("resend nonce=" + nonce + " thread name: " + Thread.currentThread().getName());
-
-        // create our transaction
-        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
-                BigInteger(gasLimit + ""), to, data);
-
-        // sign & send our transaction
-        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
-        String hexValue = Numeric.toHexString(signedMessage);
-        EthSendTransaction ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
-
-        String transactionHash = ethSendTransaction.getTransactionHash();
-
-        if (ethSendTransaction.hasError()) {
-            TTCLogger.d("failed to send transaction");
-        } else {
-            TTCLogger.d("send transaction successfully");
-        }
-
-        if (transactionHash == null) {
-            Response.Error error = ethSendTransaction.getError();
-            if (error != null) {
-                TTCLogger.e(error.getMessage());
-            }
-            return null;
-        }
-        TTCSp.setNextNonce(TTCAgent.getClient().getContext(), nonce.add(new BigInteger("1")));
-        return new TransactionResult(transactionHash, nonce);
+        return null;
     }
 
     private static String stringToHex(String str) {
@@ -151,32 +129,22 @@ public class EthClient {
         return sb.toString();
     }
 
-    public static boolean isTransactionSuccess(String rpcUrl, String hash) throws IOException {
-
-        Web3j web3 = web3(rpcUrl);
-        Transaction transaction = web3.ethGetTransactionByHash(hash).send().getTransaction();
-        if (transaction != null) {
-            String blockHash = transaction.getBlockHash();
-            TTCLogger.e("blockHash=" + blockHash);
-            String blockNumberRaw = transaction.getBlockNumberRaw();
-            TTCLogger.e("blockNumberRaw=" + blockNumberRaw);
-            TransactionReceipt transactionReceipt = web3.ethGetTransactionReceipt(hash).send().getTransactionReceipt();
-
-            if (transactionReceipt != null) {
-                TTCLogger.e("receipt" + transactionReceipt);
-                String status = transactionReceipt.getStatus();
-                System.out.println("status=" + status);
-
-                try {
-                    int statusInt = Integer.parseInt(status);
-                    if (statusInt == 1) {
-                        return true;
+    public static boolean isTransactionSuccess(String rpcUrl, String hash) {
+        Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
+        Request<?, EthGetTransactionReceipt> request = web3.ethGetTransactionReceipt(hash);
+        if (request != null) {
+            try {
+                EthGetTransactionReceipt ethGetTransactionReceipt = request.send();
+                if (ethGetTransactionReceipt != null) {
+                    TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt();
+                    if (transactionReceipt != null) {
+                        if ("0x1".equals(transactionReceipt.getStatus())) {
+                            return true;
+                        }
                     }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                } catch (RuntimeException e) {
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return false;

@@ -10,21 +10,31 @@ public class ActionHelper {
 
     public static final int ACTION_SUCCESS = 1;
 
+    /**
+     *
+     * @param hash
+     * @return  the sample is : "ufo:1:oplog:md5:hash_value:appid"
+     */
     public static String toData(String hash) {
-        return Constants.DATA_PREFIX + hash;
+        if (!TextUtils.isEmpty(hash)) {
+            return Constants.DATA_PREFIX + hash + ":" + TTCSp.getAppId();
+        } else {
+            return Constants.DATA_PREFIX + TTCSp.getAppId();
+        }
     }
 
     /**
      * 必须满足的条件
+     *
      * @return
      */
     public static boolean precondition() {
         Context context = TTCAgent.getClient().getContext();
-        if (TextUtils.isEmpty(TTCSp.getUserId(context))) {
+        if (TextUtils.isEmpty(TTCSp.getUserId())) {
             return false;
         }
 
-        return !TextUtils.isEmpty(BizApi.getPrivateKey(context))
-                && !TextUtils.isEmpty(BizApi.getIndividualAddress(context));
+        return !TextUtils.isEmpty(BizApi.getPrivateKey(context)) && !TextUtils.isEmpty(BizApi.getIndividualAddress
+                (context));
     }
 }

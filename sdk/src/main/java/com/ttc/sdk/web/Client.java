@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.ttc.sdk.db.EventDao;
 import com.ttc.sdk.util.ProcessUtil;
 import com.ttc.sdk.util.TTCLogger;
 
@@ -35,13 +36,13 @@ public class Client {
         httpStack = new HurlStack();
         eventExecutorService = new ActionExecutorService();
         repo = new Repo();
+        EventDao.init(context);
 
         if (ProcessUtil.isMainProcess(context)) {
             registerReceiver();
         } else {
             TTCLogger.e("is not main process, don't register receiver!");
         }
-
     }
 
     public Context getContext() {

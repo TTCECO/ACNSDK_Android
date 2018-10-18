@@ -29,15 +29,11 @@ public class HurlStack implements HttpStack {
 
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-
             connection.setRequestMethod("POST");
-
             connection.setConnectTimeout(DEFAULT_TIMEOUT);
             connection.setReadTimeout(DEFAULT_TIMEOUT);
-
             connection.setDoOutput(true);
             connection.setDoInput(true);
-
             connection.setRequestProperty("Connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "application/octet-stream");
 

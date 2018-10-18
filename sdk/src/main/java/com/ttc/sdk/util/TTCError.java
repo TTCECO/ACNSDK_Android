@@ -13,7 +13,6 @@ public class TTCError {
     public static final int USER_ID_NOT_CORRECT = 105;
     public static final int NOT_REGISTER = 106;
     public static final int NOT_BOUND_WALLET = 107;
-    public static final int EXTRA_IS_EMPTY = 108;
     public static final int EXTRA_NOT_JSON = 109;
     public static final int BEHAVIOR_TYPE_IS_SMALLER = 110;
     public static final int WALLET_ADDRESS_IS_EMPTY = 111;
@@ -53,9 +52,6 @@ public class TTCError {
                 break;
             case NOT_BOUND_WALLET:
                 msg = "no bound wallet";
-                break;
-            case EXTRA_IS_EMPTY:
-                msg = "Extra is empty";
                 break;
             case EXTRA_NOT_JSON:
                 msg = "Extra is not json";

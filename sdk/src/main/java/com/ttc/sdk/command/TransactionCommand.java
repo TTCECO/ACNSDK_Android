@@ -5,9 +5,9 @@ import android.content.Context;
 import com.ttc.biz.http.BizApi;
 import com.ttc.sdk.TTCAgent;
 import com.ttc.sdk.command.base.AbstractCommand;
-import com.ttc.sdk.web.EthApi;
 import com.ttc.sdk.model.TransactionResult;
-import com.ttc.sdk.util.TTCLogger;
+import com.ttc.sdk.util.Constants;
+import com.ttc.sdk.web.EthClient;
 
 public class TransactionCommand extends AbstractCommand<TransactionResult> {
 
@@ -23,9 +23,8 @@ public class TransactionCommand extends AbstractCommand<TransactionResult> {
         TransactionResult result = null;
 
         Context context = TTCAgent.getClient().getContext();
-        result = EthApi.sendTransaction(BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
+        result = EthClient.sendTransaction(Constants.ACTION_RPC_URL, BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
                 BizApi.getPrivateKey(context), BizApi.getGasPrice(context), BizApi.getGasLimit(context), data);
-        TTCLogger.d(result.toString());
         return result;
     }
 

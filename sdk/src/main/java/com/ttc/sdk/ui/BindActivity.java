@@ -15,7 +15,7 @@ import com.ttc.sdk.R;
 import com.ttc.sdk.TTCAgent;
 import com.ttc.sdk.util.AndroidUtil;
 import com.ttc.sdk.util.Constants;
-import com.ttc.sdk.web.IManager;
+import com.ttc.sdk.IManager;
 import com.ttc.sdk.util.TTCError;
 import com.ttc.sdk.util.TTCKey;
 import com.ttc.sdk.util.TTCLogger;
@@ -106,7 +106,7 @@ public class BindActivity extends Activity {
     private void finishActivity(int bindState, boolean autoTransaction, String errorMsg) {
         Intent data = new Intent();
         if (TTCAgent.getClient() != null) {
-            data.putExtra(TTCKey.APP_ID, TTCSp.getAppId(this));
+            data.putExtra(TTCKey.APP_ID, TTCSp.getAppId());
         }
         data.putExtra(TTCKey.BIND_STATE, bindState);
         data.putExtra(TTCKey.AUTO_TRANSACTION, autoTransaction);
@@ -118,11 +118,11 @@ public class BindActivity extends Activity {
 
     private boolean isSDKRegisted() {
         String errorInfo = "";
-        if (TextUtils.isEmpty(TTCSp.getAppId(this))) {
+        if (TextUtils.isEmpty(TTCSp.getAppId())) {
             errorInfo = TTCError.getMessage(TTCError.APP_ID_IS_EMPTY);
-        } else if (TextUtils.isEmpty(TTCSp.getSecretKey(this))) {
+        } else if (TextUtils.isEmpty(TTCSp.getSecretKey())) {
             errorInfo = TTCError.getMessage(TTCError.SECRET_KEY_IS_EMPTY);
-        } else if (TextUtils.isEmpty(TTCSp.getUserId(this))) {
+        } else if (TextUtils.isEmpty(TTCSp.getUserId())) {
             errorInfo = TTCError.getMessage(TTCError.USER_ID_IS_EMPTY);
         } else if (TextUtils.isEmpty(walletAddress)) {
             errorInfo = TTCError.getMessage(TTCError.WALLET_ADDRESS_IS_EMPTY);

@@ -9,8 +9,6 @@ import com.ttc.sdk.web.Client;
 import com.ttc.sdk.web.Repo;
 import com.ttc.sdk.util.AndroidUtil;
 import com.ttc.sdk.util.Constants;
-import com.ttc.sdk.web.IManager;
-import com.ttc.sdk.util.TTCConfigure;
 import com.ttc.sdk.util.TTCError;
 import com.ttc.sdk.util.TTCLogger;
 import com.ttc.sdk.util.TTCSp;
@@ -58,8 +56,8 @@ public class TTCAgent {
             return errCode;
         }
         client = new Client(context);
-        TTCSp.setAppId(context, appId);
-        TTCSp.setSecretKey(context, secretKey);
+        TTCSp.setAppId(appId);
+        TTCSp.setSecretKey( secretKey);
         return errCode;
     }
 
@@ -100,28 +98,27 @@ public class TTCAgent {
             return;
         }
 
-        String userIdSaved = TTCSp.getUserId(client.getContext());
+        String userIdSaved = TTCSp.getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
-            TTCSp.deleteUserId(client.getContext());   //先清空，避免用户上次退出没有调用unregister
+            TTCSp.deleteUserId();   //先清空，避免用户上次退出没有调用unregister
         }
 
-        TTCSp.setUserId(client.getContext(), userId);
+        TTCSp.setUserId( userId);
 
-        Context context = client.getContext();
-        BizApi.init(context, TTCSp.getAppId(context), TTCSp.getSecretKey(context), TTCSp.getUserId(context),
+        BizApi.init(TTCAgent.getClient().getContext(), TTCSp.getAppId(), TTCSp.getSecretKey(), TTCSp.getUserId(),
                 BuildConfig.VERSION_CODE);
 
         repo().getPrivateKey();
         repo().registerUser(callback);
         client.retry();
 
-
         TTCLogger.d("userId:" + userId);
     }
 
     public static void unregister() {
         if (client != null) {
-            BizApi.clear(client.getContext());
+            BizApi.clear(TTCAgent.getClient().getContext());
+            TTCSp.clear();
             TTCLogger.d("user unregister");
         }
     }
@@ -220,11 +217,6 @@ public class TTCAgent {
             TTCLogger.e(TTCError.getMessage(errCode));
             return errCode;
         }
-        if (TextUtils.isEmpty(extra)) {
-            errCode = TTCError.EXTRA_IS_EMPTY;
-            TTCLogger.e(TTCError.getMessage(errCode));
-            return errCode;
-        }
         repo().onEvent(behaviorType, extra);
         return errCode;
     }
@@ -262,7 +254,7 @@ public class TTCAgent {
             TTCLogger.e(errMsg);
             return errCode;
         }
-        if (TextUtils.isEmpty(TTCSp.getUserId(client.getContext()))) {
+        if (TextUtils.isEmpty(TTCSp.getUserId())) {
             errCode = TTCError.USER_ID_IS_EMPTY;
             errMsg = TTCError.getMessage(errCode);
             TTCLogger.e(errMsg);

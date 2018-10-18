@@ -20,4 +20,6 @@ public class Constants {
     public static final int BIND_STATE_UNBOUND = 0;  //未绑定
     public static final int BIND_STATE_BOUND = 1;    //绑定
 
+    public static final long ONE_DAY_MILLISECOND = 86400000L;
+
 }

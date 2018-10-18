@@ -1,13 +1,16 @@
 package com.ttc.sdk.command;
 
-import com.ttc.biz.http.BizApi;
-import com.ttc.sdk.TTCAgent;
+import android.text.TextUtils;
+
 import com.ttc.sdk.command.base.AbstractCommand;
+import com.ttc.sdk.db.EventDao;
+import com.ttc.sdk.model.EventBean;
 import com.ttc.sdk.model.TransactionResult;
 import com.ttc.sdk.util.ActionHelper;
 import com.ttc.sdk.util.AlgorithmUtil;
 import com.ttc.sdk.util.TTCLogger;
 import com.ttc.sdk.util.TTCSp;
+import com.ttc.sdk.web.BehaviorManager;
 
 
 public class EventCommand extends AbstractCommand<TransactionResult> {
@@ -17,32 +20,35 @@ public class EventCommand extends AbstractCommand<TransactionResult> {
 
     public EventCommand(int behaviorType, String extra) {
         this.behaviorType = behaviorType;
-        this.extra = extra;
+        if (TextUtils.isEmpty(extra)) {
+            this.extra = "{}";
+        }else {
+            this.extra = extra;
+        }
     }
 
     @Override
     public TransactionResult call() {
         long timestamp = System.currentTimeMillis();
-
-        TTCLogger.e("onEvent behaviorType=" + behaviorType + ", extra=" + extra);
-
-        String hash = AlgorithmUtil.hash(behaviorType, TTCSp.getUserId(TTCAgent.getClient().getContext()), timestamp, extra);
-        TransactionResult result = transaction(hash);
-
-        TTCLogger.d("transaction hash = " + result.getTransactionHash());
+        String hash = AlgorithmUtil.hash(behaviorType, TTCSp.getUserId(), timestamp, extra);
+        String data = ActionHelper.toData(hash);
+        TransactionCommand transactionCommand = new TransactionCommand(data);
+        TransactionResult result = transactionCommand.call();
+        TTCLogger.d("onEvent behaviorType=" + behaviorType + ", extra=" + extra + ", transaction hash = " + result
+                .getTransactionHash());
 
         if (result != null) {
-            BizApi.behaviour(TTCAgent.getClient().getContext(), behaviorType, result.getTransactionHash(), extra, timestamp, null);
+            String actionHash = result.getTransactionHash();
+            EventBean bean = EventDao.fetchEventByUserActionHash(actionHash);
+            if (bean != null) {
+                bean.setBcRetryCount(bean.getBcRetryCount() + 1);
+                EventDao.update(bean);
+            }else {
+                EventDao.insert(behaviorType, actionHash, extra, timestamp);
+            }
         }
+        BehaviorManager.getInstance().delayCheckTransaction();
         return result;
-    }
-
-
-    /**
-     * 交易-写链
-     */
-    private TransactionResult transaction(String hash) {
-        return new TransactionCommand(ActionHelper.toData(hash)).call();
     }
 
 }
