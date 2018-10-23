@@ -7,7 +7,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
-        versionName "0.0.1"
+        versionName "0.0.2"
 
         buildConfigField 'String', 'ACTION_RPC_URL', "\"http://test.ttcnet.io/\""
         buildConfigField 'String', 'TOKEN_RPC_URL', "\"http://test.ttcnet.io/\""
@@ -38,7 +38,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'org.web3j:core:3.3.1-android'
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
-
+    
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:3.8'
 }

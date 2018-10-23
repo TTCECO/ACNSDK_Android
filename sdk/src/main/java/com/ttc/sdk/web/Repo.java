@@ -5,7 +5,6 @@ import android.os.Looper;
 
 import com.ttc.biz.http.BizApi;
 import com.ttc.biz.http.BizCallback;
-import com.ttc.biz.model.BaseInfo;
 import com.ttc.sdk.IManager;
 import com.ttc.sdk.TTCAgent;
 import com.ttc.sdk.command.AppBalanceCommand;
@@ -27,17 +26,8 @@ public class Repo {
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public void getPrivateKey() {
-        BizApi.getBaseInfo(TTCAgent.getClient().getContext(), new BizCallback<BaseInfo>() {
-            @Override
-            public void success(BaseInfo baseInfo) {
 
-            }
-
-            @Override
-            public void error(String msg) {
-
-            }
-        });
+        BizApi.getBaseInfo(TTCAgent.getClient().getContext(), null);
     }
 
     public void registerUser(final IManager.UserInfoCallback callback) {
