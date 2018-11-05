@@ -8,10 +8,10 @@ import com.ttc.sdk.util.TTCSp;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
+import org.web3j.exceptions.MessageDecodingException;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
@@ -33,30 +33,33 @@ public class EthClient {
 
     public static BigDecimal getBalance(String address) {
         BigDecimal res = new BigDecimal("0");
-
-        EthGetBalance send = null;
         try {
             Web3j web3 = Web3jFactory.build(new HttpService(Constants.TOKEN_RPC_URL));
-            send = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
+            EthGetBalance send = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return res;
-
     }
 
 
     public static BigInteger getNonce(String rpcUrl, String from) throws IOException {
-        Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
         try {
+            Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(from,
                     DefaultBlockParameterName.LATEST).send();
             if (ethGetTransactionCount != null) {
                 return ethGetTransactionCount.getTransactionCount();
             }
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         } catch (ClientConnectionException e) {
+            e.printStackTrace();
+        } catch (MessageDecodingException e) {
             e.printStackTrace();
         }
         return new BigInteger("0");
@@ -113,7 +116,9 @@ public class EthClient {
                 TTCSp.setNextNonce(nonce.add(new BigInteger("1")));
                 return new TransactionResult(transactionHash, nonce);
             }
-        } catch (IOException e) {
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }  catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -130,23 +135,23 @@ public class EthClient {
     }
 
     public static boolean isTransactionSuccess(String rpcUrl, String hash) {
-        Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
-        Request<?, EthGetTransactionReceipt> request = web3.ethGetTransactionReceipt(hash);
-        if (request != null) {
-            try {
-                EthGetTransactionReceipt ethGetTransactionReceipt = request.send();
-                if (ethGetTransactionReceipt != null) {
-                    TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt();
-                    if (transactionReceipt != null) {
-                        if ("0x1".equals(transactionReceipt.getStatus())) {
-                            return true;
-                        }
+        try {
+            Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
+            EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hash).send();
+            if (ethGetTransactionReceipt != null) {
+                TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt();
+                if (transactionReceipt != null) {
+                    if ("0x1".equals(transactionReceipt.getStatus())) {
+                        return true;
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IllegalStateException e) {    //when testing, this exception occur
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return false;
     }
 }
