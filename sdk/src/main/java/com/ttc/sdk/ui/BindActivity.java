@@ -27,7 +27,6 @@ public class BindActivity extends Activity {
     private TextView tvWallet;
     private TextView tvApp;
     private TextView tvBind;
-
     private ImageView ivIconApp;
     private CheckBox cbAuto;
 

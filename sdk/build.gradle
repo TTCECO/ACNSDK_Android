@@ -7,7 +7,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 28
         versionCode 1
-        versionName "0.0.3"
+        versionName "0.0.4"
 
         buildConfigField 'String', 'ACTION_RPC_URL', "\"http://test.ttcnet.io/\""
         buildConfigField 'String', 'TOKEN_RPC_URL', "\"http://test.ttcnet.io/\""

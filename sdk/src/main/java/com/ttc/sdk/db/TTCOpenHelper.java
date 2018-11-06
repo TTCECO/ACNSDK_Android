@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TTCOpenHelper extends SQLiteOpenHelper {
 
-    public static final String DB_NAME = "ttc_new.db";
-    public static final int VERSION = 2;
+    private static final String DB_NAME = "ttc_new.db";
+    private static final int VERSION = 2;
 
     public TTCOpenHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -25,8 +25,7 @@ public class TTCOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-
+        //
     }
 
 }

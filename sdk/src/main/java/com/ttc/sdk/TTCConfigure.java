@@ -1,9 +1,10 @@
 package com.ttc.sdk;
 
+/**
+ * configure log and server switcher
+ */
 public class TTCConfigure {
-
     private boolean logEnabled;
-
     private boolean serverEnabled;
 
     private TTCConfigure(boolean logEnabled, boolean serverEnabled) {
@@ -20,9 +21,7 @@ public class TTCConfigure {
     }
 
     public static class Builder {
-
         private boolean logEnabled;
-
         private boolean serverEnabled = true;
 
         public Builder logEnabled(boolean logEnabled) {
@@ -39,6 +38,4 @@ public class TTCConfigure {
             return new TTCConfigure(logEnabled, serverEnabled);
         }
     }
-
-
 }

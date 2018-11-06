@@ -2,15 +2,14 @@ package com.ttc.sdk.command;
 
 import android.text.TextUtils;
 
+import com.ttc.biz.http.BizApi;
+import com.ttc.sdk.TTCAgent;
 import com.ttc.sdk.command.base.AbstractCommand;
-import com.ttc.sdk.db.EventDao;
-import com.ttc.sdk.model.EventBean;
 import com.ttc.sdk.model.TransactionResult;
 import com.ttc.sdk.util.ActionHelper;
 import com.ttc.sdk.util.AlgorithmUtil;
 import com.ttc.sdk.util.TTCLogger;
 import com.ttc.sdk.util.TTCSp;
-import com.ttc.sdk.web.BehaviorManager;
 
 
 public class EventCommand extends AbstractCommand<TransactionResult> {
@@ -39,15 +38,20 @@ public class EventCommand extends AbstractCommand<TransactionResult> {
 
         if (result != null) {
             String actionHash = result.getTransactionHash();
-            EventBean bean = EventDao.fetchEventByUserActionHash(actionHash);
-            if (bean != null) {
-                bean.setBcRetryCount(bean.getBcRetryCount() + 1);
-                EventDao.update(bean);
-            }else {
-                EventDao.insert(behaviorType, actionHash, extra, timestamp);
+
+            if (!TextUtils.isEmpty(actionHash)) {
+                BizApi.behaviour(TTCAgent.getClient().getContext(), behaviorType, actionHash, extra, timestamp, null);
             }
+
+//            EventBean bean = EventDao.fetchEventByUserActionHash(actionHash);
+//            if (bean != null) {
+//                bean.setBcRetryCount(bean.getBcRetryCount() + 1);
+//                EventDao.update(bean);
+//            }else {
+//                EventDao.insert(behaviorType, actionHash, extra, timestamp);
+//            }
         }
-        BehaviorManager.getInstance().delayCheckTransaction();
+//        BehaviorManager.getInstance().delayCheckTransaction();
         return result;
     }
 
