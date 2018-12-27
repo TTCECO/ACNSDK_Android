@@ -1,0 +1,49 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode 1
+        versionName "0.0.6"
+
+        buildConfigField 'String', 'ACTION_RPC_URL', "\"http://test.ttcnet.io/\""
+        buildConfigField 'String', 'TOKEN_RPC_URL', "\"http://test.ttcnet.io/\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //自定义aar的名称
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            def fileName = "ttc_sdk_${defaultConfig.versionName}.aar"
+            outputFileName = fileName
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+}
+
+dependencies {
+    compile files("libs/protobuf-javanano-3.0.0-alpha-5.jar")
+
+    implementation 'org.web3j:core:3.3.1-android'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:3.8'
+//    implementation project(':biz')
+    implementation(name:'ttc_sdk_biz_0.0.5',ext:'aar')
+}
+
+repositories {
+    mavenCentral()
+}

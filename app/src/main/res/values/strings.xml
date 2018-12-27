@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">TTCSDK_Android</string>
+
+    <string name="register">Register</string>
+    <string name="update_user_info">Update user information</string>
+    <string name="unregister">Unregister</string>
+    <string name="user_action">Behavior</string>
+    <string name="bind_dapp">Bind</string>
+    <string name="unbind_dapp">Unbind</string>
+    <string name="get_wallet_balance">Get wallet balance</string>
+    <string name="get_app_balance">Get app balance</string>
+    <string name="open_log_switch">Open log</string>
+    <string name="close_log_switch">Close log</string>
+    <string name="open_sdk_fun_switch">Open sdk function</string>
+    <string name="close_sdk_fun_switch">Close sdk function</string>
+    <string name="pls_input_userId">please input userId</string>
+    <string name="display_result">Display operating result here</string>
+    <string name="display_update_info">Display adding user information</string>
+    <string name="add_key">Key</string>
+    <string name="add_value">Value</string>
+    <string name="add">add</string>
+    <string name="behavior_type_greater_than_100">must be greater than 100</string>
+    <string name="extra_must_be_json">must be json string</string>
+    <string name="login">login</string>
+</resources>
