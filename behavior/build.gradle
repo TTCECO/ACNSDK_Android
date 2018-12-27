@@ -7,7 +7,7 @@ android {
         minSdkVersion MIN_SDK_VERSION
         targetSdkVersion TARGET_SDK_VERSION
         versionCode 1
-        versionName "0.0.6"
+        versionName "0.0.5"
 
         buildConfigField 'String', 'ACTION_RPC_URL', "\"http://test.ttcnet.io/\""
         buildConfigField 'String', 'TOKEN_RPC_URL', "\"http://test.ttcnet.io/\""

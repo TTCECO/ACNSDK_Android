@@ -8,10 +8,7 @@ import io.ttcnet.pay.GetOrderDetailCallback
 import io.ttcnet.pay.PayCallback
 import io.ttcnet.pay.TTCPay
 import io.ttcnet.pay.model.*
-import io.ttcnet.pay.util.Util
 import kotlinx.android.synthetic.main.activity_order.*
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.concurrent.Executors
 import kotlin.random.Random
@@ -22,9 +19,9 @@ class OrderActivity : AppCompatActivity() {
     private var payInfo = PayInfo()
     private var orderInfo = OrderInfo()  //return by TTC server
     private val foods = arrayOf("小龙虾", "大肠粉", "刀削面")
-    private val prices = arrayOf("3", "10", "5.6")
+    private val prices = doubleArrayOf(0.3, 0.1, 0.6)
     private val curry = arrayOf(1, 2, 3, 4)
-    private var price = ""
+    private var price = 0.0
     private var priceType = 0
 
 
@@ -32,22 +29,7 @@ class OrderActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_order)
 
-//        TTCPay.init(this, "MeiTuan", )
         init()
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        TTCPay.getOrderDetail(activity, orderInfo.ttcOrderId, object : GetOrderDetailCallback {
-//            override fun done(orderInfo: OrderInfo) {
-//                activity.orderInfo = orderInfo
-//                displayContent()
-//            }
-//
-//            override fun error(errorBean: ErrorBean) {
-//
-//            }
-//        })
     }
 
     fun init() {
@@ -74,8 +56,7 @@ class OrderActivity : AppCompatActivity() {
         order_pay.setOnClickListener {
             TTCPay.getExchangeRate(activity, priceType, object : ExchangeCallback {
                 override fun done(ttcPrice: String) {
-                    payInfo.totalTTCWei = BigDecimal(price).multiply(BigDecimal(Util.ONE_18_ZERO))
-                        .divide(BigDecimal(ttcPrice), 6, RoundingMode.HALF_UP).toBigInteger().toString()
+//                    payInfo.totalTTCWei = PayUtil.ttc2Wei(PayUtil.legalTender2TTC(ttcPrice, price))
 
 
                     TTCPay.pay(activity, payInfo, object : PayCallback {

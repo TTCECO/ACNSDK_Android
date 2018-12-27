@@ -39,6 +39,12 @@ android {
             matchingFallbacks = ["ft", "release", "debug"]
         }
     }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
@@ -51,9 +57,13 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android:flexbox:1.0.0'
 
-    implementation (project(":behavior")){
-        transitive = false
-    }
+//    implementation (project(":behavior")){
+//        transitive = false
+//    }
+//
+//    implementation project(":pay")
 
-    implementation project(":pay")
+    implementation(name:'ttc_sdk_biz_0.0.5', ext:'aar')
+    implementation(name:'ttc_sdk_0.0.5', ext:'aar')
+    implementation(name:'ttc_pay_0.0.18', ext:'aar')
 }
