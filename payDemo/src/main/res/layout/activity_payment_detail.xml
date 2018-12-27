@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".view.PaymentDetailActivity">
+
+
+    <include layout="@layout/appbar_layout"/>
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/detail_status"
+              android:layout_marginTop="50dp"
+              android:gravity="center"
+              android:textSize="@dimen/text_size_large"
+              android:textStyle="bold"
+              android:textColor="@color/black"/>
+
+    <TextView android:layout_width="wrap_content"
+              android:id="@+id/detail_price"
+              android:textSize="@dimen/text_size_big"
+              android:textStyle="bold"
+              android:text="Amout:"
+              android:layout_gravity="center"
+              android:textColor="@color/black"
+              android:layout_height="wrap_content"/>
+
+
+    <include
+            android:id="@+id/detail_order_number"
+            layout="@layout/title_content_two_rows_layout"/>
+
+    <include android:id="@+id/detail_order_company"
+             layout="@layout/title_content_two_rows_layout"/>
+
+    <include android:id="@+id/detail_order_info"
+             layout="@layout/title_content_two_rows_layout"/>
+
+</LinearLayout>
+

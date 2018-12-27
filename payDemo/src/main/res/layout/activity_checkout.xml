@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".view.CheckoutActivity">
+
+    <include layout="@layout/appbar_layout"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/checkout_rv"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+    <TextView android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:textSize="@dimen/text_size_big"
+              android:visibility="invisible"
+              android:background="@color/blue"
+              android:paddingTop="@dimen/margin_normal"
+              android:id="@+id/checkout_pay_total"
+              android:paddingBottom="@dimen/margin_normal"
+              android:text=""/>
+</LinearLayout>

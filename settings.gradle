@@ -1,1 +1,1 @@
-include ':app', ':biz', ':behavior', ':pay'
+include ':behivorDemo', ':biz', ':behavior', ':pay', ':payDemo'

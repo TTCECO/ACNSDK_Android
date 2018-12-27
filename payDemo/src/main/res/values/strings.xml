@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TTCPayDemo</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="are_u_sure_delete_it">Are you sure to delete it?</string>
+    <string name="checkout">Checkout</string>
+    <string name="payment_detail">Payment Detail</string>
+</resources>

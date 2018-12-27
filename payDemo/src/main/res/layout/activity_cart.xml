@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/background"
+        tools:context=".view.CartActivity">
+
+    <include layout="@layout/appbar_layout"/>
+
+    <android.support.v7.widget.RecyclerView
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/cart_fragment_rv"
+            android:layout_height="0dp"/>
+
+    <LinearLayout
+            android:paddingLeft="@dimen/margin_normal"
+            android:paddingRight="@dimen/margin_normal"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            android:translationZ="5dp"
+            android:elevation="5dp"
+            android:paddingTop="@dimen/margin_half"
+            android:paddingBottom="@dimen/margin_half"
+            android:layout_height="wrap_content">
+
+        <TextView android:layout_width="0dp"
+                  android:id="@+id/cart_fragment_price"
+                  android:layout_height="wrap_content"
+                  android:textColor="@color/red"
+                  android:textSize="@dimen/text_size_big"
+                  android:textStyle="bold"
+                  android:text="Total:$7,696.00"
+                  android:layout_weight="1"/>
+
+        <TextView android:id="@+id/cart_fragment_checkout"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:background="@color/black"
+                  android:textSize="@dimen/text_size_big"
+                  android:textColor="@color/white"
+                  android:textStyle="bold"
+                  android:paddingLeft="@dimen/margin_normal"
+                  android:paddingRight="@dimen/margin_normal"
+                  android:paddingBottom="@dimen/margin_half"
+                  android:paddingTop="@dimen/margin_half"
+                  android:text="Checkout"/>
+    </LinearLayout>
+
+</LinearLayout>

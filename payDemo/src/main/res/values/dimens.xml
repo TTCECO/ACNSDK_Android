@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_normal">20dp</dimen>
+    <dimen name="margin_half">10dp</dimen>
+
+    <dimen name="margin_interval">12dp</dimen>
+
+    <dimen name="text_size_large">34sp</dimen>
+    <dimen name="text_size_big">18sp</dimen>
+    <dimen name="text_size_normal">14sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    <dimen name="text_size_mini">8sp</dimen>
+
+    <dimen name="corner_radius">5dp</dimen>
+
+</resources>
