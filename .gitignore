@@ -57,3 +57,13 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+/pay/
+!/pay/build/
+/pay/build/output/
+!/pay/build/output/aar
+
+/biz/
+!/biz/build/
+/biz/build/output/
+!/biz/build/output/aar
