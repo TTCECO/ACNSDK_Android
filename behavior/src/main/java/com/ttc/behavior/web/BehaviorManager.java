@@ -5,9 +5,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-
-import com.ttc.biz.http.BizApi;
-import com.ttc.biz.http.BizCallback;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.command.TransactionEventBeanCommand;
 import com.ttc.behavior.db.EventDao;
@@ -15,7 +12,9 @@ import com.ttc.behavior.model.EventBean;
 import com.ttc.behavior.util.ActionHelper;
 import com.ttc.behavior.util.CommonType;
 import com.ttc.behavior.util.Constants;
-import com.ttc.behavior.util.TTCSp;
+import com.ttc.behavior.db.TTCSp;
+import com.ttc.biz.BizApi;
+import com.ttc.biz.BizCallback;
 
 import java.util.List;
 

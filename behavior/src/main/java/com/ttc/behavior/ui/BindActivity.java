@@ -13,13 +13,13 @@ import android.widget.TextView;
 
 import com.ttc.behavior.R;
 import com.ttc.behavior.TTCAgent;
-import com.ttc.behavior.util.AndroidUtil;
+import com.ttc.behavior.util.Utils;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.IManager;
 import com.ttc.behavior.util.TTCError;
 import com.ttc.behavior.util.TTCKey;
 import com.ttc.behavior.util.TTCLogger;
-import com.ttc.behavior.util.TTCSp;
+import com.ttc.behavior.db.TTCSp;
 
 public class BindActivity extends Activity {
 
@@ -66,10 +66,10 @@ public class BindActivity extends Activity {
         setBold(tvApp);
         setBold(tvBind);
 
-        Drawable drawable = AndroidUtil.getApplicationIcon(this);
+        Drawable drawable = Utils.getApplicationIcon(this);
         ivIconApp.setImageDrawable(drawable);
 
-        tvApp.setText(AndroidUtil.getApplicationName(this));
+        tvApp.setText(Utils.getApplicationName(this));
     }
 
     private void initData() {

@@ -2,9 +2,9 @@ package com.ttc.behavior.util;
 
 import android.content.Context;
 import android.text.TextUtils;
-
-import com.ttc.biz.http.BizApi;
 import com.ttc.behavior.TTCAgent;
+import com.ttc.behavior.db.TTCSp;
+import com.ttc.biz.BizApi;
 
 public class ActionHelper {
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".AdsActivity">
+
+    <Button android:layout_width="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:background="@android:color/holo_green_light"
+            android:id="@+id/ads_banner"
+            android:text="Banner"
+            android:layout_height="wrap_content"/>
+
+
+    <Button android:layout_width="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:background="@android:color/holo_green_light"
+            android:id="@+id/ads_interstitial"
+            android:text="interstital"
+            android:layout_height="wrap_content"/>
+
+
+    <Button android:layout_width="match_parent"
+            android:layout_marginTop="30dp"
+            android:id="@+id/ads_reward_video"
+            android:layout_marginLeft="@dimen/margin_normal"
+            android:layout_marginRight="@dimen/margin_normal"
+            android:background="@android:color/holo_green_light"
+            android:text="reward video"
+            android:layout_height="wrap_content"/>
+</LinearLayout>

@@ -2,9 +2,6 @@ package com.ttc.behavior.web;
 
 import android.os.Handler;
 import android.os.Looper;
-
-import com.ttc.biz.http.BizApi;
-import com.ttc.biz.http.BizCallback;
 import com.ttc.behavior.IManager;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.command.BehaviorReq;
@@ -12,7 +9,9 @@ import com.ttc.behavior.command.WalletBalanceCommand;
 import com.ttc.behavior.command.base.Command;
 import com.ttc.behavior.util.CommonType;
 import com.ttc.behavior.util.Constants;
-import com.ttc.behavior.util.TTCSp;
+import com.ttc.behavior.db.TTCSp;
+import com.ttc.biz.BizApi;
+import com.ttc.biz.BizCallback;
 
 import java.math.BigDecimal;
 import java.util.Map;

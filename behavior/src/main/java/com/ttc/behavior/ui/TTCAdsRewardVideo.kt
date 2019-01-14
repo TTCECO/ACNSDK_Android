@@ -1,0 +1,100 @@
+package com.ttc.behavior.ui
+
+import android.app.Activity
+import android.content.Context
+import android.util.Log
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.reward.RewardItem
+import com.google.android.gms.ads.reward.RewardedVideoAd
+import com.google.android.gms.ads.reward.RewardedVideoAdListener
+import com.ttc.behavior.util.Constants
+import com.ttc.behavior.util.Utils
+import com.ttc.biz.BizApi
+
+
+/**
+ * Created by lwq on 2019/1/7.
+ */
+class TTCAdsRewardVideo {
+
+    private lateinit var activity: Activity
+    private lateinit var rewardedVideoAd: RewardedVideoAd
+    private var rewardCallback: TTCRewardCallback? = null
+    private var unitId = ""
+
+
+    fun init(activity: Activity, adMobAppId: String, rewardUnitId: String) {
+        this.activity = activity
+        this.unitId = rewardUnitId
+
+        MobileAds.initialize(activity, adMobAppId)
+        rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(activity)
+
+        rewardedVideoAd.rewardedVideoAdListener = object : RewardedVideoAdListener {
+            override fun onRewardedVideoAdClosed() {
+                rewardCallback?.onRewardedVideoAdClosed()
+            }
+
+            override fun onRewardedVideoAdLeftApplication() {
+                rewardCallback?.onRewardedVideoAdLeftApplication()
+                Log.d("lwq", "upload click reward")
+                BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_CLICK)
+            }
+
+            override fun onRewardedVideoAdLoaded() {
+                rewardCallback?.onRewardedVideoAdLoaded()
+                Log.d("lwq", "reward loaded")
+            }
+
+            override fun onRewardedVideoAdOpened() {
+                rewardCallback?.onRewardedVideoAdOpened()
+            }
+
+            override fun onRewardedVideoCompleted() {
+                rewardCallback?.onRewardedVideoCompleted()
+            }
+
+            override fun onRewarded(p0: RewardItem?) {
+                rewardCallback?.onRewarded(p0?.type, p0?.amount)
+            }
+
+            override fun onRewardedVideoStarted() {
+                rewardCallback?.onRewardedVideoStarted()
+            }
+
+            override fun onRewardedVideoAdFailedToLoad(p0: Int) {
+                rewardCallback?.onRewardedVideoAdFailedToLoad(p0)
+                Log.d("lwq", "reward failed: " + p0)
+            }
+        }
+    }
+
+    fun requestAds() {
+        if (!rewardedVideoAd.isLoaded) {
+            rewardedVideoAd.loadAd(unitId, AdRequest.Builder().build())
+            Log.d("lwq", "reward request:" + unitId)
+        }
+    }
+
+    fun show() {
+        if (rewardedVideoAd.isLoaded) {
+            rewardedVideoAd.show()
+            Log.d("lwq", "upload reward show")
+            BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_SHOW)
+        }
+    }
+
+
+    fun pause(context: Context) {
+        rewardedVideoAd.pause(context)
+    }
+
+    fun resume(context: Context) {
+        rewardedVideoAd.resume(context)
+    }
+
+    fun setRewardedCallback(rewardCallback: TTCRewardCallback) {
+        this.rewardCallback = rewardCallback
+    }
+}

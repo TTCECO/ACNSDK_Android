@@ -13,10 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/main_env"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/main_msg_tv"
@@ -47,28 +43,28 @@
 
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white">
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:background="@android:color/white">-->
 
-                    <EditText
-                        android:id="@+id/main_user_id_et"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
-                        android:layout_weight="1"
-                        android:hint="@string/pls_input_userId"
-                        android:imeOptions="actionDone"
-                        android:inputType="textEmailAddress"
-                        android:maxLines="1"/>
+                    <!--<EditText-->
+                        <!--android:id="@+id/main_user_id_et"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="bottom"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:hint="@string/pls_input_userId"-->
+                        <!--android:imeOptions="actionDone"-->
+                        <!--android:inputType="textEmailAddress"-->
+                        <!--android:maxLines="1"/>-->
 
-                    <Button
-                        style="@style/BtnStyle"
-                        android:layout_width="wrap_content"
-                        android:onClick="register"
-                        android:text="@string/register"/>
-                </LinearLayout>
+                    <!--<Button-->
+                        <!--style="@style/BtnStyle"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:onClick="register"-->
+                        <!--android:text="@string/register"/>-->
+                <!--</LinearLayout>-->
 
                 <!--更新用户信息-->
                 <LinearLayout

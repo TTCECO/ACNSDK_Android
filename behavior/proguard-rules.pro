@@ -166,6 +166,8 @@
 -keep class com.ttc.sdk.IManager$*{*;}
 -keep class com.ttc.sdk.TTCKey{*;}
 -keep class com.ttc.sdk.util.TTCError{*;}
+-keep class com.ttc.behavior.ui.**{*;}
+
 
 -dontwarn  com.fasterxml.**
 -dontwarn  org.w3c.dom.**

@@ -22,4 +22,8 @@ public class Constants {
 
     public static final long ONE_DAY_MILLISECOND = 86400000L;
 
+
+    public static final int TYPE_SHOW = 1;
+    public static final int TYPE_CLICK = 2;
+
 }

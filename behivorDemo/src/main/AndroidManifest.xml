@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="io.ttcnet.ttc_sdk_inner">
+          package="io.ttcnet.sdk">
 
     <application
             android:name=".Application"
             android:allowBackup="true"
-            android:icon="@mipmap/labrador"
+            android:icon="@mipmap/lasvegas"
             android:label="@string/app_name"
-            android:roundIcon="@mipmap/ic_launcher_round"
+            android:roundIcon="@mipmap/lasvegas_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true">
 
-        <activity android:name=".BehaviorActivity">
+        <activity android:name=".RegisterActivity"
+                  android:windowSoftInputMode="stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <action android:name="android.intent.action.VIEW"/>
@@ -20,11 +22,23 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".OrderActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+                android:name=".AdsActivity"
+                android:screenOrientation="portrait"/>
 
+        <meta-data
+                android:name="com.google.android.gms.ads.APPLICATION_ID"
+                android:value="${ADMOB_APP_ID}"/>
+        <meta-data
+                android:name="TTC_APP_ID"
+                android:value="SDKTest"/>
+        <meta-data
+                android:name="TTC_APP_SECRET_KEY"
+                android:value="9d1990b8fc9cf1328d88af73b8f89e4d"/>
+
+        <activity android:name=".BehaviorActivity"/>
+        <activity android:name=".BannerActivity">
+        </activity>
     </application>
 
 </manifest>

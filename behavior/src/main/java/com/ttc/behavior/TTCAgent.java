@@ -3,20 +3,19 @@ package com.ttc.behavior;
 
 import android.content.Context;
 import android.text.TextUtils;
-
-import com.ttc.biz.http.BizApi;
-import com.ttc.behavior.web.Client;
-import com.ttc.behavior.web.Repo;
-import com.ttc.behavior.util.AndroidUtil;
+import android.util.Log;
+import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.util.TTCError;
 import com.ttc.behavior.util.TTCLogger;
-import com.ttc.behavior.util.TTCSp;
+import com.ttc.behavior.util.Utils;
+import com.ttc.behavior.web.Client;
+import com.ttc.behavior.web.Repo;
+import com.ttc.biz.BizApi;
 
 import java.util.Map;
 
 /**
- *
  * 对外公开的类，主要的方法都在此类中
  */
 public class TTCAgent {
@@ -43,8 +42,8 @@ public class TTCAgent {
             return errCode;
         }
 
-        String appId = AndroidUtil.getMeta(context, Constants.TTC_APP_ID);
-        String secretKey = AndroidUtil.getMeta(context, Constants.TTC_APP_SECRET_KEY);
+        String appId = Utils.getMeta(context, Constants.TTC_APP_ID);
+        String secretKey = Utils.getMeta(context, Constants.TTC_APP_SECRET_KEY);
         if (TextUtils.isEmpty(appId)) {
             errCode = TTCError.APP_ID_IS_EMPTY;
             TTCLogger.e(TTCError.getMessage(errCode));
@@ -57,7 +56,7 @@ public class TTCAgent {
         }
         client = new Client(context);
         TTCSp.setAppId(appId);
-        TTCSp.setSecretKey( secretKey);
+        TTCSp.setSecretKey(secretKey);
         return errCode;
     }
 
@@ -103,7 +102,7 @@ public class TTCAgent {
             TTCSp.clear();   //先清空，避免用户上次退出没有调用unregister
         }
 
-        TTCSp.setUserId( userId);
+        TTCSp.setUserId(userId);
 
         BizApi.init(TTCAgent.getClient().getContext(), TTCSp.getAppId(), TTCSp.getSecretKey(), TTCSp.getUserId(),
                 BuildConfig.VERSION_CODE);
@@ -276,4 +275,11 @@ public class TTCAgent {
     }
 
 
+    public static void setEnvProd(boolean isProd) {
+        BizApi.setEnv(client.getContext(), isProd);
+    }
+
+    public static boolean isEnvProd() {
+        return BizApi.isEnvProd(client.getContext());
+    }
 }

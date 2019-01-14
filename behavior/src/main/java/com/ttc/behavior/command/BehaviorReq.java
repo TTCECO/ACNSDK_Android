@@ -2,18 +2,13 @@ package com.ttc.behavior.command;
 
 import android.content.Context;
 import android.text.TextUtils;
-
-import com.ttc.biz.http.BizApi;
-import com.ttc.biz.http.BizCallback;
 import com.ttc.behavior.TTCAgent;
+import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.model.TransactionResult;
-import com.ttc.behavior.util.ActionHelper;
-import com.ttc.behavior.util.AlgorithmUtil;
-import com.ttc.behavior.util.CommonType;
-import com.ttc.behavior.util.Constants;
-import com.ttc.behavior.util.TTCLogger;
-import com.ttc.behavior.util.TTCSp;
+import com.ttc.behavior.util.*;
 import com.ttc.behavior.web.EthClient;
+import com.ttc.biz.BizApi;
+import com.ttc.biz.BizCallback;
 
 /**
  * Created by lwq on 2018/11/20.

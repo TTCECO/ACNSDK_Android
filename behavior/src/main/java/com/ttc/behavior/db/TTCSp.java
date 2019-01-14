@@ -1,10 +1,11 @@
-package com.ttc.behavior.util;
+package com.ttc.behavior.db;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.ttc.behavior.TTCAgent;
+import com.ttc.behavior.util.TTCLogger;
 
 import java.math.BigInteger;
 

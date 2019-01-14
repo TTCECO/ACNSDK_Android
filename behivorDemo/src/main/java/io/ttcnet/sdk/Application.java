@@ -1,7 +1,8 @@
-package io.ttcnet.ttc_sdk_inner;
+package io.ttcnet.sdk;
 
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.util.TTCError;
 
@@ -17,6 +18,7 @@ public class Application extends android.app.Application {
         int errCode = TTCAgent.init(this);
         if (errCode > 0) {
             String msg = TTCError.getMessage(errCode);
+            Log.e("TTC Behavior Demo", msg);
         }
     }
 

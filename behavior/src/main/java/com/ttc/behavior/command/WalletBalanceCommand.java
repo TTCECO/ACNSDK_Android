@@ -1,11 +1,10 @@
 package com.ttc.behavior.command;
 
 import android.text.TextUtils;
-
-import com.ttc.biz.http.BizApi;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.command.base.AbstractCommand;
 import com.ttc.behavior.web.EthClient;
+import com.ttc.biz.BizApi;
 
 import java.math.BigDecimal;
 

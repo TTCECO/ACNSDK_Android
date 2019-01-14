@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.ttc.behavior.model.EventBean;
-import com.ttc.behavior.util.TTCSp;
 
 import java.util.ArrayList;
 import java.util.List;

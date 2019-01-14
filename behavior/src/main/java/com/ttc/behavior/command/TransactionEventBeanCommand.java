@@ -1,13 +1,12 @@
 package com.ttc.behavior.command;
 
 import android.content.Context;
-
-import com.ttc.biz.http.BizApi;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.command.base.AbstractCommand;
 import com.ttc.behavior.model.EventBean;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.web.EthClient;
+import com.ttc.biz.BizApi;
 
 /**
  * Created by lwq on 2018/10/18.

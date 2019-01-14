@@ -3,7 +3,7 @@ package com.ttc.behavior.web;
 import com.ttc.behavior.model.TransactionResult;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.util.TTCLogger;
-import com.ttc.behavior.util.TTCSp;
+import com.ttc.behavior.db.TTCSp;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;

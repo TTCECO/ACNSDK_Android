@@ -14,12 +14,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
-public class AndroidUtil {
+public class Utils {
 
-    public static String getAppID(Context context) {
-        return context.getPackageName();
-    }
 
     public static String getMeta(Context context, String key) {
         try {
@@ -111,4 +109,10 @@ public class AndroidUtil {
         }
         return false;
     }
+
+    public static String getLocationCode( Context context) {
+        Locale local = context.getResources().getConfiguration().locale;
+        return local.getCountry();
+    }
+
 }

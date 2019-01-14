@@ -1,4 +1,4 @@
-package io.ttcnet.ttc_sdk_inner
+package io.ttcnet.sdk
 
 import org.junit.Test
 

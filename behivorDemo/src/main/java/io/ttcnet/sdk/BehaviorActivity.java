@@ -1,4 +1,4 @@
-package io.ttcnet.ttc_sdk_inner;
+package io.ttcnet.sdk;
 
 import android.content.Context;
 import android.content.Intent;
@@ -36,9 +36,9 @@ public class BehaviorActivity extends AppCompatActivity {
     private MyHandler handler = new MyHandler();
 
 
-    private TextView tvEnv;
+//    private TextView tvEnv;
     private TextView tvMsg;
-    private EditText etUserId;
+//    private EditText etUserId;
     private Button btnLog;
     private Button btnSdkFun;
     private TextView tvDisplayUpdateInfo;
@@ -56,10 +56,9 @@ public class BehaviorActivity extends AppCompatActivity {
 
         TTCAgent.configure(new TTCConfigure.Builder().logEnabled(true).build());
 
-        tvEnv = findViewById(R.id.main_env);
-        tvMsg = findViewById(R.id.main_msg_tv);
+//        tvEnv = findViewById(R.id.main_env);
 
-        etUserId = findViewById(R.id.main_user_id_et);
+//        etUserId = findViewById(R.id.main_user_id_et);
         btnLog = findViewById(R.id.main_log_btn);
         btnSdkFun = findViewById(R.id.main_sdk_fun);
         tvDisplayUpdateInfo = findViewById(R.id.main_display_update_info_tv);
@@ -68,13 +67,6 @@ public class BehaviorActivity extends AppCompatActivity {
         btnUpdateAdd = findViewById(R.id.main_update_info_add);
         etBehaviorType = findViewById(R.id.main_behavior_type);
         etBehaviorExtra = findViewById(R.id.main_behavior_extra);
-
-        if (BuildConfig.DEBUG) {
-            tvEnv.setText("dev");
-        } else {
-            tvEnv.setText("prod");
-        }
-
 
         btnLog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +116,6 @@ public class BehaviorActivity extends AppCompatActivity {
         if (requestCode == 10) {
             Toast.makeText(context, "refresh order ", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void addUpdateInfo() {
@@ -149,22 +140,6 @@ public class BehaviorActivity extends AppCompatActivity {
     }
 
 
-    public void register(View v) {
-        tvDisplayUpdateInfo.setText("");
-
-        String userId = etUserId.getText().toString();
-        TTCAgent.register(userId, new IManager.UserInfoCallback() {
-            @Override
-            public void success(Map<String, String> map) {
-                setTvMsg("register successfully", map.toString());
-            }
-
-            @Override
-            public void error(String msg) {
-                setTvMsg("register error", msg);
-            }
-        });
-    }
 
 
     public void updateUser(View v) {
