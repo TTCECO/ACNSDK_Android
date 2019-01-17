@@ -18,7 +18,7 @@ android {
         debug{
 
         }
-        
+
         release {
             keyAlias "keyAlias"
             keyPassword "123456"
@@ -76,6 +76,7 @@ dependencies {
 //    implementation project(':behavior')
 
 
+    implementation 'org.web3j:core:3.3.1-android'
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
     implementation 'com.google.android.gms:play-services-ads:17.1.2'
     implementation(name:'ttc_sdk_biz_0.0.8', ext:'aar')

@@ -40,13 +40,9 @@ class AdsActivity : AppCompatActivity() {
 
     private fun initInterstitial() {
         interstitial = TTCAdsInterstitial()
-        interstitial.init(activity, Utils.getAdmobAppId(activity), BuildConfig.interstitialUnitId)
+        interstitial.init(activity, BuildConfig.interstitialUnitId)
 
         interstitial.setAdsCallback(object : TTCAdsCallback() {
-            override fun onLoaded() {
-                super.onLoaded()
-                Toast.makeText(activity, "interstitial loaded", Toast.LENGTH_SHORT).show()
-            }
 
             override fun onAdImpression() {
                 super.onAdImpression()
@@ -85,7 +81,7 @@ class AdsActivity : AppCompatActivity() {
 
     private fun initRewardVideo() {
         rewardVideo = TTCAdsRewardVideo()
-        rewardVideo.init(activity, Utils.getAdmobAppId(activity), BuildConfig.rewardUnitId)
+        rewardVideo.init(activity,  BuildConfig.rewardUnitId)
         rewardVideo.setRewardedCallback(object : TTCRewardCallback() {
             override fun onRewardedVideoAdClosed() {
                 super.onRewardedVideoAdClosed()

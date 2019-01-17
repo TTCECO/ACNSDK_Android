@@ -19,6 +19,7 @@ android {
 dependencies {
   implementation 'org.web3j:core:3.3.1-android'
   implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
+  implementation 'com.google.android.gms:play-services-ads:17.1.2'
   implementation(name: 'ttc_sdk_xxx', ext: 'aar')
   implementation(name: 'ttc_sdk_biz_xxx', ext: 'aar')
 }
@@ -46,19 +47,19 @@ Add the following codes in AndroidManifest.xml, and replace "packageName" & "app
 <meta-data
     android:name="TTC_APP_SECRET_KEY"
     android:value="secretKey"/>
+<meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-3081086010287406~9085005576"/>
 ```
 
 ## Initiate 
-Initiate it in Application.java.  
+Initiate it in Application.java. If not used advertise, ***adMobAppId*** can be empty.  
 
 ```
 @Override
 public void onCreate() {
     super.onCreate();
-    int errCode = TTCAgent.init(this);
-    if (errCode > 0) {
-       String msg = TTCError.getMessage(errCode);
-    }
+    TTCAgent.init(this, adMobAppId);
 }
 ```
 ## Register
@@ -137,6 +138,152 @@ builder.logEnabled(false);
 builder.serverEnabled(true);
 TTCAgent.configure(builder.build());
 ```
+
+
+## Show banner ad
+It is completed in TTCAdsBanner. Method init() must be invoked first, adSize is defined in TTCAdSize. Method setBannerCallback() is optional.
+
+```
+var banner = TTCAdsBanner()
+var bannerView = banner.init(activity,  BuildConfig.bannerUnitId, TTCAdSize.BANNER)
+ads_banner_container_fl.addView(bannerView)
+
+banner.setBannerCallback(object : TTCAdsCallback() {
+
+    override fun onAdImpression() {
+        super.onAdImpression()
+    }
+
+    override fun onAdLeftApplication() {
+        super.onAdLeftApplication()
+        Toast.makeText(activity, "banner left", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClicked() {
+        super.onAdClicked()
+    }
+
+    override fun onAdFailedToLoad(p0: Int) {
+        super.onAdFailedToLoad(p0)
+        Toast.makeText(activity, "banner failed:" + p0, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClosed() {
+        super.onAdClosed()
+    }
+
+    override fun onAdOpened() {
+        super.onAdOpened()
+    }
+
+    override fun onAdLoaded() {
+        super.onAdLoaded()
+        Toast.makeText(activity, "banner adloaded", Toast.LENGTH_SHORT).show()
+    }
+});
+```
+## show interstitial ad
+Create TTCAdsInterstitial object, and init it with unit id. After requesting ad, then you can show it. 
+
+```
+interstitial = TTCAdsInterstitial()
+interstitial.init(activity, BuildConfig.interstitialUnitId)
+
+interstitial.setAdsCallback(object : TTCAdsCallback() {
+
+    override fun onAdImpression() {
+        super.onAdImpression()
+        Toast.makeText(activity, "interstitial impression", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdLeftApplication() {
+        super.onAdLeftApplication()
+        Toast.makeText(activity, "interstitial left", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClicked() {
+        super.onAdClicked()
+    }
+
+    override fun onAdFailedToLoad(p0: Int) {
+        super.onAdFailedToLoad(p0)
+        Toast.makeText(activity, "interstitial failed loaded:" + p0, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClosed() {
+        super.onAdClosed()
+    }
+
+    override fun onAdOpened() {
+        super.onAdOpened()
+    }
+
+    override fun onAdLoaded() {
+        super.onAdLoaded()
+        interstitial.show()  //加载完成，显示
+        Toast.makeText(activity, "interstitial adLoaded", Toast.LENGTH_SHORT).show() 
+    }
+})
+```
+
+## Show rewarded ad
+Create TTCAdsRewardVideo object, and init it with unit id. After requesting ad, then you can show it. Also, you can pause and resume it.
+
+```
+rewardVideo = TTCAdsRewardVideo()
+rewardVideo.init(activity,  BuildConfig.rewardUnitId)
+rewardVideo.setRewardedCallback(object : TTCRewardCallback() {
+    override fun onRewardedVideoAdClosed() {
+        super.onRewardedVideoAdClosed()
+    }
+
+    override fun onRewardedVideoAdLeftApplication() {
+        super.onRewardedVideoAdLeftApplication()
+        Toast.makeText(activity, "reward left", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdLoaded() {
+        super.onRewardedVideoAdLoaded()
+        rewardVideo.show()
+        Toast.makeText(activity, "reward loaded", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdOpened() {
+        super.onRewardedVideoAdOpened()
+    }
+
+    override fun onRewardedVideoCompleted() {
+        super.onRewardedVideoCompleted()
+        Toast.makeText(activity, "reward complete", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewarded(type: String?, amount: Int?) {
+        super.onRewarded(type, amount)
+    }
+
+    override fun onRewardedVideoStarted() {
+        super.onRewardedVideoStarted()
+    }
+
+    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
+        super.onRewardedVideoAdFailedToLoad(p0)
+        Toast.makeText(activity, "reward failed loaded:" + p0, Toast.LENGTH_SHORT).show()
+    }
+})
+
+
+override fun onResume() {
+    super.onResume()
+    rewardVideo.resume(activity)
+}
+
+override fun onPause() {
+    super.onPause()
+    rewardVideo.pause(activity)
+}
+
+```
+
 ## Get SDK information
 
 ```

@@ -3,7 +3,10 @@ package com.ttc.behavior.ui
 import android.content.Context
 import android.util.Log
 import android.widget.FrameLayout
-import com.google.android.gms.ads.*
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.ttc.behavior.util.Constants
 import com.ttc.behavior.util.Utils
 import com.ttc.biz.BizApi
@@ -14,28 +17,34 @@ import com.ttc.biz.BizApi
  */
 class TTCAdsBanner {
 
+    private var isTest = false;     //
     private var callback: TTCAdsCallback? = null
 
-    fun init(context: Context, adMobAppId: String, unitId: String, adSize: Int): FrameLayout {
-        MobileAds.initialize(context, adMobAppId)
+    fun init(context: Context, unitId: String, adSize: Int): FrameLayout {
 
         var container = FrameLayout(context)
-        var adview = AdView(context);
+        var adView = AdView(context);
 
-        if (adSize == TTCAdSize.BANNER) {
-            adview.adSize = AdSize.BANNER;
-        } else {
-            adview.adSize = AdSize.SMART_BANNER
+        when (adSize) {
+            TTCAdSize.BANNER -> adView.adSize = AdSize.BANNER
+            TTCAdSize.LARGE_BANNER -> adView.adSize = AdSize.LARGE_BANNER
+            TTCAdSize.FULL_BANNER -> adView.adSize = AdSize.FULL_BANNER
+            TTCAdSize.SMART_BANNER -> adView.adSize = AdSize.SMART_BANNER
+            else -> adView.adSize = AdSize.SMART_BANNER
         }
         Log.d("lwq", "banner unit id:" + unitId)
-        adview.adUnitId = unitId
+        adView.adUnitId = unitId
 
-        container.addView(adview)
-        var adRequest = AdRequest.Builder().build()
+        container.addView(adView)
+        var requestBuilder = AdRequest.Builder()
 
-        adview.loadAd(adRequest)
+        if (isTest) {
+            requestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+        }
 
-        adview.adListener = object : AdListener() {
+        adView.loadAd(requestBuilder.build())
+
+        adView.adListener = object : AdListener() {
             override fun onAdImpression() {
                 super.onAdImpression()
                 callback?.onAdImpression()
@@ -45,7 +54,7 @@ class TTCAdsBanner {
                 super.onAdLeftApplication()
                 callback?.onAdLeftApplication()
                 Log.d("lwq", "upload click banner")
-                BizApi.uploadAdsEvent(context, adview.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
+                BizApi.uploadAdsEvent(context, adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
             }
 
             override fun onAdClicked() {
@@ -72,7 +81,7 @@ class TTCAdsBanner {
                 super.onAdLoaded()
                 callback?.onAdLoaded()
                 Log.d("lwq", "upload banner show")
-                BizApi.uploadAdsEvent(context, adview.adUnitId, Utils.getLocationCode(context), Constants.TYPE_SHOW)
+                BizApi.uploadAdsEvent(context, adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_SHOW)
             }
         }
         return container
@@ -81,5 +90,9 @@ class TTCAdsBanner {
 
     fun setBannerCallback(ttcAdsCallback: TTCAdsCallback) {
         this.callback = ttcAdsCallback
+    }
+
+    fun setTestState(isTest: Boolean) {
+        this.isTest = true;
     }
 }

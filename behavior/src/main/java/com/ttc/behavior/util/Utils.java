@@ -8,7 +8,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-
+import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -112,6 +112,9 @@ public class Utils {
 
     public static String getLocationCode( Context context) {
         Locale local = context.getResources().getConfiguration().locale;
+        //local.getISO3Country():USA
+        //local.getDisplayCountry():United States
+        //local.getCountry():US
         return local.getCountry();
     }
 

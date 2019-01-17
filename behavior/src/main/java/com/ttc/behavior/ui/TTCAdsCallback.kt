@@ -5,8 +5,6 @@ package com.ttc.behavior.ui
  */
 open class TTCAdsCallback {
 
-    open fun onLoaded() {}
-
     open fun onAdImpression() {}
 
     open fun onAdLeftApplication() {}

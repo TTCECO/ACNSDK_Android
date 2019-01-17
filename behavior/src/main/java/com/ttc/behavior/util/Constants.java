@@ -25,5 +25,7 @@ public class Constants {
 
     public static final int TYPE_SHOW = 1;
     public static final int TYPE_CLICK = 2;
+    public static final int TYPE_VIDEO_OVER = 3;  //video play over
+
 
 }

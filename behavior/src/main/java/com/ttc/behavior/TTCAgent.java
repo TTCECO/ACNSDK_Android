@@ -3,7 +3,7 @@ package com.ttc.behavior;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
+import com.google.android.gms.ads.MobileAds;
 import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.util.TTCError;
@@ -27,9 +27,10 @@ public class TTCAgent {
      * init it in application.java
      *
      * @param context
+     * @param adMobAppId  if not need advertise, null
      * @return
      */
-    public static int init(Context context) {
+    public static int init(Context context, String adMobAppId) {
         int errCode = 0;
         if (!SERVER_ENABLE) {
             errCode = TTCError.SDK_SERVER_OFF;
@@ -54,6 +55,12 @@ public class TTCAgent {
             TTCLogger.e(TTCError.getMessage(errCode));
             return errCode;
         }
+
+        //init only once
+        if (!TextUtils.isEmpty(adMobAppId)) {
+            MobileAds.initialize(context, adMobAppId);
+        }
+
         client = new Client(context);
         TTCSp.setAppId(appId);
         TTCSp.setSecretKey(secretKey);

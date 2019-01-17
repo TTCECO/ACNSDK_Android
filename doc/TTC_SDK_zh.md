@@ -18,6 +18,7 @@ android {
 dependencies {
   implementation 'org.web3j:core:3.3.1-android'
   implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
+  implementation 'com.google.android.gms:play-services-ads:17.1.2'
   implementation(name: 'ttc_sdk_xxx', ext: 'aar')
   implementation(name: 'ttc_sdk_biz_xxx', ext: 'aar')
 }
@@ -45,19 +46,19 @@ dependencies {
 <meta-data
     android:name="TTC_APP_SECRET_KEY"
     android:value="secretKey"/>
+<meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-3081086010287406~9085005576"/>
 ```
 
 ## 初始化接口
-在Application中初始化;  
+在Application中初始化, 如果使用广告，则传入adMobAppID，不需要则传空即可;  
 
 ```
 @Override
 public void onCreate() {
     super.onCreate();
-    int errCode = TTCAgent.init(this);
-    if (errCode > 0) {
-       String msg = TTCError.getMessage(errCode);
-    }
+    TTCAgent.init(this, adMobAppId);
 }
 ```
 ## 注册用户接口
@@ -160,6 +161,151 @@ builder.logEnabled(false);
 builder.serverEnabled(true);
 TTCAgent.configure(builder.build());
 ```
+
+## 显示banner广告
+TTCAdsBanner实现了此功能，首先调用init()方法，然后设置回调；adSize在TTCAdSize.kt中有枚举;
+
+```
+var banner = TTCAdsBanner()
+var bannerView = banner.init(activity,  BuildConfig.bannerUnitId, TTCAdSize.BANNER)
+ads_banner_container_fl.addView(bannerView)
+
+banner.setBannerCallback(object : TTCAdsCallback() {
+ 
+    override fun onAdImpression() {
+        super.onAdImpression()
+    }
+
+    override fun onAdLeftApplication() {
+        super.onAdLeftApplication()
+        Toast.makeText(activity, "banner left", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClicked() {
+        super.onAdClicked()
+    }
+
+    override fun onAdFailedToLoad(p0: Int) {
+        super.onAdFailedToLoad(p0)
+        Toast.makeText(activity, "banner failed:" + p0, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClosed() {
+        super.onAdClosed()
+    }
+
+    override fun onAdOpened() {
+        super.onAdOpened()
+    }
+
+    override fun onAdLoaded() {
+        super.onAdLoaded()
+        Toast.makeText(activity, "banner adloaded", Toast.LENGTH_SHORT).show()
+    }
+});
+```
+## 显示插页广告
+在TTCAdsInterstitial中实现此功能，首先传入unitId初始化，然后请求广告requestAd(), 显示时调用show(),同样可以设置回调；
+
+```
+interstitial = TTCAdsInterstitial()
+interstitial.init(activity, BuildConfig.interstitialUnitId)
+
+interstitial.setAdsCallback(object : TTCAdsCallback() {
+
+    override fun onAdImpression() {
+        super.onAdImpression()
+        Toast.makeText(activity, "interstitial impression", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdLeftApplication() {
+        super.onAdLeftApplication()
+        Toast.makeText(activity, "interstitial left", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClicked() {
+        super.onAdClicked()
+    }
+
+    override fun onAdFailedToLoad(p0: Int) {
+        super.onAdFailedToLoad(p0)
+        Toast.makeText(activity, "interstitial failed loaded:" + p0, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onAdClosed() {
+        super.onAdClosed()
+    }
+
+    override fun onAdOpened() {
+        super.onAdOpened()
+    }
+
+    override fun onAdLoaded() {
+        super.onAdLoaded()
+        interstitial.show()  //加载完成，显示
+        Toast.makeText(activity, "interstitial adLoaded", Toast.LENGTH_SHORT).show() 
+    }
+})
+```
+
+## 展示激励视频广告
+创建TTCAdsRewardVideo对象，传入unitId初始化init()，请求广告requestAds(), 展示show(), 可以暂停pause()和恢复resume()；
+
+```
+rewardVideo = TTCAdsRewardVideo()
+rewardVideo.init(activity,  BuildConfig.rewardUnitId)
+rewardVideo.setRewardedCallback(object : TTCRewardCallback() {
+    override fun onRewardedVideoAdClosed() {
+        super.onRewardedVideoAdClosed()
+    }
+
+    override fun onRewardedVideoAdLeftApplication() {
+        super.onRewardedVideoAdLeftApplication()
+        Toast.makeText(activity, "reward left", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdLoaded() {
+        super.onRewardedVideoAdLoaded()
+        rewardVideo.show()
+        Toast.makeText(activity, "reward loaded", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewardedVideoAdOpened() {
+        super.onRewardedVideoAdOpened()
+    }
+
+    override fun onRewardedVideoCompleted() {
+        super.onRewardedVideoCompleted()
+        Toast.makeText(activity, "reward complete", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRewarded(type: String?, amount: Int?) {
+        super.onRewarded(type, amount)
+    }
+
+    override fun onRewardedVideoStarted() {
+        super.onRewardedVideoStarted()
+    }
+
+    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
+        super.onRewardedVideoAdFailedToLoad(p0)
+        Toast.makeText(activity, "reward failed loaded:" + p0, Toast.LENGTH_SHORT).show()
+    }
+})
+
+
+override fun onResume() {
+    super.onResume()
+    rewardVideo.resume(activity)
+}
+
+override fun onPause() {
+    super.onPause()
+    rewardVideo.pause(activity)
+}
+
+```
+
 ## sdk版本信息
 获取sdk的版本名称和版本号：
 

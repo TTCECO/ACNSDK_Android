@@ -15,7 +15,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        int errCode = TTCAgent.init(this);
+        int errCode = TTCAgent.init(this, Utils.INSTANCE.getAdmobAppId(this));
         if (errCode > 0) {
             String msg = TTCError.getMessage(errCode);
             Log.e("TTC Behavior Demo", msg);

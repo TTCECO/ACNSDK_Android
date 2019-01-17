@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
-import com.google.android.gms.ads.MobileAds
 import com.ttc.behavior.util.Constants
 import com.ttc.behavior.util.Utils
 import com.ttc.biz.BizApi
@@ -21,9 +20,8 @@ class TTCAdsInterstitial {
     private var callback: TTCAdsCallback? = null
 
 
-    fun init(context: Context, adMobAppId: String, unitId: String) {
+    fun init(context: Context, unitId: String) {
         this.context = context
-        MobileAds.initialize(context, adMobAppId)
         interstitialAd = InterstitialAd(context)
         interstitialAd.adUnitId = unitId
         Log.d("lwq", "intertitial unit id:" + unitId)
@@ -65,6 +63,12 @@ class TTCAdsInterstitial {
             override fun onAdOpened() {
                 super.onAdOpened()
                 callback?.onAdOpened()
+                BizApi.uploadAdsEvent(
+                    context,
+                    interstitialAd.adUnitId,
+                    Utils.getLocationCode(context),
+                    Constants.TYPE_SHOW
+                )
             }
 
             override fun onAdLoaded() {
@@ -89,8 +93,6 @@ class TTCAdsInterstitial {
         if (interstitialAd.isLoaded) {
             Log.d("lwq", "upload interstitial show")
             interstitialAd.show()
-
-            BizApi.uploadAdsEvent(context, interstitialAd.adUnitId, Utils.getLocationCode(context), Constants.TYPE_SHOW)
         }
 
     }

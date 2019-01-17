@@ -24,11 +24,10 @@ class TTCAdsRewardVideo {
     private var unitId = ""
 
 
-    fun init(activity: Activity, adMobAppId: String, rewardUnitId: String) {
+    fun init(activity: Activity, rewardUnitId: String) {
         this.activity = activity
         this.unitId = rewardUnitId
 
-        MobileAds.initialize(activity, adMobAppId)
         rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(activity)
 
         rewardedVideoAd.rewardedVideoAdListener = object : RewardedVideoAdListener {
@@ -49,14 +48,18 @@ class TTCAdsRewardVideo {
 
             override fun onRewardedVideoAdOpened() {
                 rewardCallback?.onRewardedVideoAdOpened()
+                Log.d("lwq", "reward loaded")
+                BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_SHOW)
             }
 
             override fun onRewardedVideoCompleted() {
                 rewardCallback?.onRewardedVideoCompleted()
+                Log.d("lwq", "reward loaded")
             }
 
             override fun onRewarded(p0: RewardItem?) {
                 rewardCallback?.onRewarded(p0?.type, p0?.amount)
+                BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_VIDEO_OVER)
             }
 
             override fun onRewardedVideoStarted() {
@@ -81,7 +84,6 @@ class TTCAdsRewardVideo {
         if (rewardedVideoAd.isLoaded) {
             rewardedVideoAd.show()
             Log.d("lwq", "upload reward show")
-            BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_SHOW)
         }
     }
 
