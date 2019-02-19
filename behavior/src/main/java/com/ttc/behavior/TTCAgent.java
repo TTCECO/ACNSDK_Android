@@ -13,6 +13,7 @@ import com.ttc.behavior.web.Client;
 import com.ttc.behavior.web.Repo;
 import com.ttc.biz.BizApi;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,10 +28,9 @@ public class TTCAgent {
      * init it in application.java
      *
      * @param context
-     * @param adMobAppId  if not need advertise, null
      * @return
      */
-    public static int init(Context context, String adMobAppId) {
+    public static int init(Context context) {
         int errCode = 0;
         if (!SERVER_ENABLE) {
             errCode = TTCError.SDK_SERVER_OFF;
@@ -45,6 +45,8 @@ public class TTCAgent {
 
         String appId = Utils.getMeta(context, Constants.TTC_APP_ID);
         String secretKey = Utils.getMeta(context, Constants.TTC_APP_SECRET_KEY);
+        String adMobAppId = Utils.getMeta(context, Constants.AD_MOB_APP_ID);
+
         if (TextUtils.isEmpty(appId)) {
             errCode = TTCError.APP_ID_IS_EMPTY;
             TTCLogger.e(TTCError.getMessage(errCode));
@@ -114,7 +116,13 @@ public class TTCAgent {
         BizApi.init(TTCAgent.getClient().getContext(), TTCSp.getAppId(), TTCSp.getSecretKey(), TTCSp.getUserId(),
                 BuildConfig.VERSION_CODE);
 
-        repo().getPrivateKey();
+        //upload device Id
+        Map<String,String> info = new HashMap<>();
+        info.put(UserAttr.CLIENT_ID, Utils.getClientId());
+        info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(TTCAgent.getClient().getContext()));
+        BizApi.updateUser(TTCAgent.getClient().getContext(),info, null);
+
+        repo().getBaseInfo();
         repo().registerUser(callback);
         client.retry();
 

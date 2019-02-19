@@ -25,7 +25,7 @@
                   android:ellipsize="end"
                   android:textColor="@color/black"
                   android:text="Furniture"
-                  android:id="@+id/main_title"/>
+        />
 
         <RelativeLayout
                 android:layout_centerVertical="true"
@@ -47,8 +47,8 @@
                     android:visibility="gone"
                     android:layout_height="12dp"/>
 
-            <ImageView android:id="@+id/main_cart_iv"
-                       android:layout_width="wrap_content"
+            <ImageView
+                    android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:layout_marginTop="-6dp"
                        android:layout_below="@+id/main_cart_goods_num"

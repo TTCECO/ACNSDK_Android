@@ -27,34 +27,35 @@ public class BehaviorReq {
                 String hash = AlgorithmUtil.hash(behaviorType, TTCSp.getUserId(), timestamp, sExtra);
                 String data = ActionHelper.toData(hash);
                 TransactionResult result = reqBlock(data);
-                TTCLogger.d("onEvent behaviorType=" + behaviorType + ", extra=" + sExtra + ", transaction hash = " +
-                        result.getTransactionHash());
 
                 if (result != null) {
+                    TTCLogger.d("onEvent behaviorType=" + behaviorType + ", extra=" + sExtra + ", transaction hash = " +
+                            result.getTransactionHash());
+
                     String actionHash = result.getTransactionHash();
 
                     if (!TextUtils.isEmpty(actionHash)) {
                         BizApi.behaviour(TTCAgent.getClient().getContext(), behaviorType, actionHash, sExtra,
                                 timestamp, new BizCallback<String>() {
-                            @Override
-                            public void success(String s) {
-                                if (behaviorType == CommonType.OPEN_DAPP) {
-                                    TTCSp.setLastOpenTimestamp(System.currentTimeMillis());
-                                }
-                            }
+                                    @Override
+                                    public void success(String s) {
+                                        if (behaviorType == CommonType.OPEN_DAPP) {
+                                            TTCSp.setLastOpenTimestamp(System.currentTimeMillis());
+                                        }
+                                    }
 
-                            @Override
-                            public void error(String msg) {
+                                    @Override
+                                    public void error(String msg) {
 
-                            }
-                        });
+                                    }
+                                });
                     }
                 }
             }
         });
     }
 
-    private static TransactionResult reqBlock(String data){
+    private static TransactionResult reqBlock(String data) {
         TransactionResult result = null;
 
         Context context = TTCAgent.getClient().getContext();

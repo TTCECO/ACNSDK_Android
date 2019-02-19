@@ -11,4 +11,7 @@ public class UserAttr {
     public static final String ADDRESS = "address";
     public static final String USER_ID = "userId";
     public static final String WALLET = "wallet";
+    public static final String CLIENT_ID = "clientId";
+    public static final String COUNTRY_CODE = "countryCode";
+
 }

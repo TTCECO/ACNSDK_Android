@@ -7,8 +7,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -116,6 +116,10 @@ public class Utils {
         //local.getDisplayCountry():United States
         //local.getCountry():US
         return local.getCountry();
+    }
+
+    public static String getClientId(){
+        return Build.SERIAL;
     }
 
 }

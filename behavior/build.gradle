@@ -8,7 +8,7 @@ android {
         minSdkVersion MIN_SDK_VERSION
         targetSdkVersion TARGET_SDK_VERSION
         versionCode 1
-        versionName "0.0.8"
+        versionName "0.0.18"
 
         buildConfigField 'String', 'ACTION_RPC_URL', "\"http://test.ttcnet.io/\""
         buildConfigField 'String', 'TOKEN_RPC_URL', "\"http://test.ttcnet.io/\""
@@ -37,7 +37,6 @@ android {
 }
 
 dependencies {
-//    compile files("libs/protobuf-javanano-3.0.0-alpha-5.jar")
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -48,7 +47,7 @@ dependencies {
 
     implementation project(':biz')
 
-//    implementation(name:'ttc_sdk_biz_0.0.6',ext:'aar')
+//    implementation(name:'ttc_sdk_biz_0.0.18',ext:'aar')
 
     implementation 'com.google.android.gms:play-services-ads:17.1.2'
 

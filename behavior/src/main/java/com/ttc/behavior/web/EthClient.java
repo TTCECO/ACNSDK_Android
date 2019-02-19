@@ -1,10 +1,10 @@
 package com.ttc.behavior.web;
 
+import android.text.TextUtils;
+import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.model.TransactionResult;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.util.TTCLogger;
-import com.ttc.behavior.db.TTCSp;
-
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -13,11 +13,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Response;
-import org.web3j.protocol.core.methods.response.EthGetBalance;
-import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
-import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.exceptions.ClientConnectionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
@@ -77,6 +73,11 @@ public class EthClient {
      */
     public static TransactionResult sendTransaction(String rpcUrl, String from, String to, String fromPrivateKey,
                                                     String gasPrice, int gasLimit, String data) {
+
+        if (TextUtils.isEmpty(fromPrivateKey)) {
+            TTCLogger.e("send transaction: fromPrivateKey is empty");
+            return null;
+        }
 
         String dataHex = stringToHex(data);
         Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));

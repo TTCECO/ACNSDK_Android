@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="bind">绑定</string>
+    <string name="bind">Bind</string>
     <string name="ttc_wallet">TTC Connect</string>
-    <string name="loading">加载中…</string>
+    <string name="loading">Đang tải…</string>
 </resources>

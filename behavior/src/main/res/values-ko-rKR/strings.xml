@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bind">연동</string>
-    <string name="auto_import">자동 가져오기 TTC</string>
-    <string name="bind_success">연동 성공</string>
-    <string name="bind_failed">연동 실패</string>
     <string name="ttc_wallet">TTC Connect</string>
+    <string name="loading">로드 중…</string>
 </resources>

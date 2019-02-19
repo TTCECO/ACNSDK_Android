@@ -3,7 +3,7 @@
           package="io.ttcnet.ttc_pay_demo_officer">
 
     <application
-            android:name=".Application"
+            android:name=".MyApplication"
             android:allowBackup="true"
             android:icon="@mipmap/app_icon"
             android:label="@string/app_name"
@@ -41,8 +41,11 @@
         <activity
                 android:name=".view.BaseActivity"
                 android:screenOrientation="portrait"/>
-        <activity android:name=".view.MainActivity" android:launchMode="singleTask"
+
+        <activity android:name=".view.MainActivity"
+                  android:launchMode="singleTask"
                   android:screenOrientation="portrait"/>
+
     </application>
 
 </manifest>

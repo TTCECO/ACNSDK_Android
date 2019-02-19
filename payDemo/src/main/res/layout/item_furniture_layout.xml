@@ -22,7 +22,6 @@
             android:layout_height="wrap_content">
         <LinearLayout
                 android:layout_width="match_parent"
-                android:id="@+id/item_goods_title_des"
                 android:orientation="vertical"
                 android:layout_toLeftOf="@id/item_goods_price_layout"
                 android:layout_height="wrap_content">
@@ -65,7 +64,6 @@
                     android:text="$105"/>
 
             <ImageView
-                    android:id="@+id/item_goods_cart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

@@ -15,7 +15,12 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        int errCode = TTCAgent.init(this, Utils.INSTANCE.getAdmobAppId(this));
+
+        int errCode = TTCAgent.init(this);
+
+        //todo lwq 上线时，改为true
+        TTCAgent.setEnvProd(false);
+
         if (errCode > 0) {
             String msg = TTCError.getMessage(errCode);
             Log.e("TTC Behavior Demo", msg);

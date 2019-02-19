@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bind">Bind</string>
-    <string name="auto_import">Automatic import TTC</string>
-    <string name="bind_success">Bind succeeded</string>
-    <string name="bind_failed">Bind failed</string>
     <string name="ttc_wallet">TTC Connect</string>
+    <string name="loading">Loading…</string>
 </resources>

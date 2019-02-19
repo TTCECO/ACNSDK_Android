@@ -23,7 +23,7 @@ public class Repo {
 
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public void getPrivateKey() {
+    public void getBaseInfo() {
         BizApi.getBaseInfo(TTCAgent.getClient().getContext(), null);
     }
 

@@ -49,8 +49,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/iv_wallet"
-                android:layout_width="60dp"
+                    android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_margin="6dp"
                 android:background="@drawable/round_rect"
@@ -126,18 +125,5 @@
         android:text="@string/bind"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_small"/>
-
-    <CheckBox
-        android:id="@+id/cb_auto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_normal"
-        android:background="@null"
-        android:button="@drawable/cb_selector"
-        android:checked="true"
-        android:paddingLeft="@dimen/margin_half"
-        android:text="@string/auto_import"
-        android:textColor="@color/ttc_black"
-        android:textSize="@dimen/text_size_tiny"/>
 
 </LinearLayout>

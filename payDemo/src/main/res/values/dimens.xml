@@ -11,6 +11,4 @@
     <dimen name="text_size_small">12sp</dimen>
     <dimen name="text_size_mini">8sp</dimen>
 
-    <dimen name="corner_radius">5dp</dimen>
-
 </resources>

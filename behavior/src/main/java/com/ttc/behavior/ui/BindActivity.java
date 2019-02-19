@@ -7,19 +7,13 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.ttc.behavior.IManager;
 import com.ttc.behavior.R;
 import com.ttc.behavior.TTCAgent;
-import com.ttc.behavior.util.Utils;
-import com.ttc.behavior.util.Constants;
-import com.ttc.behavior.IManager;
-import com.ttc.behavior.util.TTCError;
-import com.ttc.behavior.util.TTCKey;
-import com.ttc.behavior.util.TTCLogger;
 import com.ttc.behavior.db.TTCSp;
+import com.ttc.behavior.util.*;
 
 public class BindActivity extends Activity {
 
@@ -28,7 +22,6 @@ public class BindActivity extends Activity {
     private TextView tvApp;
     private TextView tvBind;
     private ImageView ivIconApp;
-    private CheckBox cbAuto;
 
     private String walletAddress;
 
@@ -59,7 +52,6 @@ public class BindActivity extends Activity {
         tvApp = findViewById(R.id.tv_app);
         tvBind = findViewById(R.id.btn_bind);
         ivIconApp = findViewById(R.id.iv_icon_app);
-        cbAuto = findViewById(R.id.cb_auto);
 
         setBold(tvTitle);
         setBold(tvWallet);
@@ -84,7 +76,7 @@ public class BindActivity extends Activity {
 
     public void bind(View view) {
         if (isSDKRegisted()) {
-            final boolean auto = cbAuto.isChecked();
+            final boolean auto = true;
             TTCAgent.getClient().getRepo().bindApp(walletAddress, auto, new IManager.BindCallback() {
                 @Override
                 public void onMessage(boolean success, String message) {
