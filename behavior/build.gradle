@@ -44,12 +44,12 @@ dependencies {
     implementation 'org.web3j:core:3.3.1-android'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:3.8'
-
-    implementation project(':biz')
-
-//    implementation(name:'ttc_sdk_biz_0.0.18',ext:'aar')
-
     implementation 'com.google.android.gms:play-services-ads:17.1.2'
+
+//    implementation project(':biz')
+
+    implementation(name:'ttc_sdk_biz_0.0.18',ext:'aar')
+
 
 }
 
