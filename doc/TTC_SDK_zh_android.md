@@ -1,7 +1,7 @@
 # TTC SDK教程
 ## 准备工作
 
-下载 [SDK](https://github.com/TTCECO/TTCSDK_Android)
+下载 [SDK](https://github.com/TTCECO/TTCSDK_Android/releases)
 
 ## 快速集成
 将sdk放入libs目录下，在build.gradle中添加依赖，sdk的名称请根据相应的版本号填写。

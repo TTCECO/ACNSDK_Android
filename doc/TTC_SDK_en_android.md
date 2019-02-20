@@ -2,7 +2,7 @@
 
 ## Basics
 
-Download [SDK](https://github.com/TTCECO/TTCSDK_Android)
+Download [SDK](https://github.com/TTCECO/TTCSDK_Android/releases)
 
 ## Integration 
 Put sdk in libs directory, add dependencies in build.gradle and replace “ttc\_sdk\_xxx” and "ttc\_sdk\_biz\_xxx" with the real name;
@@ -119,6 +119,7 @@ TTCAgent.getWalletBalance(IManager.BalanceCallback callback)
 
 ## Upload user behaviors  
 The ___actionType__ must be greater than 100. The ___extra___ must be a json structure string.
+The value and meaning of action type, 
 
 ```
 TTCAgent.onEvent(int actionType, String extra)
