@@ -8,13 +8,11 @@ import com.ttc.behavior.util.TTCLogger;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
-import org.web3j.exceptions.MessageDecodingException;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Response;
 import org.web3j.protocol.core.methods.response.*;
-import org.web3j.protocol.exceptions.ClientConnectionException;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
 
@@ -34,9 +32,7 @@ public class EthClient {
             EthGetBalance send = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return res;
@@ -51,11 +47,7 @@ public class EthClient {
             if (ethGetTransactionCount != null) {
                 return ethGetTransactionCount.getTransactionCount();
             }
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (ClientConnectionException e) {
-            e.printStackTrace();
-        } catch (MessageDecodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new BigInteger("0");
@@ -81,30 +73,24 @@ public class EthClient {
 
         String dataHex = stringToHex(data);
         Web3j web3 = null;
-        Credentials credentials = Credentials.create(fromPrivateKey);
         BigInteger nonce = null;
         BigInteger nextNonce = TTCSp.getNextNonce();
+        Credentials credentials = null;
         try {
+            credentials = Credentials.create(fromPrivateKey);
             web3 = Web3jFactory.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, from);
-        } catch (ClientConnectionException | IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+            if (nonce.compareTo(nextNonce) <= 0) {
+                nonce = nextNonce;  //nonce从0开始
+            }
+            TTCLogger.d("send transaction, nonce=" + nonce);
 
-        if (nonce.compareTo(nextNonce) <= 0) {
-            nonce = nextNonce;  //nonce从0开始
-        }
-
-        TTCLogger.d("send transaction, nonce=" + nonce);
-        // create our transaction
-        RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
-                BigInteger(gasLimit + ""), to, dataHex);
-
-        // sign & send our transaction
-        byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
-        String hexValue = Numeric.toHexString(signedMessage);
-        try {
+            // create our transaction
+            RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
+                    BigInteger(gasLimit + ""), to, dataHex);
+            // sign & send our transaction
+            byte[] signedMessage = TransactionEncoder.signMessage(rawTransaction, credentials);
+            String hexValue = Numeric.toHexString(signedMessage);
             EthSendTransaction ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
             if (ethSendTransaction != null) {
                 String transactionHash = ethSendTransaction.getTransactionHash();
@@ -118,9 +104,8 @@ public class EthClient {
                 TTCSp.setNextNonce(nonce.add(new BigInteger("1")));
                 return new TransactionResult(transactionHash, nonce);
             }
-        } catch (IllegalStateException|ClientConnectionException | IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
         return null;
     }
@@ -147,12 +132,7 @@ public class EthClient {
                     }
                 }
             }
-        } catch (IllegalStateException e) {    //when testing, this exception occur
-            e.printStackTrace();
-        } catch (ClientConnectionException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {    //when testing, this exception occur
         }
 
         return false;
