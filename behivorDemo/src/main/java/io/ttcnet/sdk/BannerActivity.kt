@@ -25,7 +25,7 @@ class BannerActivity : AppCompatActivity() {
     private fun initAdsBanner() {
 
         var banner = TTCAdsBanner()
-        var bannerView = banner.init(activity,  BuildConfig.bannerUnitId, TTCAdSize.BANNER)
+        var bannerView = banner.init(activity,  BuildConfig.bannerUnitId, TTCAdSize.MEDIUM_RECTANGLE)
         ads_banner_container_fl.addView(bannerView)
 
         banner.setBannerCallback(object : TTCAdsCallback() {

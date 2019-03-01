@@ -99,10 +99,13 @@ The ***info*** is what the user update. The common keys are defined in UserAttr.
 TTCAgent.updateUserInfo(Map<String, String> info, IManager.UserInfoCallback callback)
 ```
 ## Unbind
-It is used to unbind the TTC Wallet.
+It is used to unbind the TTC Wallet. 
 
 ```
 TTCAgent.unbindApp()
+
+//when you are product mode, please set true
+TTCAgent.setEnvProd(false);
 ```
 ## Get account balance
 The account balance is the balance in the dapp that is not synchronized to the TTC Wallet.

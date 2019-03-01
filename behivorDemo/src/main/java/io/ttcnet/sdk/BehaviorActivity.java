@@ -36,9 +36,7 @@ public class BehaviorActivity extends AppCompatActivity {
     private MyHandler handler = new MyHandler();
 
 
-//    private TextView tvEnv;
     private TextView tvMsg;
-//    private EditText etUserId;
     private Button btnLog;
     private Button btnSdkFun;
     private TextView tvDisplayUpdateInfo;
@@ -57,7 +55,7 @@ public class BehaviorActivity extends AppCompatActivity {
         TTCAgent.configure(new TTCConfigure.Builder().logEnabled(true).build());
 
 //        tvEnv = findViewById(R.id.main_env);
-
+        tvMsg = findViewById(R.id.main_msg_tv);
 //        etUserId = findViewById(R.id.main_user_id_et);
         btnLog = findViewById(R.id.main_log_btn);
         btnSdkFun = findViewById(R.id.main_sdk_fun);
@@ -138,8 +136,6 @@ public class BehaviorActivity extends AppCompatActivity {
         etUpdateValue.setText("");
         etUpdateKey.requestFocus();
     }
-
-
 
 
     public void updateUser(View v) {

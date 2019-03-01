@@ -80,13 +80,14 @@ public class EthClient {
         }
 
         String dataHex = stringToHex(data);
-        Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
+        Web3j web3 = null;
         Credentials credentials = Credentials.create(fromPrivateKey);
         BigInteger nonce = null;
         BigInteger nextNonce = TTCSp.getNextNonce();
         try {
+            web3 = Web3jFactory.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, from);
-        } catch (IOException e) {
+        } catch (ClientConnectionException | IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -117,7 +118,7 @@ public class EthClient {
                 TTCSp.setNextNonce(nonce.add(new BigInteger("1")));
                 return new TransactionResult(transactionHash, nonce);
             }
-        } catch (IllegalStateException | IOException e) {
+        } catch (IllegalStateException|ClientConnectionException | IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -147,6 +148,8 @@ public class EthClient {
                 }
             }
         } catch (IllegalStateException e) {    //when testing, this exception occur
+            e.printStackTrace();
+        } catch (ClientConnectionException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

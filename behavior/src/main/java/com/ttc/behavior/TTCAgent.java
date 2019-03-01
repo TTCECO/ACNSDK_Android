@@ -117,10 +117,10 @@ public class TTCAgent {
                 BuildConfig.VERSION_CODE);
 
         //upload device Id
-        Map<String,String> info = new HashMap<>();
+        Map<String, String> info = new HashMap<>();
         info.put(UserAttr.CLIENT_ID, Utils.getClientId());
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(TTCAgent.getClient().getContext()));
-        BizApi.updateUser(TTCAgent.getClient().getContext(),info, null);
+        BizApi.updateUser(TTCAgent.getClient().getContext(), info, null);
 
         repo().getBaseInfo();
         repo().registerUser(callback);

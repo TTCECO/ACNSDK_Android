@@ -1,7 +1,6 @@
 package com.ttc.behavior.ui
 
 import android.content.Context
-import android.util.Log
 import android.widget.FrameLayout
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
@@ -28,11 +27,12 @@ class TTCAdsBanner {
         when (adSize) {
             TTCAdSize.BANNER -> adView.adSize = AdSize.BANNER
             TTCAdSize.LARGE_BANNER -> adView.adSize = AdSize.LARGE_BANNER
+            TTCAdSize.MEDIUM_RECTANGLE ->adView.adSize = AdSize.MEDIUM_RECTANGLE
+            TTCAdSize.LEADER_BOARD -> AdSize.LEADERBOARD
             TTCAdSize.FULL_BANNER -> adView.adSize = AdSize.FULL_BANNER
             TTCAdSize.SMART_BANNER -> adView.adSize = AdSize.SMART_BANNER
             else -> adView.adSize = AdSize.SMART_BANNER
         }
-        Log.d("lwq", "banner unit id:" + unitId)
         adView.adUnitId = unitId
 
         container.addView(adView)
@@ -53,7 +53,6 @@ class TTCAdsBanner {
             override fun onAdLeftApplication() {
                 super.onAdLeftApplication()
                 callback?.onAdLeftApplication()
-                Log.d("lwq", "upload click banner")
                 BizApi.uploadAdsEvent(context, adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
             }
 
@@ -80,7 +79,6 @@ class TTCAdsBanner {
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 callback?.onAdLoaded()
-                Log.d("lwq", "upload banner show")
                 BizApi.uploadAdsEvent(context, adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_SHOW)
             }
         }
