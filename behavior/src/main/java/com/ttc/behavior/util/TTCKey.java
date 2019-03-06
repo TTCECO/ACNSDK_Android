@@ -11,4 +11,6 @@ public class TTCKey {
     public static final String BIND_STATE = "bind_state";  // 绑定的状态 0 未绑定 1 已绑定
     public static final String AUTO_TRANSACTION = "auto_transaction";
     public static final String ERROR_MSG = "error_msg";
+    public static final String BIND_REWARD = "bind_reward";
+
 }

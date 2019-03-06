@@ -1,10 +1,8 @@
 package com.ttc.behavior.util;
 
-import com.ttc.behavior.BuildConfig;
-
 public class Constants {
-    public static final String ACTION_RPC_URL = BuildConfig.ACTION_RPC_URL;
-    public static final String TOKEN_RPC_URL = BuildConfig.TOKEN_RPC_URL;
+    public static String MAIN_CHAIN_RPC_URL = "http://test.ttcnet.io/";
+    public static String SIDE_CHAIN_RPC_URL = "http://test.ttcnet.io/";
 
     public static final String SIGN_TYPE = "MD5";
     public static final String DATA_PREFIX = "ufo:1:oplog:md5:";

@@ -59,7 +59,7 @@ public class BehaviorReq {
         TransactionResult result = null;
 
         Context context = TTCAgent.getClient().getContext();
-        result = EthClient.sendTransaction(Constants.ACTION_RPC_URL, BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
+        result = EthClient.sendTransaction(Constants.SIDE_CHAIN_RPC_URL, BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
                 BizApi.getPrivateKey(context), BizApi.getGasPrice(context), BizApi.getGasLimit(context), data);
         return result;
     }

@@ -8,3 +8,4 @@
 2. pay sdk version:
 3. sdk demo version = sdk version;
 4. pay demo version = pay sdk version;
+5. 版本启动三段数字，第2位表示功能的增加，第3位表示修改bug

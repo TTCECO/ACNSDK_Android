@@ -24,12 +24,13 @@ dependencies {
 }
 
 ```
-在AndroidManifest中加入下面的配置， 将“应用包名”替换为您应用的包名，appID和secretKey替换为您之前申请的值，其它的请勿修改。
+在AndroidManifest中加入下面的配置， 将“应用包名”替换为您应用的包名，appID和secretKey替换为您之前申请的值，其它的请勿修改。  
+开发期间，adMobAppId、bannerUnitId、interstitialUnitId、rewardUnitId使用我们给定的测试Id，测试可以换成正式的Id；
 
 ```
 <activity-alias
     android:name="bind"
-    android:targetActivity="com.ttc.sdk.ui.BindActivity">
+    android:targetActivity="com.ttc.behavior.ui.BindActivity">
 
     <intent-filter>
         <action android:name="com.ttc.wallet.BINDACTION" />
@@ -53,12 +54,16 @@ dependencies {
 
 ## 初始化接口
 在Application中初始化, 如果使用广告，则传入adMobAppID，不需要则传空即可;  
+在开发和测试期间, TTCAgent.setEnvProd(false)；上线时，再设为true；
 
 ```
 @Override
 public void onCreate() {
     super.onCreate();
-    TTCAgent.init(this, adMobAppId);
+    TTCAgent.init(this);
+    
+    //开发和测试期间请设为false；上线时，改为true;
+    TTCAgent.setEnvProd(false);
 }
 ```
 ## 注册用户接口

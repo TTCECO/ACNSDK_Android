@@ -57,7 +57,7 @@ public class BehaviorManager {
                         EventDao.deleteEvent(bean.getActionHash());
                         continue;
                     }
-                    if (EthClient.isTransactionSuccess(Constants.ACTION_RPC_URL, bean.getActionHash())) {
+                    if (EthClient.isTransactionSuccess(Constants.SIDE_CHAIN_RPC_URL, bean.getActionHash())) {
                         bean.setBcRetryCount(0);
                         EventDao.update(bean);
                         uploadBizBehavior(bean);

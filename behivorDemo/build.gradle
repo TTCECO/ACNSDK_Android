@@ -10,6 +10,7 @@ android {
         targetSdkVersion TARGET_SDK_VERSION
         versionCode 1
         versionName SDK_VERSION_NAME
+        versionNameSuffix "ft5"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -30,6 +31,13 @@ android {
             buildConfigField("String", "bannerUnitId", "\"ca-app-pub-3940256099942544/6300978111\"")
             buildConfigField("String", "interstitialUnitId", "\"ca-app-pub-3940256099942544/8691691433\"")
             buildConfigField("String", "rewardUnitId", "\"ca-app-pub-3940256099942544/5224354917\"")
+
+            applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def fileName = "BehaviorDemo${defaultConfig.versionName}_${defaultConfig.versionNameSuffix}.apk"
+                    outputFileName = fileName
+                }
+            }
         }
 
         release {
@@ -40,11 +48,10 @@ android {
             buildConfigField("String", "rewardUnitId", "\"ca-app-pub-3081086010287406/8541233601\"")
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix "ft4"
 
             applicationVariants.all { variant ->
                 variant.outputs.all { output ->
-                    def fileName = "BehaviorDemo${defaultConfig.versionName}.apk"
+                    def fileName = "BehaviorDemo${defaultConfig.versionName}_${defaultConfig.versionNameSuffix}.apk"
                     outputFileName = fileName
                 }
             }
@@ -76,6 +83,6 @@ dependencies {
     implementation 'org.web3j:core:3.3.1-android'
     implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
     implementation 'com.google.android.gms:play-services-ads:17.1.3'
-    implementation(name:'ttc_sdk_biz_0.0.20_4', ext:'aar')
-    implementation(name:'ttc_sdk_0.0.20_4', ext:'aar')
+    implementation(name:'ttc_sdk_biz_0.1.0', ext:'aar')
+    implementation(name:'ttc_sdk_0.1.0', ext:'aar')
 }

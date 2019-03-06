@@ -122,4 +122,8 @@ public class Utils {
         return Build.SERIAL;
     }
 
+    public static String change2Hex(String ttcAddress){
+        return ttcAddress.replace("tt", "0x");
+    }
+
 }

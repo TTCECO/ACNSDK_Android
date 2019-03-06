@@ -3,4 +3,5 @@
     <string name="bind">연동</string>
     <string name="ttc_wallet">TTC Connect</string>
     <string name="loading">로드 중…</string>
+    <string name="get_ttc_after_bind">Receive %d TTC after binding</string>
 </resources>

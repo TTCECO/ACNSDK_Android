@@ -90,7 +90,4 @@ class TTCAdsBanner {
         this.callback = ttcAdsCallback
     }
 
-    fun setTestState(isTest: Boolean) {
-        this.isTest = true;
-    }
 }

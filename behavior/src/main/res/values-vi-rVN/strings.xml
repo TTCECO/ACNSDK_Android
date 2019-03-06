@@ -3,4 +3,5 @@
     <string name="bind">Kết nối</string>
     <string name="ttc_wallet">TTC Connect</string>
     <string name="loading">Đang tải…</string>
+    <string name="get_ttc_after_bind">Receive %d TTC after binding</string>
 </resources>

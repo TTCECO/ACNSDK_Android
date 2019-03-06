@@ -13,11 +13,14 @@ public class WalletBalanceCommand extends AbstractCommand<BigDecimal> {
 
     @Override
     public BigDecimal call() {
-
-        String wallet = BizApi.getIndividualAddress(TTCAgent.getClient().getContext());
-        if (TextUtils.isEmpty(wallet)) {
-            return new BigDecimal("0");
+        BigDecimal balance = BigDecimal.ZERO;
+        String wallet = BizApi.getBoundWalletAddress(TTCAgent.getClient().getContext());
+        if (!TextUtils.isEmpty(wallet)) {
+            BigDecimal temp = EthClient.getBalance(wallet);
+            if (temp != null) {
+                balance = temp;
+            }
         }
-        return EthClient.getBalance(wallet);
+        return balance;
     }
 }

@@ -1,12 +1,22 @@
 package com.ttc.behavior;
 
+import com.ttc.biz.model.BindSucData;
+
 import java.math.BigDecimal;
 import java.util.Map;
 
 public interface IManager {
 
     interface BindCallback {
-        void onMessage(boolean success, String message);
+        void success(BindSucData data);
+
+        void error(String msg);
+    }
+
+    interface UnbindCallback{
+        void success();
+
+        void error(String msg);
     }
 
     interface BalanceCallback {

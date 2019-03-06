@@ -14,6 +14,7 @@ import com.ttc.behavior.R;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.util.*;
+import com.ttc.biz.model.BindSucData;
 
 public class BindActivity extends Activity {
 
@@ -24,6 +25,7 @@ public class BindActivity extends Activity {
     private ImageView ivIconApp;
 
     private String walletAddress;
+    private int bindReward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,9 @@ public class BindActivity extends Activity {
         setBold(tvApp);
         setBold(tvBind);
 
+        if (bindReward > 0) {
+            tvTitle.setText(getString(R.string.get_ttc_after_bind, bindReward));
+        }
         Drawable drawable = Utils.getApplicationIcon(this);
         ivIconApp.setImageDrawable(drawable);
 
@@ -66,6 +71,7 @@ public class BindActivity extends Activity {
 
     private void initData() {
         walletAddress = getIntent().getStringExtra(TTCKey.WALLET_ADDRESS);
+        bindReward = getIntent().getIntExtra(TTCKey.BIND_REWARD, 0);
         TTCLogger.e("walletAddress=" + walletAddress);
     }
 
@@ -79,12 +85,14 @@ public class BindActivity extends Activity {
             final boolean auto = true;
             TTCAgent.getClient().getRepo().bindApp(walletAddress, auto, new IManager.BindCallback() {
                 @Override
-                public void onMessage(boolean success, String message) {
-                    if (success) {
-                        finishActivity(1, auto, "");
-                    } else {
-                        finishActivity(0, auto, message);
-                    }
+                public void success(BindSucData data) {
+                    bindReward = data.reward;
+                    finishActivity(1, auto, "");
+                }
+
+                @Override
+                public void error(String msg) {
+                    finishActivity(0, auto, msg);
                 }
             });
         }
@@ -102,6 +110,7 @@ public class BindActivity extends Activity {
         data.putExtra(TTCKey.BIND_STATE, bindState);
         data.putExtra(TTCKey.AUTO_TRANSACTION, autoTransaction);
         data.putExtra(TTCKey.ERROR_MSG, errorMsg);
+        data.putExtra(TTCKey.BIND_REWARD, bindReward);
 
         setResult(RESULT_OK, data);
         finish();

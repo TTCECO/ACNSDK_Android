@@ -10,7 +10,7 @@ import io.ttcnet.ttc_pay_demo_officer.repository.FurnitureRepository
  */
 class FurnitureViewModel : ViewModel {
 
-    lateinit var furnitureLiveData : LiveData<ArrayList<FurnitureModel>>
+    var furnitureLiveData: LiveData<ArrayList<FurnitureModel>>
 
     constructor() {
         furnitureLiveData = FurnitureRepository.genData()

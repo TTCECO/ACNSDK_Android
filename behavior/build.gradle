@@ -9,9 +9,6 @@ android {
         targetSdkVersion TARGET_SDK_VERSION
         versionCode 1
         versionName SDK_VERSION_NAME
-
-        buildConfigField 'String', 'ACTION_RPC_URL', "\"http://test.ttcnet.io/\""
-        buildConfigField 'String', 'TOKEN_RPC_URL', "\"http://test.ttcnet.io/\""
     }
     buildTypes {
         release {

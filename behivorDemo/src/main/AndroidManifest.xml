@@ -26,6 +26,18 @@
                 android:name=".AdsActivity"
                 android:screenOrientation="portrait"/>
 
+        <activity-alias
+                android:name="bind"
+                android:targetActivity="com.ttc.behavior.ui.BindActivity">
+
+            <intent-filter>
+                <action android:name="com.ttc.wallet.BINDACTION" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data
+                        android:scheme="ttc.behavior.demo" />
+            </intent-filter>
+
+        </activity-alias>
 
         <meta-data
                 android:name="TTC_APP_ID"

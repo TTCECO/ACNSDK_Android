@@ -2,16 +2,19 @@ package com.ttc.behavior.web;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import com.ttc.behavior.IManager;
 import com.ttc.behavior.TTCAgent;
 import com.ttc.behavior.command.BehaviorReq;
 import com.ttc.behavior.command.WalletBalanceCommand;
 import com.ttc.behavior.command.base.Command;
+import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.util.CommonType;
 import com.ttc.behavior.util.Constants;
-import com.ttc.behavior.db.TTCSp;
 import com.ttc.biz.BizApi;
 import com.ttc.biz.BizCallback;
+import com.ttc.biz.model.BaseInfo;
+import com.ttc.biz.model.BindSucData;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -24,7 +27,25 @@ public class Repo {
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public void getBaseInfo() {
-        BizApi.getBaseInfo(TTCAgent.getClient().getContext(), null);
+        BizApi.getBaseInfo(TTCAgent.getClient().getContext(), new BizCallback<BaseInfo>() {
+            @Override
+            public void success(BaseInfo baseInfo) {
+                if (baseInfo != null) {
+
+                    if (!TextUtils.isEmpty(baseInfo.getSideChainRPCUrl())) {
+                        Constants.SIDE_CHAIN_RPC_URL = baseInfo.getSideChainRPCUrl();
+                    }
+                    if (!TextUtils.isEmpty(baseInfo.getMainChainRPCUrl())) {
+                        Constants.MAIN_CHAIN_RPC_URL = baseInfo.getMainChainRPCUrl();
+                    }
+                }
+            }
+
+            @Override
+            public void error(String msg) {
+
+            }
+        });
     }
 
     public void registerUser(final IManager.UserInfoCallback callback) {
@@ -85,15 +106,14 @@ public class Repo {
     }
 
     public void bindApp(String walletAddress, boolean autoTransaction, final IManager.BindCallback callback) {
-        BizApi.bindApp(TTCAgent.getClient().getContext(), walletAddress, autoTransaction, new BizCallback<String>() {
+        BizApi.bindApp(TTCAgent.getClient().getContext(), walletAddress, autoTransaction, new BizCallback<BindSucData>() {
             @Override
-            public void success(final String s) {
+            public void success(final BindSucData bindSucData) {
                 if (callback != null) {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onMessage(true, s);
-
+                            callback.success(bindSucData);
                         }
                     });
                 }
@@ -105,7 +125,7 @@ public class Repo {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onMessage(false, msg);
+                            callback.error(msg);
                         }
                     });
                 }
@@ -113,16 +133,16 @@ public class Repo {
         });
     }
 
-    public void unbindApp(final IManager.BindCallback callback) {
+
+    public void unbindApp(final IManager.UnbindCallback callback) {
         BizApi.unbindApp(TTCAgent.getClient().getContext(), new BizCallback<String>() {
             @Override
-            public void success(final String s) {
+            public void success(String s) {
                 if (callback != null) {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onMessage(true, s);
-
+                            callback.success();
                         }
                     });
                 }
@@ -134,7 +154,7 @@ public class Repo {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            callback.onMessage(false, msg);
+                            callback.error(msg);
 
                         }
                     });
@@ -178,7 +198,7 @@ public class Repo {
         TTCAgent.getClient().getEventExecutorService().execute(new Runnable() {
             @Override
             public void run() {
-                String address = BizApi.getBehaviourAddress(TTCAgent.getClient().getContext());
+                String address = BizApi.getIndividualAddress(TTCAgent.getClient().getContext());
                 final BigDecimal balance = EthClient.getBalance(address);
 
                 mainHandler.post(new Runnable() {
@@ -189,7 +209,7 @@ public class Repo {
                         }
                         if (balance != null) {
                             callback.success(balance);
-                        }else {
+                        } else {
                             callback.error("");
                         }
                     }

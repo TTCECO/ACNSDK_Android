@@ -17,8 +17,9 @@ public class Application extends android.app.Application {
         super.onCreate();
 
         int errCode = TTCAgent.init(this);
+//        TTCAgent.register("123",null);
 
-        //todo lwq 上线时，改为true
+        //开发和测试期间请设为false；上线时，改为true;
         TTCAgent.setEnvProd(false);
 
         if (errCode > 0) {

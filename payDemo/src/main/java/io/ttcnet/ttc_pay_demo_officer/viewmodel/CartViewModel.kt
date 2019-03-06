@@ -7,7 +7,7 @@ import io.ttcnet.ttc_pay_demo_officer.repository.CartRepository
 
 class CartViewModel : ViewModel {
 
-    lateinit var checkedFurniture: LiveData<ArrayList<FurnitureModel>>
+     var checkedFurniture: LiveData<ArrayList<FurnitureModel>>
 
     constructor(){
         checkedFurniture = CartRepository.getData()

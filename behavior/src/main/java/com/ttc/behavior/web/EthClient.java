@@ -5,6 +5,7 @@ import com.ttc.behavior.db.TTCSp;
 import com.ttc.behavior.model.TransactionResult;
 import com.ttc.behavior.util.Constants;
 import com.ttc.behavior.util.TTCLogger;
+import com.ttc.behavior.util.Utils;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
@@ -28,8 +29,8 @@ public class EthClient {
     public static BigDecimal getBalance(String address) {
         BigDecimal res = null;
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(Constants.TOKEN_RPC_URL));
-            EthGetBalance send = web3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
+            Web3j web3 = Web3jFactory.build(new HttpService(Constants.SIDE_CHAIN_RPC_URL));
+            EthGetBalance send = web3.ethGetBalance(Utils.change2Hex(address), DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
         } catch (Exception e) {
@@ -50,7 +51,7 @@ public class EthClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new BigInteger("0");
+        return BigInteger.ZERO;
     }
 
     /**

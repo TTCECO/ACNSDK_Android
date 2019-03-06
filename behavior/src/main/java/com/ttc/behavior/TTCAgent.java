@@ -160,11 +160,11 @@ public class TTCAgent {
      *
      * @param callback
      */
-    public static void unbindApp(IManager.BindCallback callback) {
+    public static void unbindApp(IManager.UnbindCallback callback) {
         String errMsg = TTCError.getMessage(checkServerClientUserId());
         if (!TextUtils.isEmpty(errMsg)) {
             if (callback != null) {
-                callback.onMessage(false, errMsg);
+                callback.error(errMsg);
             }
             return;
         }
@@ -204,7 +204,7 @@ public class TTCAgent {
      * @param callback
      */
     public static void getAppBalance(IManager.BalanceCallback callback) {
-        String errMsg = TTCError.getMessage(checkServerClientUserId());
+        String errMsg = TTCError.getMessage(checkServerClientUserId());  
         if (!TextUtils.isEmpty(errMsg)) {
             if (callback != null) {
                 callback.error(errMsg);

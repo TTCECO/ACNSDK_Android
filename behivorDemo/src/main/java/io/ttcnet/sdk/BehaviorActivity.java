@@ -210,14 +210,15 @@ public class BehaviorActivity extends AppCompatActivity {
     public void unbind(View v) {
         tvDisplayUpdateInfo.setText("");
 
-        TTCAgent.unbindApp(new IManager.BindCallback() {
+        TTCAgent.unbindApp(new IManager.UnbindCallback() {
             @Override
-            public void onMessage(boolean success, String message) {
-                if (success) {
-                    setTvMsg("unbind successfully", message);
-                } else {
-                    setTvMsg("unbind error", message);
-                }
+            public void success() {
+                setTvMsg("unbind successfully", "");
+            }
+
+            @Override
+            public void error(String msg) {
+                setTvMsg("unbind error", msg);
             }
         });
     }

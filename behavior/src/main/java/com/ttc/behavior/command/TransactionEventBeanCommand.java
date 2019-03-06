@@ -23,7 +23,7 @@ public class TransactionEventBeanCommand extends AbstractCommand<EventBean> {
     public EventBean call() throws Exception {
 
         Context context = TTCAgent.getClient().getContext();
-        EthClient.sendTransaction(Constants.ACTION_RPC_URL, BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
+        EthClient.sendTransaction(Constants.SIDE_CHAIN_RPC_URL, BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
                 BizApi.getPrivateKey(context), BizApi.getGasPrice(context), BizApi.getGasLimit(context), bean.getData());
 
 
