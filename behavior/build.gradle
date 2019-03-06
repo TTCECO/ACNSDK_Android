@@ -43,9 +43,9 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:3.8'
     implementation 'com.google.android.gms:play-services-ads:17.1.2'
 
-    implementation project(':biz')
+//    implementation project(':biz')
 
-//    implementation(name:'ttc_sdk_biz_0.0.18',ext:'aar')
+    implementation(name:'ttc_sdk_biz_0.1.0',ext:'aar')
 
 
 }
