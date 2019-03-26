@@ -4,7 +4,8 @@
 下载 [SDK](https://github.com/TTCECO/TTCSDK_Android/releases)
 
 ## 快速集成
-将sdk放入libs目录下，在build.gradle中添加依赖，sdk的名称请根据相应的版本号填写。
+将sdk放入libs目录下，在build.gradle中添加依赖，sdk的名称请根据相应的版本号填写。需要支持java8.
+如果您的工程没有使用kotlin，请通过android studio添加kotlin依赖。
 
 ```
 android {
@@ -16,16 +17,31 @@ android {
 }
 
 dependencies {
-  implementation 'org.web3j:core:3.3.1-android'
+  implementation 'org.web3j:core:4.2.0-android'
   implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
-  implementation 'com.google.android.gms:play-services-ads:17.1.2'
   implementation(name: 'ttc_sdk_xxx', ext: 'aar')
   implementation(name: 'ttc_sdk_biz_xxx', ext: 'aar')
+  
+  //kotlin
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    
+  //广告功能，需要添加此依赖
+  implementation 'com.google.android.gms:play-services-ads:17.2.0'
 }
 
 ```
 在AndroidManifest中加入下面的配置， 将“应用包名”替换为您应用的包名，appID和secretKey替换为您之前申请的值，其它的请勿修改。  
-开发期间，adMobAppId、bannerUnitId、interstitialUnitId、rewardUnitId使用我们给定的测试Id，测试可以换成正式的Id；
+如需接广告，开发期间adMobAppId、bannerUnitId、interstitialUnitId、rewardUnitId使用我们给定的测试Id，开发完成之后换成正式的Id；
+  
+测试的ID：  
+com.google.android.gms.ads.APPLICATION_ID： ca-app-pub-3940256099942544~3347511713  
+
+| 广告名称 | 单元ID
+| ---- | ----           
+| Banner | ca-app-pub-3940256099942544/6300978111    
+| Interstitial | ca-app-pub-3940256099942544/1033173712    
+| Interstitial Video	| ca-app-pub-3940256099942544/8691691433    
+| Rewarded Video | ca-app-pub-3940256099942544/5224354917    
 
 ```
 <activity-alias
@@ -47,14 +63,16 @@ dependencies {
 <meta-data
     android:name="TTC_APP_SECRET_KEY"
     android:value="secretKey"/>
+    
+    <!--接入广告，需要添加-->
 <meta-data
     android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="ca-app-pub-3081086010287406~9085005576"/>
+    android:value="ca-app-pub-3940256099942544~3347511713"/>
 ```
 
 ## 初始化接口
-在Application中初始化, 如果使用广告，则传入adMobAppID，不需要则传空即可;  
-在开发和测试期间, TTCAgent.setEnvProd(false)；上线时，再设为true；
+在Application中初始化, 行为和广告都需要初始化;  
+在开发和测试期间, TTCAgent.setEnvProd(false)；上线时，再设为true，默认是true；
 
 ```
 @Override
@@ -68,7 +86,7 @@ public void onCreate() {
 ```
 ## 注册用户接口
 
-注册用户， 传入要注册的userId， 注册成功后如果有返回用户信息；  
+注册用户， 传入要注册的userId， 注册成功后返回用户所有信息；  
 
 ```
 TTCAgent.register(String userId, IManager.UserInfoCallback callback)
@@ -80,6 +98,9 @@ TTCAgent.register("123", new IManager.UserInfoCallback() {
            @Override
            public void success(Map<String, String> map) {
                //常用属性在UserAttr中已定义
+                  String userId = map.get(UserAttr.USER_ID);
+                  String nickname = map.get(UserAttr.NICK_NAME);
+                  ...
            }
 
            @Override
@@ -88,6 +109,22 @@ TTCAgent.register("123", new IManager.UserInfoCallback() {
        });
 
 ```
+
+## 用户行为接口
+behaviorType为行为类型，behaviorType要大于100。extra为可选项。   
+
+```
+TTCAgent.onEvent(int behaviorType, String extra)
+```
+
+
+## 记录用户登录
+如果您需要记录每天用户的登录信息，登录的类型在CommonType中已定义，请在父activity中调用:
+
+```
+TTCAgent.onEvent(CommonType.OPEN_DAPP, "");
+```
+
 ## 注销用户接口
 用户退出时务必调用， 清空在本地保留的用户信息    
 
@@ -145,12 +182,8 @@ TTCAgent.getWalletBalance(new IManager.BalanceCallback() {
     }
 });
 ```
-## 用户行为接口
-behaviorType为行为类型，behaviorType要大于100；extra 必须为json字符串。    
 
-```
-TTCAgent.onEvent(int behaviorType, String extra)
-```
+
 ## sdk设置
 设置日志开关、 sdk功能开关（通过serverEnabled设置）
 
@@ -200,7 +233,7 @@ TTCAdsBanner实现了此功能，首先调用init()方法，然后设置回调�
 
 ```
 var banner = TTCAdsBanner()
-var bannerView = banner.init(activity,  BuildConfig.bannerUnitId, TTCAdSize.BANNER)
+var bannerView = banner.init(activity,  Utils.getBannerUnitId(), TTCAdSize.BANNER)
 ads_banner_container_fl.addView(bannerView)
 
 banner.setBannerCallback(object : TTCAdsCallback() {

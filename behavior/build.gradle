@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 
     //自定义aar的名称
     libraryVariants.all { variant ->
@@ -38,16 +42,14 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation 'org.web3j:core:3.3.1-android'
+    implementation 'org.web3j:core:4.2.0-android'
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:3.8'
-    implementation 'com.google.android.gms:play-services-ads:17.1.2'
+    implementation 'com.google.android.gms:play-services-ads:17.2.0'
 
 //    implementation project(':biz')
 
-    implementation(name:'ttc_sdk_biz_0.1.0',ext:'aar')
-
-
+    implementation(name:'ttc_sdk_biz_0.1.1',ext:'aar')
 }
 
 repositories {

@@ -10,7 +10,6 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
-import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Response;
 import org.web3j.protocol.core.methods.response.*;
@@ -29,7 +28,7 @@ public class EthClient {
     public static BigDecimal getBalance(String address) {
         BigDecimal res = null;
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(Constants.SIDE_CHAIN_RPC_URL));
+            Web3j web3 = Web3j.build(new HttpService(Constants.SIDE_CHAIN_RPC_URL));
             EthGetBalance send = web3.ethGetBalance(Utils.change2Hex(address), DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
@@ -42,7 +41,7 @@ public class EthClient {
 
     public static BigInteger getNonce(String rpcUrl, String from) throws IOException {
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
+            Web3j web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(from,
                     DefaultBlockParameterName.LATEST).send();
             if (ethGetTransactionCount != null) {
@@ -79,7 +78,7 @@ public class EthClient {
         Credentials credentials = null;
         try {
             credentials = Credentials.create(fromPrivateKey);
-            web3 = Web3jFactory.build(new HttpService(rpcUrl));
+            web3 = Web3j.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, from);
             if (nonce.compareTo(nextNonce) <= 0) {
                 nonce = nextNonce;  //nonce从0开始
@@ -123,10 +122,10 @@ public class EthClient {
 
     public static boolean isTransactionSuccess(String rpcUrl, String hash) {
         try {
-            Web3j web3 = Web3jFactory.build(new HttpService(rpcUrl));
+            Web3j web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hash).send();
             if (ethGetTransactionReceipt != null) {
-                TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt();
+                TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt().get();
                 if (transactionReceipt != null) {
                     if ("0x1".equals(transactionReceipt.getStatus())) {
                         return true;
@@ -134,6 +133,7 @@ public class EthClient {
                 }
             }
         } catch (Exception e) {    //when testing, this exception occur
+            e.printStackTrace();
         }
 
         return false;

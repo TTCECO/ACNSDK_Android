@@ -16,7 +16,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-
+        main_msg_tv.append("isProd:" + TTCAgent.isEnvProd());
     }
 
     fun register(v: View) {

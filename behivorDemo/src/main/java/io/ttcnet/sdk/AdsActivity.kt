@@ -21,6 +21,10 @@ class AdsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ads)
 
+        //true-采用线上的广告id，false-采用google提供的开发id。如果不设置，默认是true。
+        //同时要修改manifest中的admobId
+        Utils.useProdId = true
+
         initInterstitial()
         initRewardVideo()
 
@@ -40,7 +44,7 @@ class AdsActivity : AppCompatActivity() {
 
     private fun initInterstitial() {
         interstitial = TTCAdsInterstitial()
-        interstitial.init(activity, BuildConfig.interstitialUnitId)
+        interstitial.init(activity, Utils.getInterstitialUnitId())
 
         interstitial.setAdsCallback(object : TTCAdsCallback() {
 
@@ -81,7 +85,7 @@ class AdsActivity : AppCompatActivity() {
 
     private fun initRewardVideo() {
         rewardVideo = TTCAdsRewardVideo()
-        rewardVideo.init(activity,  BuildConfig.rewardUnitId)
+        rewardVideo.init(activity,  Utils.getRewardUnitId())
         rewardVideo.setRewardedCallback(object : TTCRewardCallback() {
             override fun onRewardedVideoAdClosed() {
                 super.onRewardedVideoAdClosed()

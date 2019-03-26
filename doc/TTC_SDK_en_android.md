@@ -5,7 +5,7 @@
 Download [SDK](https://github.com/TTCECO/TTCSDK_Android/releases)
 
 ## Integration 
-Put sdk in libs directory, add dependencies in build.gradle and replace “ttc\_sdk\_xxx” and "ttc\_sdk\_biz\_xxx" with the real name;
+Put sdk in libs directory, add dependencies in build.gradle and replace “ttc\_sdk\_xxx” and "ttc\_sdk\_biz\_xxx" with the real name; Need Java8 support. If your project don't use kotlin, please add kotlin dependency.
 
 ```
 android {
@@ -17,20 +17,35 @@ android {
 }
 
 dependencies {
-  implementation 'org.web3j:core:3.3.1-android'
+  implementation 'org.web3j:core:4.2.0-android'
   implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
-  implementation 'com.google.android.gms:play-services-ads:17.1.2'
   implementation(name: 'ttc_sdk_xxx', ext: 'aar')
   implementation(name: 'ttc_sdk_biz_xxx', ext: 'aar')
+  
+  //kotlin
+  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    
+  //add it if use ad function
+  implementation 'com.google.android.gms:play-services-ads:17.2.0'
 }
 
 ``` 
-Add the following codes in AndroidManifest.xml, and replace "packageName" & "appID" & "seceretKey" with yours;
+Add the following codes in AndroidManifest.xml, and replace "packageName" & "appID" & "secretKey" with yours; If use ad function, add "com.google.android.gms.ads.APPLICATION_ID". During development, please use test Ids. 
+  
+test ID：  
+com.google.android.gms.ads.APPLICATION_ID： ca-app-pub-3940256099942544~3347511713  
+
+| AD format | unit Id
+| ---- | ----           
+| Banner | ca-app-pub-3940256099942544/6300978111    
+| Interstitial | ca-app-pub-3940256099942544/1033173712    
+| Interstitial Video	| ca-app-pub-3940256099942544/8691691433    
+| Rewarded Video | ca-app-pub-3940256099942544/5224354917   
 
 ```
 <activity-alias
     android:name="bind"
-    android:targetActivity="com.ttc.sdk.ui.BindActivity">
+    android:targetActivity="com.ttc.behavior.ui.BindActivity">
 
     <intent-filter>
         <action android:name="com.ttc.wallet.BINDACTION" />
@@ -47,19 +62,24 @@ Add the following codes in AndroidManifest.xml, and replace "packageName" & "app
 <meta-data
     android:name="TTC_APP_SECRET_KEY"
     android:value="secretKey"/>
+    
+    <!--add it if use ad function -->
 <meta-data
     android:name="com.google.android.gms.ads.APPLICATION_ID"
-    android:value="ca-app-pub-3081086010287406~9085005576"/>
+    android:value="ca-app-pub-3940256099942544~3347511713"/>
 ```
 
 ## Initiate 
-Initiate it in Application.java. If not used advertise, ***adMobAppId*** can be empty.  
+Initiate it in Application.java. During dev, please set envProd is false. If you  don't set it, it is ture default.
 
 ```
 @Override
 public void onCreate() {
     super.onCreate();
     TTCAgent.init(this, adMobAppId);
+    
+     //during dev, set false. The default value is true.
+    TTCAgent.setEnvProd(false);
 }
 ```
 ## Register
@@ -86,6 +106,22 @@ TTCAgent.register("123", new IManager.UserInfoCallback() {
        });
 
 ```
+
+## Upload user behaviors  
+The actionType must be greater than 100. Extra is optional.
+
+```
+TTCAgent.onEvent(int actionType, String extra)
+```
+
+## Upload user login
+If need user login info, you can add it in parent Activty
+
+```
+TTCAgent.onEvent(CommonType.OPEN_DAPP, "");
+```
+
+
 ## Log out
 When the user logs out, make sure to  call the method to clear local information; 
 
@@ -103,9 +139,6 @@ It is used to unbind the TTC Wallet.
 
 ```
 TTCAgent.unbindApp()
-
-//when you are product mode, please set true
-TTCAgent.setEnvProd(false);
 ```
 ## Get account balance
 The account balance is the balance in the dapp that is not synchronized to the TTC Wallet.
@@ -120,13 +153,7 @@ TTCAgent.getAppBalance(IManager.BalanceCallback callback)
 TTCAgent.getWalletBalance(IManager.BalanceCallback callback)
 ```
 
-## Upload user behaviors  
-The ___actionType__ must be greater than 100. The ___extra___ must be a json structure string.
-The value and meaning of action type, 
 
-```
-TTCAgent.onEvent(int actionType, String extra)
-```
 ## Configure 
 Configure log & sdk function switcher
 
@@ -177,7 +204,7 @@ It is completed in TTCAdsBanner. Method init() must be invoked first, adSize is 
 
 ```
 var banner = TTCAdsBanner()
-var bannerView = banner.init(activity,  BuildConfig.bannerUnitId, TTCAdSize.BANNER)
+var bannerView = banner.init(activity,  Utils.getBannerUnitId(), TTCAdSize.BANNER)
 ads_banner_container_fl.addView(bannerView)
 
 banner.setBannerCallback(object : TTCAdsCallback() {
