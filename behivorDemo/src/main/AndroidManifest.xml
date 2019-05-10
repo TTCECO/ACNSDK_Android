@@ -12,7 +12,7 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
 
-        <activity android:name=".RegisterActivity"
+        <activity android:name=".activity.RegisterActivity"
                   android:windowSoftInputMode="stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -23,43 +23,43 @@
         </activity>
 
         <activity
-                android:name=".AdsActivity"
+                android:name=".activity.AdsActivity"
                 android:screenOrientation="portrait"/>
 
         <activity-alias
                 android:name="bind"
-                android:targetActivity="com.ttc.behavior.ui.BindActivity">
+                android:targetActivity="com.acn.behavior.ui.BindActivity">
 
             <intent-filter>
-                <action android:name="com.ttc.wallet.BINDACTION"/>
+                <action android:name="com.acn.wallet.BINDACTION"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data
-                        android:scheme="ttc.behavior.demo"/>
+                        android:scheme="acn.behavior.demo"/>
             </intent-filter>
 
         </activity-alias>
 
         <meta-data
-                android:name="TTC_APP_ID"
+                android:name="ACN_DAPP_ID"
                 android:value="SDKTest"/>
         <meta-data
-                android:name="TTC_APP_SECRET_KEY"
+                android:name="ACN_DAPP_SECRET_KEY"
                 android:value="9d1990b8fc9cf1328d88af73b8f89e4d"/>
 
         <!--广告需要添加-->
         <!--add it if advertise-->
-        <!--&lt;!&ndash;google提供的开发id&ndash;&gt;-->
-        <!--<meta-data-->
-                <!--android:name="com.google.android.gms.ads.APPLICATION_ID"-->
-                <!--android:value="ca-app-pub-3081086010287406~9085005576"/>-->
-
-        <!--线上的id-->
+        <!--google提供的开发id-->
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
-                android:value="ca-app-pub-3940256099942544~3347511713"/>
+                android:value="ca-app-pub-3081086010287406~9085005576"/>
 
-        <activity android:name=".BehaviorActivity"/>
-        <activity android:name=".BannerActivity">
+        <!--线上的id-->
+        <!--<meta-data-->
+                <!--android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+                <!--android:value="ca-app-pub-3940256099942544~3347511713"/>-->
+
+        <activity android:name=".activity.BehaviorActivity"/>
+        <activity android:name=".activity.BannerActivity">
         </activity>
     </application>
 

@@ -61,7 +61,7 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
 
-    implementation project(":pay")
+//    implementation project(":pay")
 
-//    implementation(name: 'ttc_pay_0.0.19', ext: 'aar')
+    implementation(name: 'ttc_pay_0.0.19', ext: 'aar')
 }

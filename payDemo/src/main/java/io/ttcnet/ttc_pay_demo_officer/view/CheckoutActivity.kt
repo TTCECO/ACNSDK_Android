@@ -107,7 +107,7 @@ class CheckoutActivity : BaseActivity() {
         val format = SimpleDateFormat("yyyyMMddHHmmss")
         payInfo.merchantOrderNo = format.format(now)
         payInfo.orderCreateTime = now
-        payInfo.orderExpireTime = now + 60 * 1000
+        payInfo.orderExpireTime = now + 3 * 60 * 1000
         payInfo.signature = Utils.getSignFromServer(activity, payInfo, Utils.getAppId())
         TTCPay.pay(activity, payInfo, object : PayCallback {
             override fun createTTCOrderOver(ttcOrderId: String) {

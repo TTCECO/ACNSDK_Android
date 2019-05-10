@@ -31,7 +31,7 @@
 #指示语：不能用这个指令处理库中的代码，因为有的类和类成员没有设计成public ,而在api中可能变成public
 -allowaccessmodification
 #当有优化和使用-repackageclasses时才适用。
--repackageclasses 'com.ttc.sdk'
+-repackageclasses 'com.acn.behavior'
  # 混淆时记录日志(打印混淆的详细信息)
  # 这句话能够使我们的项目混淆后产生映射文件
  # 包含有类名->混淆后类名的映射关系
@@ -153,20 +153,6 @@
     public static int d(...);
     public static int e(...);
 }
-
--keep class com.ttc.sdk.TTCAgent {
-    public <methods>;
-}
--keep class com.ttc.sdk.TTCConfigure{*;}
--keep class com.ttc.sdk.TTCConfigure$*{*;}
-#EventType没用，都是用户自定义
-#-keep class com.ttc.sdk.EventType{*;}
--keep class com.ttc.sdk.UserAttr{*;}
--keep class com.ttc.sdk.IManager{*;}
--keep class com.ttc.sdk.IManager$*{*;}
--keep class com.ttc.sdk.TTCKey{*;}
--keep class com.ttc.sdk.util.TTCError{*;}
--keep class com.ttc.behavior.ui.**{*;}
 
 
 -dontwarn  com.fasterxml.**

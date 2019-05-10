@@ -1,4 +1,4 @@
-<manifest package="com.ttc.behavior"
+<manifest package="com.acn.behavior"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -10,7 +10,7 @@
     <application>
 
         <activity
-            android:name="com.ttc.behavior.ui.BindActivity"
+            android:name=".ui.BindActivity"
             android:screenOrientation="portrait">
 
         </activity>

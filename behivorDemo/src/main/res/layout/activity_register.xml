@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="io.ttcnet.sdk.RegisterActivity">
+        tools:context="io.ttcnet.sdk.activity.RegisterActivity">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -28,8 +28,8 @@
 
         <Button
                 style="@style/BtnStyle"
+                android:id="@+id/btn_register"
                 android:layout_width="wrap_content"
-                android:onClick="register"
                 android:text="@string/register"/>
     </LinearLayout>
 
@@ -37,16 +37,16 @@
 
         <Button
                 style="@style/BtnStyle"
+                android:id="@+id/btn_like_comment"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:onClick="uploadLikeComment"
-                android:text="like comment"/>
+                android:text="upload Behavior" android:layout_height="32dp"/>
 
         <Button
+                android:id="@+id/btn_ads"
                 style="@style/BtnStyle"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
-                android:onClick="uploadAdsBehavior"
                 android:text="ads"/>
     </LinearLayout>
 
