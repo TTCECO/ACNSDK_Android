@@ -53,7 +53,7 @@ class ACNAdsBanner {
             override fun onAdLeftApplication() {
                 super.onAdLeftApplication()
                 callback?.onAdLeftApplication()
-                BizApi.uploadAdsEvent(context, adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
+                BizApi.getInstance().uploadAdsEvent( adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
             }
 
             override fun onAdClicked() {
@@ -79,7 +79,7 @@ class ACNAdsBanner {
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 callback?.onAdLoaded()
-                BizApi.uploadAdsEvent(context, adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_SHOW)
+                BizApi.getInstance().uploadAdsEvent( adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_SHOW)
             }
         }
         return container

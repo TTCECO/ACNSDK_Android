@@ -21,7 +21,7 @@ class CheckoutAdapter : RecyclerView.Adapter<CheckoutAdapter.CheckoutHolder> {
     private var context: Context? = null
     private var data: ArrayList<PayChannelModel>? = null
     private lateinit var channelViewModel: ChannelViewModel
-    private var callback : CheckedChannelCallback ?=null
+    private var callback: CheckedChannelCallback? = null
 
 
     constructor(context: Context?, data: ArrayList<PayChannelModel>?, channelViewModel: ChannelViewModel) : super() {
@@ -44,25 +44,23 @@ class CheckoutAdapter : RecyclerView.Adapter<CheckoutAdapter.CheckoutHolder> {
         if (channel != null) {
             holder.ivIcon.setImageResource(channel.iconUncheckedResId)
             holder.tvName.setText(channel.name)
-//            holder.ivCheckedIcon.setImageResource(channel.iconCheckedResId)
+
+            if (channel.checked) {
+                holder.root.setBackgroundResource(channel.checkedBgColorId)
+                holder.ivIcon.setImageResource(channel.iconCheckedResId)
+                holder.tvName.visibility = View.GONE
+            } else {
+                holder.root.setBackgroundResource(R.color.white)
+                holder.ivIcon.setImageResource(channel.iconUncheckedResId)
+                holder.tvName.visibility = View.VISIBLE
+            }
 
             holder.itemView.setOnClickListener {
-                if (channel.id == Constant.PAY_CHANNEL_TTC_ID) {
-                    channel.checked = !channel.checked
-                    if (channel.checked) {
-                        holder.root.setBackgroundResource(R.color.blue)
-                        holder.ivIcon.setImageResource(channel.iconCheckedResId)
-                        holder.tvName.visibility = View.GONE
-                        if (callback != null) {
-                            callback!!.done(channel.id)
-                        }
+                if (channel.id == Constant.PAY_CHANNEL_TTC_ID || channel.id == Constant.PAY_CHANNEL_ACN_ID) {
+                    if (callback != null) {
+                        callback!!.done(channel.id)
                     }
-//                    else {
-//                        holder.root.setBackgroundResource(R.color.white)
-//                        holder.ivIcon.setImageResource(channel.iconUncheckedResId)
-//                        holder.tvName.visibility = View.VISIBLE
-//                    }
-                }else{
+                } else {
                     Utils.toast(context, "not open yet")
                 }
             }
@@ -81,7 +79,7 @@ class CheckoutAdapter : RecyclerView.Adapter<CheckoutAdapter.CheckoutHolder> {
         fun done(channelId: Int)
     }
 
-    fun setCheckedChannelCallback(callback: CheckedChannelCallback){
+    fun setCheckedChannelCallback(callback: CheckedChannelCallback) {
         this.callback = callback
     }
 }

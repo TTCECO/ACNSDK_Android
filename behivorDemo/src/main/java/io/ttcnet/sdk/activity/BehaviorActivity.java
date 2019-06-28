@@ -2,7 +2,6 @@ package io.ttcnet.sdk.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,7 +19,6 @@ import com.acn.behavior.IManager;
 import com.acn.behavior.util.ACNKey;
 import com.acn.behavior.util.CommonType;
 import com.acn.behavior.util.SDKError;
-import io.ttcnet.sdk.BuildConfig;
 import io.ttcnet.sdk.R;
 import io.ttcnet.sdk.utils.IntentKey;
 
@@ -127,6 +125,7 @@ public class BehaviorActivity extends AppCompatActivity {
         });
 
         tvMsg.setText(getIntent().getStringExtra(IntentKey.CONTENT));
+
     }
 
 
@@ -134,6 +133,18 @@ public class BehaviorActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        switch (requestCode) {
+            case 1:
+                if (resultCode == RESULT_OK) {
+                    if (data != null) {
+                        boolean isBindSuc = data.getBooleanExtra(ACNKey.BIND_STATE, false);
+                        int reward = data.getIntExtra(ACNKey.BIND_REWARD, 0);
+                        String rewardSymbol = data.getStringExtra(ACNKey.BIND_REWARD_SYMBOL);
+                        Toast.makeText(this, "isBindSuc:" + isBindSuc + reward + rewardSymbol, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
         if (requestCode == 10) {
             Toast.makeText(context, "refresh order ", Toast.LENGTH_SHORT).show();
         }
@@ -226,10 +237,7 @@ public class BehaviorActivity extends AppCompatActivity {
 
     //在调用的app中如是写
     public void bind(View v) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(BuildConfig.APPLICATION_ID + "://"));
-        intent.putExtra(ACNKey.WALLET_ADDRESS, "0xa6aAc51BE7Cd96412896d5EFa2B8C0Cf72d340Ba");
-        startActivity(intent);
+//        ACNAgent.bindApp(this, "http://img.freepik.com/free-icon/facebook-logo-button_318-84980.jpg?size=158c&ext=jpg", 1);
     }
 
     public void unbind(View v) {

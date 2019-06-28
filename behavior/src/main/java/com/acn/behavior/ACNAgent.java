@@ -1,16 +1,17 @@
 package com.acn.behavior;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import com.acn.behavior.db.ACNSp;
-import com.acn.behavior.util.Constants;
-import com.acn.behavior.util.SDKError;
-import com.acn.behavior.util.SDKLogger;
-import com.acn.behavior.util.Utils;
+import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
 import com.acn.behavior.web.Repo;
 import com.acn.biz.BizApi;
+import com.acn.biz.model.BaseInfo;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.HashMap;
@@ -113,14 +114,14 @@ public class ACNAgent {
 
         ACNSp.setUserId(userId);
 
-        BizApi.init(ACNAgent.getClient().getContext(), ACNSp.getDappId(), ACNSp.getDappSecretKey(), ACNSp.getUserId(),
+        BizApi.getInstance().init( ACNSp.getDappId(), ACNSp.getDappSecretKey(), ACNSp.getUserId(),
                 BuildConfig.VERSION_CODE);
 
         //upload device Id
         Map<String, String> info = new HashMap<>();
         info.put(UserAttr.CLIENT_ID, Utils.getClientId());
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
-        BizApi.updateUser(ACNAgent.getClient().getContext(), info, null);
+        BizApi.getInstance().updateUser( info, null);
 
         repo().getBaseInfo();
         repo().registerUser(callback);
@@ -131,7 +132,6 @@ public class ACNAgent {
 
     public static void unregister() {
         if (client != null) {
-            BizApi.clear(ACNAgent.getClient().getContext());
             ACNSp.clear();
             SDKLogger.d("user unregister");
         }
@@ -155,6 +155,16 @@ public class ACNAgent {
         repo().updateUser(info, callback);
     }
 
+    private static void bindApp(Activity activity, String appIconUrl, int reqCode){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
+        intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
+        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
+        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
+        intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
+        intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
+        activity.startActivityForResult(intent, reqCode);
+    }
+
     /**
      * When the user  call it,  the dapp disconnect with wallet
      *
@@ -174,7 +184,7 @@ public class ACNAgent {
     /**
      * 获取绑定的钱包的余额
      * get the bound wallet's balance
-     *
+     * acn balance
      * @param callback
      */
     public static void getWalletBalance(IManager.BalanceCallback callback) {
@@ -186,7 +196,7 @@ public class ACNAgent {
             return;
         }
 
-        if (TextUtils.isEmpty(BizApi.getBoundWalletAddress(client.getContext()))) {
+        if (TextUtils.isEmpty(BaseInfo.getInstance().getWalletAddress())) {
             errMsg = SDKError.getMessage(SDKError.WALLET_ADDRESS_IS_EMPTY);
             if (callback != null) {
                 callback.error(errMsg);
@@ -212,6 +222,11 @@ public class ACNAgent {
             return;
         }
         repo().getAppBalance(callback);
+    }
+
+    //返回绑定的钱包地址
+    public static String getBoundWalletAddress(){
+        return BaseInfo.getInstance().getWalletAddress();
     }
 
     /**
@@ -291,10 +306,10 @@ public class ACNAgent {
 
 
     public static void setEnvProd(boolean isProd) {
-        BizApi.setEnv(client.getContext(), isProd);
+        BaseInfo.getInstance().setProd( isProd);
     }
 
     public static boolean isEnvProd() {
-        return BizApi.isEnvProd(client.getContext());
+        return BaseInfo.getInstance().isProd();
     }
 }

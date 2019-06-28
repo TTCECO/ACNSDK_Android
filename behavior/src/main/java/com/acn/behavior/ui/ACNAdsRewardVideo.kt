@@ -37,29 +37,25 @@ class ACNAdsRewardVideo {
 
             override fun onRewardedVideoAdLeftApplication() {
                 rewardCallback?.onRewardedVideoAdLeftApplication()
-                Log.d("lwq", "upload click reward")
-                BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_CLICK)
+                BizApi.getInstance().uploadAdsEvent(unitId, Utils.getLocationCode(activity), Constants.TYPE_CLICK)
             }
 
             override fun onRewardedVideoAdLoaded() {
                 rewardCallback?.onRewardedVideoAdLoaded()
-                Log.d("lwq", "reward loaded")
             }
 
             override fun onRewardedVideoAdOpened() {
                 rewardCallback?.onRewardedVideoAdOpened()
-                Log.d("lwq", "reward loaded")
-                BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_SHOW)
+                BizApi.getInstance().uploadAdsEvent(unitId, Utils.getLocationCode(activity), Constants.TYPE_SHOW)
             }
 
             override fun onRewardedVideoCompleted() {
                 rewardCallback?.onRewardedVideoCompleted()
-                Log.d("lwq", "reward loaded")
             }
 
             override fun onRewarded(p0: RewardItem?) {
                 rewardCallback?.onRewarded(p0?.type, p0?.amount)
-                BizApi.uploadAdsEvent(activity, unitId, Utils.getLocationCode(activity), Constants.TYPE_VIDEO_OVER)
+                BizApi.getInstance().uploadAdsEvent(unitId, Utils.getLocationCode(activity), Constants.TYPE_VIDEO_OVER)
             }
 
             override fun onRewardedVideoStarted() {
@@ -68,7 +64,6 @@ class ACNAdsRewardVideo {
 
             override fun onRewardedVideoAdFailedToLoad(p0: Int) {
                 rewardCallback?.onRewardedVideoAdFailedToLoad(p0)
-                Log.d("lwq", "reward failed: " + p0)
             }
         }
     }
@@ -76,15 +71,16 @@ class ACNAdsRewardVideo {
     fun requestAds() {
         if (!rewardedVideoAd.isLoaded) {
             rewardedVideoAd.loadAd(unitId, AdRequest.Builder().build())
-            Log.d("lwq", "reward request:" + unitId)
         }
     }
 
+    fun isLoaded(): Boolean {
+        return rewardedVideoAd.isLoaded
+    }
+
+    //check isLoaded before invoke this method
     fun show() {
-        if (rewardedVideoAd.isLoaded) {
-            rewardedVideoAd.show()
-            Log.d("lwq", "upload reward show")
-        }
+        rewardedVideoAd.show()
     }
 
 

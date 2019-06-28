@@ -24,7 +24,6 @@ class ACNAdsInterstitial {
         this.context = context
         interstitialAd = InterstitialAd(context)
         interstitialAd.adUnitId = unitId
-        Log.d("lwq", "intertitial unit id:" + unitId)
 
         interstitialAd.adListener = object : AdListener() {
             override fun onAdImpression() {
@@ -35,9 +34,7 @@ class ACNAdsInterstitial {
             override fun onAdLeftApplication() {
                 super.onAdLeftApplication()
                 callback?.onAdLeftApplication()
-                Log.d("lwq", "upload click interstitial")
-                BizApi.uploadAdsEvent(
-                    context,
+                BizApi.getInstance().uploadAdsEvent(
                     interstitialAd.adUnitId,
                     Utils.getLocationCode(context),
                     Constants.TYPE_CLICK
@@ -52,7 +49,6 @@ class ACNAdsInterstitial {
             override fun onAdFailedToLoad(p0: Int) {
                 super.onAdFailedToLoad(p0)
                 callback?.onAdFailedToLoad(p0)
-                Log.d("lwq", "interstitial failed: " + p0)
             }
 
             override fun onAdClosed() {
@@ -63,8 +59,7 @@ class ACNAdsInterstitial {
             override fun onAdOpened() {
                 super.onAdOpened()
                 callback?.onAdOpened()
-                BizApi.uploadAdsEvent(
-                    context,
+                BizApi.getInstance().uploadAdsEvent(
                     interstitialAd.adUnitId,
                     Utils.getLocationCode(context),
                     Constants.TYPE_SHOW
@@ -74,7 +69,6 @@ class ACNAdsInterstitial {
             override fun onAdLoaded() {
                 super.onAdLoaded()
                 callback?.onAdLoaded()
-                Log.d("lwq", "interstitial loaded")
             }
         }
     }
@@ -85,16 +79,16 @@ class ACNAdsInterstitial {
                 .build()
 
             interstitialAd.loadAd(adRequest)
-            Log.d("lwq", "interstitial request")
         }
     }
 
-    fun show() {
-        if (interstitialAd.isLoaded) {
-            Log.d("lwq", "upload interstitial show")
-            interstitialAd.show()
-        }
+    fun isLoaded():Boolean {
+        return interstitialAd.isLoaded
+    }
 
+
+    fun show() {
+            interstitialAd.show()
     }
 
     fun setAdsCallback(callback: ACNAdsCallback) {

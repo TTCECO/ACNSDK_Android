@@ -7,13 +7,20 @@ import com.acn.behavior.ACNAgent
  */
 object Utils {
 
+    //google sample
     const val G_BANNER_UNIT_ID = "ca-app-pub-3940256099942544/6300978111"
     const val G_INTERSTITIAL_UNIT_ID = "ca-app-pub-3940256099942544/8691691433"
     const val G_REWARD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917"
 
+    //
     const val BANNER_UNIT_ID = "ca-app-pub-3081086010287406/1197232103"
-    const val INTERSTITIAL_UNIT_ID = "ca-app-pub-3940256099942544/6837367756"
-    const val REWARD_UNIT_ID = "ca-app-pub-3940256099942544/8541233601"
+    const val INTERSTITIAL_UNIT_ID = "ca-app-pub-3081086010287406/6837367756"
+    const val REWARD_UNIT_ID = "ca-app-pub-3081086010287406/8541233601"
+
+    //alive
+//    const val BANNER_UNIT_ID = "ca-app-pub-3081086010287406/4676365933"
+//    const val INTERSTITIAL_UNIT_ID = "ca-app-pub-3081086010287406/5633288607"
+//    const val REWARD_UNIT_ID = "ca-app-pub-3081086010287406/6001109799"
 
     fun getBannerUnitId(): String {
         if (ACNAgent.isEnvProd()) {

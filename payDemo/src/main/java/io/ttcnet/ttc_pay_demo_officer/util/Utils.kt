@@ -61,11 +61,11 @@ object Utils {
         map["outTradeNo"] = payInfo.merchantOrderNo
         map["description"] = payInfo.orderContent
         map["totalFee"] = payInfo.totalTTCWei
-        map["partnerAddress"] = ""
+        map["partnerAddress"] = payInfo.partnerAddress
         map["createTime"] = payInfo.orderCreateTime
         map["expireTime"] = payInfo.orderExpireTime
-        map["payType"] = 1
-        map["sellerDefinedPage"] = 0
+        map["payType"] = payInfo.payType
+        map["sellerDefinedPage"] = payInfo.sellerDefinedPage
         map["appId"] = appId
 
         var sb = StringBuilder()

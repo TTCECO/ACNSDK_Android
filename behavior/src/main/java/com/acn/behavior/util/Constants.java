@@ -30,4 +30,7 @@ public class Constants {
     public static final int TYPE_VIDEO_OVER = 3;  //video play over
 
 
+    public static final int OPERATE_BIND = 1;
+    public static final int OPERATE_UNBIND = 2;
+
 }

@@ -1,13 +1,15 @@
 package com.acn.behavior.web;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.db.ACNSp;
-import com.acn.behavior.util.*;
+import com.acn.behavior.util.AlgorithmUtil;
+import com.acn.behavior.util.CommonType;
+import com.acn.behavior.util.Constants;
+import com.acn.behavior.util.Utils;
 import com.acn.biz.BizApi;
 import com.acn.biz.BizCallback;
 import com.acn.biz.model.BaseInfo;
@@ -24,7 +26,7 @@ public class Repo {
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public void getBaseInfo() {
-        BizApi.getBaseInfo(ACNAgent.getClient().getContext(), new BizCallback<BaseInfo>() {
+        BizApi.getInstance().getBaseInfo(new BizCallback<BaseInfo>() {
             @Override
             public void success(BaseInfo baseInfo) {
                 if (baseInfo != null) {
@@ -46,7 +48,7 @@ public class Repo {
     }
 
     public void registerUser(final IManager.UserInfoCallback callback) {
-        BizApi.userRegister(ACNAgent.getClient().getContext(), new BizCallback<Map<String, String>>() {
+        BizApi.getInstance().userRegister(new BizCallback<Map<String, String>>() {
             @Override
             public void success(final Map<String, String> stringStringMap) {
                 if (callback != null) {
@@ -65,7 +67,7 @@ public class Repo {
     }
 
     public void updateUser(final Map<String, String> param, final IManager.UserInfoCallback callback) {
-        BizApi.updateUser(ACNAgent.getClient().getContext(), param, new BizCallback<Map<String, String>>() {
+        BizApi.getInstance().updateUser(param, new BizCallback<Map<String, String>>() {
             @Override
             public void success(final Map<String, String> stringStringMap) {
                 if (callback != null) {
@@ -83,7 +85,7 @@ public class Repo {
     }
 
     public void bindApp(String walletAddress, boolean autoTransaction, final IManager.BindCallback callback) {
-        BizApi.bindApp(ACNAgent.getClient().getContext(), walletAddress, autoTransaction, new BizCallback<BindSucData>() {
+        BizApi.getInstance().bindApp(walletAddress, autoTransaction, new BizCallback<BindSucData>() {
             @Override
             public void success(final BindSucData bindSucData) {
                 if (callback != null) {
@@ -102,9 +104,9 @@ public class Repo {
 
 
     public void unbindApp(final IManager.UnbindCallback callback) {
-        BizApi.unbindApp(ACNAgent.getClient().getContext(), new BizCallback<String>() {
+        BizApi.getInstance().unbindApp(new BizCallback<BindSucData>() {
             @Override
-            public void success(String s) {
+            public void success(BindSucData data) {
                 if (callback != null) {
                     mainHandler.post(callback::success);
                 }
@@ -121,17 +123,22 @@ public class Repo {
 
     public void getWalletBalance(final IManager.BalanceCallback callback) {
         ACNAgent.getClient().getEventExecutorService().execute(() -> {
-            String wallet = BizApi.getBoundWalletAddress(ACNAgent.getClient().getContext());
-            BigDecimal balance = EthClient.getBalance(wallet);
+            String wallet = BaseInfo.getInstance().getWalletAddress();
 
-            if (callback != null) {
-                mainHandler.post(() -> {
-                    if (balance != null) {
-                        callback.success(balance);
-                    } else {
-                        callback.error("");
-                    }
-                });
+            try {
+                BigDecimal balance = EthClient.getFrozenAvailableAmount(wallet, BaseInfo.getInstance().getAcnContractAddress(), BaseInfo.getInstance().getExchangeContractAddress());
+
+                if (callback != null) {
+                    mainHandler.post(() -> {
+                        if (balance != null) {
+                            callback.success(balance);
+                        } else {
+                            callback.error("");
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -141,19 +148,24 @@ public class Repo {
         ACNAgent.getClient().getEventExecutorService().execute(new Runnable() {
             @Override
             public void run() {
-                String address = BizApi.getIndividualAddress(ACNAgent.getClient().getContext());
-                final BigDecimal balance = EthClient.getBalance(address);
+                String address = BaseInfo.getInstance().getIndividualAddress();
+                try {
+                    BigDecimal balance = EthClient.getFrozenAvailableAmount(address, BaseInfo.getInstance().getAcnContractAddress(), BaseInfo.getInstance().getExchangeContractAddress());
 
-                mainHandler.post(() -> {
-                    if (callback == null) {
-                        return;
-                    }
-                    if (balance != null) {
-                        callback.success(balance);
-                    } else {
-                        callback.error("");
-                    }
-                });
+                    mainHandler.post(() -> {
+                        if (callback == null) {
+                            return;
+                        }
+                        if (balance != null) {
+                            callback.success(balance);
+                        } else {
+                            callback.error("");
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
     }
@@ -168,12 +180,11 @@ public class Repo {
             long timestamp = System.currentTimeMillis();
             String hash = AlgorithmUtil.hash(behaviorType, ACNSp.getUserId(), timestamp, extra);
             String data = Utils.addHash2Ufo1OplogMd5(hash);
-            Context context = ACNAgent.getClient().getContext();
-            String txHash = EthClient.sendTransaction(ACNSp.getSideChainRpcUrl(), BizApi.getBehaviourAddress(context), BizApi.getIndividualAddress(context),
-                    BizApi.getPrivateKey(context), BizApi.getGasPrice(context), BizApi.getGasLimit(context), data);
+            String txHash = EthClient.sendTransaction(ACNSp.getSideChainRpcUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
+                    BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
 
             if (!TextUtils.isEmpty(txHash)) {
-                BizApi.behaviour(ACNAgent.getClient().getContext(), behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
+                BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
                     @Override
                     public void success(String s) {
                         if (behaviorType == CommonType.OPEN_DAPP) {

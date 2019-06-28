@@ -123,7 +123,11 @@ public class Utils {
         return Build.SERIAL;
     }
 
-    public static String change2Hex(String ttcAddress){
+    public static String format2ETHAddress(String ttcAddress)throws NullPointerException{
+        if (ttcAddress == null || ttcAddress .equals("") ) {
+            throw  new NullPointerException();
+        }
+
         if (ttcAddress.startsWith("t") || ttcAddress.startsWith("T")) {
             return "0x" + ttcAddress.substring(2);
         }else {

@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
-import com.acn.biz.BizApi;
+import com.acn.biz.model.BaseInfo;
 
 import java.math.BigInteger;
 
@@ -96,7 +96,7 @@ public class ACNSp {
 
     public static String getMainChainRpcUrl() {
         String defaultRpc;
-        if (BizApi.isEnvProd(ACNAgent.getClient().getContext())) {
+        if (BaseInfo.getInstance().isProd()) {
             defaultRpc = Constants.MAIN_CHAIN_RPC_URL;
         } else {
             defaultRpc = Constants.TEST_MAIN_CHAIN_RPC_URL;
@@ -110,10 +110,10 @@ public class ACNSp {
 
     public static String getSideChainRpcUrl() {
         String defaultRpc;
-        if (BizApi.isEnvProd(ACNAgent.getClient().getContext())) {
-            defaultRpc =  Constants.SIDE_CHAIN_RPC_URL;
+        if (BaseInfo.getInstance().isProd()) {
+            defaultRpc = Constants.SIDE_CHAIN_RPC_URL;
         } else {
-            defaultRpc =  Constants.TEST_SIDE_CHAIN_RPC_URL;
+            defaultRpc = Constants.TEST_SIDE_CHAIN_RPC_URL;
         }
         return sp.getString(SIDE_RPC_URL, defaultRpc);
     }

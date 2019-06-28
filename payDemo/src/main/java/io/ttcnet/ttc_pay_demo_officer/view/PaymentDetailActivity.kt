@@ -79,7 +79,11 @@ class PaymentDetailActivity : BaseActivity() {
             OrderState.STATE_OVERDUE -> detail_status.setText("overdue")
             OrderState.STATE_INVALID -> detail_status.setText("invalid")
         }
-        detail_price.setText("Amount:" + orderInfo.totalTTC + "TTC")
+        if (orderInfo.tokenId == 0) {
+            detail_price.setText("Amount:" + orderInfo.totalTTC + "TTC")
+        }else if (orderInfo.tokenId == 1) {
+            detail_price.setText("Amount:" + orderInfo.totalTTC + "ACN")
+        }
 
         itemOrderNoContent.setText(orderInfo.outOrderId)
         itemCompanyContent.setText(orderInfo.partnerName)

@@ -8,12 +8,13 @@ android {
         applicationId "ttc.pay.demo"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 1
-        versionName "0.0.19"
+        versionCode 2
+        versionName PAY_VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
+
         release {
             keyAlias "keyAlias"
             keyPassword "123456"
@@ -23,6 +24,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
+
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -33,6 +39,12 @@ android {
                     outputFileName = fileName
                 }
             }
+        }
+
+        ft.initWith(release)
+        ft {
+            signingConfig signingConfigs.release
+            matchingFallbacks = ['ft', 'release', 'debug']
         }
     }
 
@@ -63,5 +75,5 @@ dependencies {
 
 //    implementation project(":pay")
 
-    implementation(name: 'ttc_pay_0.0.19', ext: 'aar')
+    implementation(name: 'ttc_pay_0.1.0', ext: 'aar')
 }

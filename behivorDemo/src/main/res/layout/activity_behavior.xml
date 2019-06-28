@@ -55,6 +55,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
+                    <TextView
+                            android:text="Update: "
+                            android:layout_width="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="wrap_content"/>
+
                     <EditText
                             android:id="@+id/main_update_info_key"
                             android:layout_width="0dp"
@@ -172,6 +180,7 @@
                         android:layout_width="wrap_content"
                         android:text="@string/close_sdk_fun_switch"
                         app:layout_flexGrow="1"/>
+
 
             </com.google.android.flexbox.FlexboxLayout>
         </LinearLayout>

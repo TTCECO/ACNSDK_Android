@@ -5,11 +5,19 @@ import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.*;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
@@ -17,6 +25,8 @@ import org.web3j.utils.Numeric;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 发送交易，查询交易是否成功，内存中nonce的更新
@@ -30,8 +40,9 @@ public class EthClient {
             return null;
         }
 
-        String hexAddress = Utils.change2Hex(address);
         try {
+            String hexAddress = Utils.format2ETHAddress(address);
+
             web3 = Web3j.build(new HttpService(ACNSp.getMainChainRpcUrl()));
             EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
@@ -46,10 +57,136 @@ public class EthClient {
         return res;
     }
 
+    //token
+    public static BigDecimal getTokenBalance(String fromAddress, String contractAddress) throws Exception {
+
+        String methodName = "balanceOf";
+        List<Type> inputs = new ArrayList<>();
+        inputs.add(new Address(Utils.format2ETHAddress(fromAddress)));
+        List<TypeReference<?>> outputs = new ArrayList<>();
+        TypeReference<?> typeReference = new TypeReference<Uint256>() {
+        };
+        outputs.add(typeReference);
+
+        BigDecimal res = null;
+        String errMsg = "";
+        try {
+            Web3j web3j = Web3j.build(new HttpService(ACNSp.getMainChainRpcUrl()));
+            Function function = new Function(methodName, inputs, outputs);
+            String data = FunctionEncoder.encode(function);
+            org.web3j.protocol.core.methods.request.Transaction transaction = Transaction.createEthCallTransaction(Utils.format2ETHAddress(fromAddress),
+                    Utils.format2ETHAddress(contractAddress), data);
+
+            EthCall ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+            if (ethCall.hasError()) {
+                errMsg = ethCall.getError().getMessage();
+            } else {
+                List<Type> results = FunctionReturnDecoder.decode(ethCall.getValue(),
+                        function.getOutputParameters());
+
+                if (results != null && results.size() > 0) {
+                    BigInteger balance = (BigInteger) results.get(0).getValue();
+                    res = new BigDecimal(balance).divide(new BigDecimal(Constants.ONE_QUINTILLION));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            errMsg = e.getMessage();
+            throw e;
+        }
+
+        return res;
+
+
+//            if (handler == null) {
+//                return;
+//            }
+//
+//            Message msg = handler.obtainMessage();
+//            msg.arg1 = tokenId;
+//            if (decimals != null) {
+//                msg.what = GET_TOKEN_DECIMAL_SUC;
+//                msg.obj = decimals;
+//            } else {
+//                msg.what = GET_TOKEN_DECIMAL_FAIL;
+//                msg.obj = errMsg;
+//                com.ttc.wallet.util.LogUtils.INSTANCE.e("get token decimals fail," + errMsg + "," + tokenId);
+//            }
+//
+//            handler.sendMessage(msg);
+    }
+
+
+    //查询代币冻结余额
+    public static BigDecimal getFrozenAvailableAmount(String fromAddress, String tokenAddress, String contractAddress) throws Exception{
+            String methodName = "getAccountBalance";
+            String errMsg = "";
+            try {
+                Web3j web3j = Web3j.build(new HttpService(ACNSp.getMainChainRpcUrl()));
+
+                ArrayList<Type> inputParameters = new ArrayList<>();
+                ArrayList<TypeReference<?>> outputParameters = new ArrayList<>();
+                inputParameters.add(new Address(Utils.format2ETHAddress(tokenAddress)));
+                inputParameters.add(new Address(Utils.format2ETHAddress(fromAddress)));
+
+                TypeReference<Uint256> frozenType = new TypeReference<Uint256>() {
+                };
+                TypeReference<Uint256> balanceType = new TypeReference<Uint256>() {
+                };
+                outputParameters.add(frozenType);
+                outputParameters.add(balanceType);
+
+                Function function = new Function(methodName, inputParameters, outputParameters);
+                String data = FunctionEncoder.encode(function);
+                Transaction transaction = Transaction.createEthCallTransaction(Utils.format2ETHAddress(fromAddress),
+                        contractAddress, data);
+
+                EthCall ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+                if (ethCall.hasError()) {
+                    errMsg = ethCall.getError().getMessage();
+                } else {
+                    List<Type> results = FunctionReturnDecoder.decode(ethCall.getValue(),
+                            function.getOutputParameters());
+
+                    if (results.size() >= 2) {
+                      BigInteger[]  balance = new BigInteger[2];
+                        balance[0] = (BigInteger) results.get(0).getValue();
+                        balance[1] = (BigInteger) results.get(1).getValue();
+                        BigDecimal res = new BigDecimal(balance[0].add(balance[1])).divide(new BigDecimal(Constants.ONE_QUINTILLION));
+                        return res;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
+//                errMsg = e.getMessage();
+//                LogUtils.INSTANCE.e(errMsg);
+            }
+            return null;
+
+//            if (handler == null) {
+//                return;
+//            }
+//
+//            Message msg = handler.obtainMessage();
+//            msg.arg1 = tokenId;
+//            if (balance != null) {
+//                msg.what = GET_FROZEN_AVAILABLE_AMOUNT_SUC;
+//                msg.obj = balance;
+//            } else {
+//                msg.what = GET_FROZEN_AVAILABLE_AMOUNT_FAIL;
+//                msg.obj = errMsg;
+//                LogUtils.INSTANCE.e("getFrozenAvailable error:" + errMsg);
+//            }
+//            handler.sendMessage(msg);
+
+    }
+
 
     public static BigInteger getNonce(String rpcUrl, String from) throws IOException {
-        String hexFrom = Utils.change2Hex(from);
         try {
+            String hexFrom = Utils.format2ETHAddress(from);
+
             Web3j web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(hexFrom,
                     DefaultBlockParameterName.LATEST).send();
@@ -73,22 +210,24 @@ public class EthClient {
      * @throws IOException
      */
     public static String sendTransaction(String rpcUrl, String from, String to, String fromPrivateKey,
-                                                    String gasPrice, int gasLimit, String data) {
+                                         String gasPrice, int gasLimit, String data) {
 
         if (TextUtils.isEmpty(fromPrivateKey)) {
             SDKLogger.e("send transaction: fromPrivateKey is empty");
             return null;
         }
-        String hexFrom = Utils.change2Hex(from);
-        String hexTo = Utils.change2Hex(to);
-        String hexPrivateKey = Utils.change2Hex(fromPrivateKey);
-
-        String dataHex = Utils.stringToHex(data);
-        Web3j web3 = null;
-        BigInteger nonce = null;
-        BigInteger nextNonce = ACNSp.getNextNonce();
-        Credentials credentials = null;
         try {
+
+            String hexFrom = Utils.format2ETHAddress(from);
+            String hexTo = Utils.format2ETHAddress(to);
+            String hexPrivateKey = Utils.format2ETHAddress(fromPrivateKey);
+
+            String dataHex = Utils.stringToHex(data);
+            Web3j web3 = null;
+            BigInteger nonce = null;
+            BigInteger nextNonce = ACNSp.getNextNonce();
+            Credentials credentials = null;
+
             credentials = Credentials.create(hexPrivateKey);
             web3 = Web3j.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, hexFrom);

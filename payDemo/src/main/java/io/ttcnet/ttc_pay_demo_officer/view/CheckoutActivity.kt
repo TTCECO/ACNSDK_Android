@@ -15,6 +15,7 @@ import io.ttcnet.pay.TTCPay
 import io.ttcnet.pay.model.Currency
 import io.ttcnet.pay.model.ErrorBean
 import io.ttcnet.pay.model.PayInfo
+import io.ttcnet.pay.model.Token
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.adapter.CheckoutAdapter
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
@@ -34,7 +35,7 @@ class CheckoutActivity : BaseActivity() {
 
     private lateinit var adapter: CheckoutAdapter
     private var payChannels: ArrayList<PayChannelModel>? = null
-    private   var payInfo =PayInfo()
+    private var payInfo = PayInfo()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,21 +61,40 @@ class CheckoutActivity : BaseActivity() {
 
         adapter.setCheckedChannelCallback(object : CheckoutAdapter.CheckedChannelCallback {
             override fun done(channelId: Int) {
-                getTTCExchangeRate()
+//               var selectedChannel : PayChannelModel
+                for (channel in payChannels!!) {
+                    if (channel.id == channelId) {
+                        channel.checked = true;
+//                        selectedChannel = channel
+                        checkout_pay_total.setBackgroundResource(channel.checkedBgColorId)
+                    }else {
+                        channel.checked = false;
+                    }
+                }
+
+                if (channelId == Constant.PAY_CHANNEL_TTC_ID) {
+                    payInfo.payType = 0
+                    getTTCExchangeRate(Token.ID_TTC)
+                } else if (channelId == Constant.PAY_CHANNEL_ACN_ID) {
+                    payInfo.payType = 1
+                    getTTCExchangeRate(Token.ID_ACN)
+                }
+
+                adapter.notifyDataSetChanged()
             }
         })
 
         checkout_pay_total.setOnClickListener {
             if (!TextUtils.isEmpty(payInfo.totalTTCWei)) {
                 payTTC()
-            }else{
+            } else {
                 Utils.toast(activity, "total fee is empty")
             }
         }
     }
 
-    fun getTTCExchangeRate() {
-        TTCPay.getExchangeRate(this, Currency.dollar, object : ExchangeCallback {
+    fun getTTCExchangeRate(tokenId: Int) {
+        TTCPay.getExchangeRate(this, Currency.dollar, tokenId, object : ExchangeCallback {
             override fun done(ttcPrice: String) {
                 var goods = cartViewModel.checkedFurniture.value
                 if (goods != null) {
@@ -88,10 +108,14 @@ class CheckoutActivity : BaseActivity() {
                         }
                         sb.append(f.title).append(" ").append(f.description)
                     }
-                    var totalTTC = PayUtil.legalTender2TTC(ttcPrice,totalLegalTender);
+                    var totalTTC = PayUtil.legalTender2TTC(ttcPrice, totalLegalTender);
                     payInfo.orderContent = sb.toString()
                     payInfo.totalTTCWei = PayUtil.ttc2Wei(totalTTC)
-                    checkout_pay_total.setText("Pay " + totalTTC + "TTC")
+                    if (tokenId == Token.ID_TTC) {
+                        checkout_pay_total.setText("Pay " + totalTTC + "TTC")
+                    }else if (tokenId == Token.ID_ACN) {
+                        checkout_pay_total.setText("Pay " + totalTTC + "ACN")
+                    }
                     checkout_pay_total.visibility = View.VISIBLE
                 }
             }
@@ -107,7 +131,7 @@ class CheckoutActivity : BaseActivity() {
         val format = SimpleDateFormat("yyyyMMddHHmmss")
         payInfo.merchantOrderNo = format.format(now)
         payInfo.orderCreateTime = now
-        payInfo.orderExpireTime = now + 3 * 60 * 1000
+        payInfo.orderExpireTime = now + 3 * 60 * 1000   //3min
         payInfo.signature = Utils.getSignFromServer(activity, payInfo, Utils.getAppId())
         TTCPay.pay(activity, payInfo, object : PayCallback {
             override fun createTTCOrderOver(ttcOrderId: String) {
@@ -129,7 +153,7 @@ class CheckoutActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             finish()
         }
     }

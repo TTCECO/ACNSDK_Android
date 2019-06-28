@@ -72,7 +72,7 @@ public class BindActivity extends Activity {
     private void initData() {
         walletAddress = getIntent().getStringExtra(ACNKey.WALLET_ADDRESS);
         bindReward = getIntent().getIntExtra(ACNKey.BIND_REWARD, 0);
-        SDKLogger.e("walletAddress=" + walletAddress);
+//        SDKLogger.e("walletAddress=" + walletAddress);
     }
 
     private void setBold(TextView textView) {
