@@ -8,16 +8,6 @@
     <uses-permission android:name="android.permission.REORDER_TASKS"/>
 
     <application>
-        <receiver
-                android:name=".BindReceiver"
-                android:enabled="true"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="acn.bind.receiver"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
-
         <activity
                 android:name=".ui.BindActivity"
                 android:screenOrientation="portrait">

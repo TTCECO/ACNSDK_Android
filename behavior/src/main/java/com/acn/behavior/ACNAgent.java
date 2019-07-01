@@ -4,6 +4,7 @@ package com.acn.behavior;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.text.TextUtils;
 import com.acn.behavior.db.ACNSp;
@@ -67,6 +68,9 @@ public class ACNAgent {
         client = new Client(context);
         ACNSp.setDappId(appId);
         ACNSp.setDappSecretKey(secretKey);
+
+        context.registerReceiver(new BindReceiver(), new IntentFilter("acn.bind.receiver"));
+
         return errCode;
     }
 
@@ -114,14 +118,14 @@ public class ACNAgent {
 
         ACNSp.setUserId(userId);
 
-        BizApi.getInstance().init( ACNSp.getDappId(), ACNSp.getDappSecretKey(), ACNSp.getUserId(),
+        BizApi.getInstance().init(ACNSp.getDappId(), ACNSp.getDappSecretKey(), ACNSp.getUserId(),
                 BuildConfig.VERSION_CODE);
 
         //upload device Id
         Map<String, String> info = new HashMap<>();
         info.put(UserAttr.CLIENT_ID, Utils.getClientId());
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
-        BizApi.getInstance().updateUser( info, null);
+        BizApi.getInstance().updateUser(info, null);
 
         repo().getBaseInfo();
         repo().registerUser(callback);
@@ -155,7 +159,8 @@ public class ACNAgent {
         repo().updateUser(info, callback);
     }
 
-    private static void bindApp(Activity activity, String appIconUrl, int reqCode){
+    //user can get result on OnActivityResult()
+    public static void bindApp(Activity activity, String appIconUrl, int reqCode) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
         intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
@@ -185,6 +190,7 @@ public class ACNAgent {
      * 获取绑定的钱包的余额
      * get the bound wallet's balance
      * acn balance
+     *
      * @param callback
      */
     public static void getWalletBalance(IManager.BalanceCallback callback) {
@@ -225,7 +231,7 @@ public class ACNAgent {
     }
 
     //返回绑定的钱包地址
-    public static String getBoundWalletAddress(){
+    public static String getBoundWalletAddress() {
         return BaseInfo.getInstance().getWalletAddress();
     }
 
@@ -306,7 +312,7 @@ public class ACNAgent {
 
 
     public static void setEnvProd(boolean isProd) {
-        BaseInfo.getInstance().setProd( isProd);
+        BaseInfo.getInstance().setProd(isProd);
     }
 
     public static boolean isEnvProd() {

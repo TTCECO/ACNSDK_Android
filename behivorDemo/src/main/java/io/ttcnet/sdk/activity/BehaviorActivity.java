@@ -234,10 +234,15 @@ public class BehaviorActivity extends AppCompatActivity {
         }
     }
 
+    public void getBoundAddress(View view) {
+        String address = ACNAgent.getBoundWalletAddress();
+        tvMsg.setText("boundAddress:" + address);
+    }
+
 
     //在调用的app中如是写
     public void bind(View v) {
-//        ACNAgent.bindApp(this, "http://img.freepik.com/free-icon/facebook-logo-button_318-84980.jpg?size=158c&ext=jpg", 1);
+        ACNAgent.bindApp(this, "http://img.freepik.com/free-icon/facebook-logo-button_318-84980.jpg?size=158c&ext=jpg", 1);
     }
 
     public void unbind(View v) {

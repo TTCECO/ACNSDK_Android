@@ -140,16 +140,25 @@
                 <Button
                         style="@style/BtnStyle"
                         android:layout_width="wrap_content"
+                        android:onClick="getBoundAddress"
+                        android:text="get bound address"
+                        android:visibility="visible"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
                         android:onClick="bind"
                         android:text="@string/bind_dapp"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:layout_flexGrow="1"/>
 
                 <Button
                         style="@style/BtnStyle"
                         android:layout_width="wrap_content"
                         android:onClick="unbind"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:text="@string/unbind_dapp"/>
 
                 <Button

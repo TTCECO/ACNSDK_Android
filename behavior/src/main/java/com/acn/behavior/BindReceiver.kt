@@ -8,6 +8,6 @@ import com.acn.biz.BizApi
 class BindReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        BizApi.getInstance().getBaseInfo(null)
+        BizApi.getInstance().userRegister(null)
     }
 }

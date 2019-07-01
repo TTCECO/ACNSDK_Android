@@ -11,11 +11,6 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-        <receiver
-                android:name=".MyReceiver"
-                android:enabled="true"
-                android:exported="true">
-        </receiver>
 
         <activity
                 android:name=".activity.RegisterActivity"
@@ -43,35 +38,32 @@
             </intent-filter>
         </activity-alias>
 
-        <receiver
-                android:name="com.acn.behavior.BindReceiver"
-                android:enabled="true"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="acn.bind.receiver"/>
 
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </receiver>
 
         <meta-data
                 android:name="ACN_DAPP_ID"
                 android:value="SDKTest"/>
         <meta-data
                 android:name="ACN_DAPP_SECRET_KEY"
-                android:value="9d1990b8fc9cf1328d88af73b8f89e4d"/> <!-- 广告需要添加 -->
+                android:value="9d1990b8fc9cf1328d88af73b8f89e4d"/>
+
+        <!-- 广告需要添加 -->
         <!-- add it if advertise -->
         <!-- google提供的开发id -->
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
-                android:value="ca-app-pub-3940256099942544~3347511713"/> <!-- 线上的id -->
+                android:value="ca-app-pub-3940256099942544~3347511713"/>
+
+        <!-- 线上的id -->
         <!-- <meta-data -->
         <!-- android:name="com.google.android.gms.ads.APPLICATION_ID" -->
         <!-- android:value="ca-app-pub-3081086010287406~9085005576"/> -->
+
         <!-- alive -->
         <!-- <meta-data -->
         <!-- android:name="com.google.android.gms.ads.APPLICATION_ID" -->
         <!-- android:value="ca-app-pub-3081086010287406~1303871795"/> -->
+
         <activity android:name=".activity.BehaviorActivity"/>
         <activity android:name=".activity.BannerActivity">
         </activity>
