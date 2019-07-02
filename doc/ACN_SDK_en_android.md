@@ -108,7 +108,8 @@ ACNAgent.register("123", new IManager.UserInfoCallback() {
 ```
 
 ## Upload user behaviors  
-The actionType must be greater than 100. Extra is optional.
+actionType: Dapp can define it.  
+extra: optional.
 
 ```
 ACNAgent.onEvent(int actionType, String extra)
@@ -134,11 +135,29 @@ The ***info*** is what the user update. The common keys are defined in UserAttr.
 ```
 ACNAgent.updateUserInfo(Map<String, String> info, IManager.UserInfoCallback callback)
 ```
+
+## Bind
+The mothod result can received onActivityResult(int requestCode, int resultCode, @Nullable Intent data):  
+resultCode = RESULT\_OK  
+The bind result:  
+isBindSuc = data.getBooleanExtra(ACNKey.BIND\_STATE, false);     
+if has bound reward, return the count.  
+reward = data.getIntExtra(ACNKey.BIND\_REWARD, 0);  
+The symbol of reward Token.  
+rewardSymbol = data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL);  
+If bind fail, return the error message.  
+errMsg = data.getStringExtra(ACNKey.ERROR\_MSG);  
+
+```
+bindApp(Activity activity, String appIconUrl, int reqCode)
+```
+
+
 ## Unbind
 It is used to unbind the TTC Connect. 
 
 ```
-ACNAgent.unbindApp()
+ACNAgent.unbindApp(IManager.UnbindCallback callback)
 ```
 ## Get account balance
 The account balance is the balance in the dapp that is not synchronized to the TTC Connect.

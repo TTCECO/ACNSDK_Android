@@ -141,7 +141,14 @@ public class BehaviorActivity extends AppCompatActivity {
                         int reward = data.getIntExtra(ACNKey.BIND_REWARD, 0);
                         String rewardSymbol = data.getStringExtra(ACNKey.BIND_REWARD_SYMBOL);
                         String errMsg = data.getStringExtra(ACNKey.ERROR_MSG);
-                        tvMsg.setText("bind success");
+                        if (isBindSuc) {
+                            tvMsg.setText("bind success.");
+                            if (reward > 0) {
+                                tvMsg.append("reward:" + reward + rewardSymbol);
+                            }
+                        } else {
+                            tvMsg.setText("bind failure");
+                        }
                     }
                 }
                 break;

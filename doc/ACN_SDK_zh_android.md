@@ -140,7 +140,7 @@ ACNAgent.updateUserInfo(Map<String, String> info,IManager.UserInfoCallback callb
 ```
 
 ## 绑定钱包
-该方法的返回可以在onActivityResult(int requestCode, int resultCode, @Nullable Intent data)中接收:  
+该方法的返回可以在onActivityResult(int requestCode, int resultCode, @Nullable Intent data)中接收返回值:    
 返回 resultCode = RESULT\_OK  
 绑定是否成功 isBindSuc = data.getBooleanExtra(ACNKey.BIND\_STATE, false);     
 绑定的奖励数量 reward = data.getIntExtra(ACNKey.BIND\_REWARD, 0);  
@@ -151,11 +151,11 @@ ACNAgent.updateUserInfo(Map<String, String> info,IManager.UserInfoCallback callb
 bindApp(Activity activity, String appIconUrl, int reqCode)
 ```
 
-## 解绑应用接口
+## 解绑钱包
 解绑后，无法将TTC转入钱包。    
 
 ```
-ACNAgent.unbindApp()
+ACNAgent.unbindApp(IManager.UnbindCallback callback)
 ```
 ## 待提取的ACN接口
 在此app中，还未转入钱包的所有ACN；

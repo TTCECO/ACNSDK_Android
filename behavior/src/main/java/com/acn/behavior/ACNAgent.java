@@ -25,6 +25,7 @@ public class ACNAgent {
     private static boolean SERVER_ENABLE = true;
 
     private static Client client = null;
+    private static BindReceiver bindReceiver;
 
     /**
      * init it in application.java
@@ -69,10 +70,6 @@ public class ACNAgent {
         ACNSp.setDappId(appId);
         ACNSp.setDappSecretKey(secretKey);
 
-        IntentFilter filter = new IntentFilter("acn.bind.receiver");
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        context.registerReceiver(new BindReceiver(), filter);
-
         return errCode;
     }
 
@@ -116,6 +113,7 @@ public class ACNAgent {
         String userIdSaved = ACNSp.getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
             ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
+//            BaseInfo.getInstance().clear();
         }
 
         ACNSp.setUserId(userId);
@@ -133,12 +131,19 @@ public class ACNAgent {
         repo().registerUser(callback);
         client.retry();
 
+
+        bindReceiver = new BindReceiver();
+        IntentFilter filter = new IntentFilter("acn.bind.receiver");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        client.getContext().registerReceiver(bindReceiver, filter);
+
         SDKLogger.d("userId:" + userId);
     }
 
     public static void unregister() {
         if (client != null) {
             ACNSp.clear();
+            client.getContext().unregisterReceiver(bindReceiver);
             SDKLogger.d("user unregister");
         }
     }
@@ -165,8 +170,8 @@ public class ACNAgent {
     public static void bindApp(Activity activity, String appIconUrl, int reqCode) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
-        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
-        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
+        intent.putExtra(ACNKey.USER_ID, ACNSp.getUserId());
+        intent.putExtra(ACNKey.APP_ID, ACNSp.getDappId());
         intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
         intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
         activity.startActivityForResult(intent, reqCode);
