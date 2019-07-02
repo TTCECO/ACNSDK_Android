@@ -140,7 +140,8 @@ public class BehaviorActivity extends AppCompatActivity {
                         boolean isBindSuc = data.getBooleanExtra(ACNKey.BIND_STATE, false);
                         int reward = data.getIntExtra(ACNKey.BIND_REWARD, 0);
                         String rewardSymbol = data.getStringExtra(ACNKey.BIND_REWARD_SYMBOL);
-                        Toast.makeText(this, "isBindSuc:" + isBindSuc + reward + rewardSymbol, Toast.LENGTH_SHORT).show();
+                        String errMsg = data.getStringExtra(ACNKey.ERROR_MSG);
+                        tvMsg.setText("bind success");
                     }
                 }
                 break;

@@ -111,7 +111,8 @@ ACNAgent.register("123", new IManager.UserInfoCallback() {
 ```
 
 ## 用户行为接口
-behaviorType为行为类型，behaviorType要大于100。extra为可选项。   
+behaviorType为行为类型，Dapp可自定义；  
+extra为可选项。   
 
 ```
 ACNAgent.onEvent(int behaviorType, String extra)
@@ -137,6 +138,19 @@ ACNAgent.unregister()
 ```
 ACNAgent.updateUserInfo(Map<String, String> info,IManager.UserInfoCallback callback)
 ```
+
+## 绑定钱包
+该方法的返回可以在onActivityResult(int requestCode, int resultCode, @Nullable Intent data)中接收:  
+返回 resultCode = RESULT\_OK  
+绑定是否成功 isBindSuc = data.getBooleanExtra(ACNKey.BIND\_STATE, false);     
+绑定的奖励数量 reward = data.getIntExtra(ACNKey.BIND\_REWARD, 0);  
+绑定奖励的虚拟币名称 rewardSymbol = data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL);  
+错误信息 errMsg = data.getStringExtra(ACNKey.ERROR\_MSG);  
+
+```
+bindApp(Activity activity, String appIconUrl, int reqCode)
+```
+
 ## 解绑应用接口
 解绑后，无法将TTC转入钱包。    
 

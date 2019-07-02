@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.REORDER_TASKS"/>
 
     <application>
+        <receiver
+                android:name=".BindReceiver"
+                android:exported="true"
+                android:enabled="true"/>
+
         <activity
                 android:name=".ui.BindActivity"
                 android:screenOrientation="portrait">

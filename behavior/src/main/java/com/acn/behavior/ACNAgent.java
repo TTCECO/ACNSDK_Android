@@ -69,7 +69,9 @@ public class ACNAgent {
         ACNSp.setDappId(appId);
         ACNSp.setDappSecretKey(secretKey);
 
-        context.registerReceiver(new BindReceiver(), new IntentFilter("acn.bind.receiver"));
+        IntentFilter filter = new IntentFilter("acn.bind.receiver");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        context.registerReceiver(new BindReceiver(), filter);
 
         return errCode;
     }
