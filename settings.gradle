@@ -1,1 +1,1 @@
-include ':behivorDemo', ':biz', ':behavior', ':pay', ':payDemo'
+include ':behivorDemo', ':behavior', ':pay', ':payDemo'

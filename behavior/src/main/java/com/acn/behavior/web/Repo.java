@@ -30,13 +30,13 @@ public class Repo {
             @Override
             public void success(BaseInfo baseInfo) {
                 if (baseInfo != null) {
-                    if (!TextUtils.isEmpty(baseInfo.getMainChainRPCUrl())) {
-                        ACNSp.setMainChainRpcUrl(baseInfo.getMainChainRPCUrl());
-                    }
-
-                    if (!TextUtils.isEmpty(baseInfo.getSideChainRPCUrl())) {
-                        ACNSp.setSideChainRpcUrl(baseInfo.getSideChainRPCUrl());
-                    }
+//                    if (!TextUtils.isEmpty(baseInfo.getMainChainRPCUrl())) {
+//                        ACNSp.setMainChainRpcUrl(baseInfo.getMainChainRPCUrl());
+//                    }
+//
+//                    if (!TextUtils.isEmpty(baseInfo.getSideChainRPCUrl())) {
+//                        ACNSp.setSideChainRpcUrl(baseInfo.getSideChainRPCUrl());
+//                    }
                 }
             }
 
@@ -178,9 +178,9 @@ public class Repo {
         }
         ACNAgent.getClient().getEventExecutorService().execute(() -> {
             long timestamp = System.currentTimeMillis();
-            String hash = AlgorithmUtil.hash(behaviorType, ACNSp.getUserId(), timestamp, extra);
+            String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
             String data = Utils.addHash2Ufo1OplogMd5(hash);
-            String txHash = EthClient.sendTransaction(ACNSp.getSideChainRpcUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
+            String txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
                     BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
 
             if (!TextUtils.isEmpty(txHash)) {

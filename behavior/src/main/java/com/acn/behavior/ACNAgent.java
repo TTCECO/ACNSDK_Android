@@ -67,8 +67,10 @@ public class ACNAgent {
         }
 
         client = new Client(context);
-        ACNSp.setDappId(appId);
-        ACNSp.setDappSecretKey(secretKey);
+//        ACNSp.setDappId(appId);
+//        ACNSp.setDappSecretKey(secretKey);
+        BaseInfo.getInstance().setAppId(appId);
+        BaseInfo.getInstance().setSecretKey(secretKey);
 
         return errCode;
     }
@@ -110,15 +112,15 @@ public class ACNAgent {
             return;
         }
 
-        String userIdSaved = ACNSp.getUserId();
+        String userIdSaved = BaseInfo.getInstance().getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
             ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
             BaseInfo.getInstance().clear();
         }
 
-        ACNSp.setUserId(userId);
+//        ACNSp.setUserId(userId);
 
-        BizApi.getInstance().init(ACNSp.getDappId(), ACNSp.getDappSecretKey(), ACNSp.getUserId(),
+        BizApi.getInstance().init(BaseInfo.getInstance().getAppId(), BaseInfo.getInstance().getSecretKey(), userId,
                 BuildConfig.VERSION_CODE);
 
         //upload device Id
@@ -171,8 +173,8 @@ public class ACNAgent {
     public static void bindApp(Activity activity, String appIconUrl, int reqCode) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
-        intent.putExtra(ACNKey.USER_ID, ACNSp.getUserId());
-        intent.putExtra(ACNKey.APP_ID, ACNSp.getDappId());
+        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
+        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
         intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
         intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
         activity.startActivityForResult(intent, reqCode);
@@ -297,7 +299,7 @@ public class ACNAgent {
             SDKLogger.e(errMsg);
             return errCode;
         }
-        if (TextUtils.isEmpty(ACNSp.getUserId())) {
+        if (TextUtils.isEmpty(BaseInfo.getInstance().getUserId())) {
             errCode = SDKError.USER_ID_IS_EMPTY;
             errMsg = SDKError.getMessage(errCode);
             SDKLogger.e(errMsg);

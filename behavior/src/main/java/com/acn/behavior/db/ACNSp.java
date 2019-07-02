@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
-import com.acn.behavior.util.Constants;
-import com.acn.behavior.util.SDKLogger;
-import com.acn.biz.model.BaseInfo;
 
 import java.math.BigInteger;
 
@@ -35,34 +32,34 @@ public class ACNSp {
     }
 
 
-    public static void setUserId(String userId) {
-        editor.putString(KEY_USER_ID, userId).apply();
-    }
+//    public static void setUserId(String userId) {
+//        editor.putString(KEY_USER_ID, userId).apply();
+//    }
+//
+//
+//    public static String getUserId() {
+//        String userId = sp.getString(KEY_USER_ID, "");
+//        SDKLogger.d("sp userId:" + userId);
+//        return userId;
+//    }
 
+//    public static void setDappId(String dappId) {
+//        editor.putString(KEY_DAPP_ID, dappId).apply();
+//    }
+//
+//    public static String getDappId() {
+//        String appId = sp.getString(KEY_DAPP_ID, "");
+//        return appId;
+//    }
 
-    public static String getUserId() {
-        String userId = sp.getString(KEY_USER_ID, "");
-        SDKLogger.d("sp userId:" + userId);
-        return userId;
-    }
-
-    public static void setDappId(String dappId) {
-        editor.putString(KEY_DAPP_ID, dappId).apply();
-    }
-
-    public static String getDappId() {
-        String appId = sp.getString(KEY_DAPP_ID, "");
-        return appId;
-    }
-
-    public static void setDappSecretKey(String secretKey) {
-        editor.putString(KEY_DAPP_SECRET_KEY, secretKey).apply();
-    }
-
-    public static String getDappSecretKey() {
-        String secretKey = sp.getString(KEY_DAPP_SECRET_KEY, "");
-        return secretKey;
-    }
+//    public static void setDappSecretKey(String secretKey) {
+//        editor.putString(KEY_DAPP_SECRET_KEY, secretKey).apply();
+//    }
+//
+//    public static String getDappSecretKey() {
+//        String secretKey = sp.getString(KEY_DAPP_SECRET_KEY, "");
+//        return secretKey;
+//    }
 
     //write the last nonce
     public static void setNextNonce(BigInteger nonce) {
@@ -90,31 +87,31 @@ public class ACNSp {
         return sp.getLong(LAST_OPEN_MS, 0L);
     }
 
-    public static void setMainChainRpcUrl(String mainRpcUrl) {
-        editor.putString(MAIN_RPC_URL, mainRpcUrl);
-    }
-
-    public static String getMainChainRpcUrl() {
-        String defaultRpc;
-        if (BaseInfo.getInstance().isProd()) {
-            defaultRpc = Constants.MAIN_CHAIN_RPC_URL;
-        } else {
-            defaultRpc = Constants.TEST_MAIN_CHAIN_RPC_URL;
-        }
-        return sp.getString(MAIN_RPC_URL, defaultRpc);
-    }
-
-    public static void setSideChainRpcUrl(String sideRpcUrl) {
-        editor.putString(SIDE_RPC_URL, sideRpcUrl);
-    }
-
-    public static String getSideChainRpcUrl() {
-        String defaultRpc;
-        if (BaseInfo.getInstance().isProd()) {
-            defaultRpc = Constants.SIDE_CHAIN_RPC_URL;
-        } else {
-            defaultRpc = Constants.TEST_SIDE_CHAIN_RPC_URL;
-        }
-        return sp.getString(SIDE_RPC_URL, defaultRpc);
-    }
+//    public static void setMainChainRpcUrl(String mainRpcUrl) {
+//        editor.putString(MAIN_RPC_URL, mainRpcUrl);
+//    }
+//
+//    public static String getMainChainRpcUrl() {
+//        String defaultRpc;
+//        if (BaseInfo.getInstance().isProd()) {
+//            defaultRpc = Constants.MAIN_CHAIN_RPC_URL;
+//        } else {
+//            defaultRpc = Constants.TEST_MAIN_CHAIN_RPC_URL;
+//        }
+//        return sp.getString(MAIN_RPC_URL, defaultRpc);
+//    }
+//
+//    public static void setSideChainRpcUrl(String sideRpcUrl) {
+//        editor.putString(SIDE_RPC_URL, sideRpcUrl);
+//    }
+//
+//    public static String getSideChainRpcUrl() {
+//        String defaultRpc;
+//        if (BaseInfo.getInstance().isProd()) {
+//            defaultRpc = Constants.SIDE_CHAIN_RPC_URL;
+//        } else {
+//            defaultRpc = Constants.TEST_SIDE_CHAIN_RPC_URL;
+//        }
+//        return sp.getString(SIDE_RPC_URL, defaultRpc);
+//    }
 }

@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.R;
-import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
+import com.acn.biz.model.BaseInfo;
 import com.acn.biz.model.BindSucData;
 
 public class BindActivity extends Activity {
@@ -105,7 +105,7 @@ public class BindActivity extends Activity {
     private void finishActivity(int bindState, boolean autoTransaction, String errorMsg) {
         Intent data = new Intent();
         if (ACNAgent.getClient() != null) {
-            data.putExtra(ACNKey.APP_ID, ACNSp.getDappId());
+            data.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
         }
         data.putExtra(ACNKey.BIND_STATE, bindState);
         data.putExtra(ACNKey.AUTO_TRANSACTION, autoTransaction);
@@ -118,11 +118,11 @@ public class BindActivity extends Activity {
 
     private boolean isSDKRegisted() {
         String errorInfo = "";
-        if (TextUtils.isEmpty(ACNSp.getDappId())) {
+        if (TextUtils.isEmpty(BaseInfo.getInstance().getAppId())) {
             errorInfo = SDKError.getMessage(SDKError.APP_ID_IS_EMPTY);
-        } else if (TextUtils.isEmpty(ACNSp.getDappSecretKey())) {
+        } else if (TextUtils.isEmpty(BaseInfo.getInstance().getSecretKey())) {
             errorInfo = SDKError.getMessage(SDKError.SECRET_KEY_IS_EMPTY);
-        } else if (TextUtils.isEmpty(ACNSp.getUserId())) {
+        } else if (TextUtils.isEmpty(BaseInfo.getInstance().getUserId())) {
             errorInfo = SDKError.getMessage(SDKError.USER_ID_IS_EMPTY);
         } else if (TextUtils.isEmpty(walletAddress)) {
             errorInfo = SDKError.getMessage(SDKError.WALLET_ADDRESS_IS_EMPTY);

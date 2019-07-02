@@ -5,6 +5,7 @@ import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
+import com.acn.biz.model.BaseInfo;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -43,7 +44,7 @@ public class EthClient {
         try {
             String hexAddress = Utils.format2ETHAddress(address);
 
-            web3 = Web3j.build(new HttpService(ACNSp.getMainChainRpcUrl()));
+            web3 = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
             EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
@@ -71,7 +72,7 @@ public class EthClient {
         BigDecimal res = null;
         String errMsg = "";
         try {
-            Web3j web3j = Web3j.build(new HttpService(ACNSp.getMainChainRpcUrl()));
+            Web3j web3j = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
             Function function = new Function(methodName, inputs, outputs);
             String data = FunctionEncoder.encode(function);
             org.web3j.protocol.core.methods.request.Transaction transaction = Transaction.createEthCallTransaction(Utils.format2ETHAddress(fromAddress),
@@ -122,7 +123,7 @@ public class EthClient {
             String methodName = "getAccountBalance";
             String errMsg = "";
             try {
-                Web3j web3j = Web3j.build(new HttpService(ACNSp.getMainChainRpcUrl()));
+                Web3j web3j = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
 
                 ArrayList<Type> inputParameters = new ArrayList<>();
                 ArrayList<TypeReference<?>> outputParameters = new ArrayList<>();
