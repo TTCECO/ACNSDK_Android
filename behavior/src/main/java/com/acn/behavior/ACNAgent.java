@@ -113,7 +113,7 @@ public class ACNAgent {
         String userIdSaved = ACNSp.getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
             ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
-//            BaseInfo.getInstance().clear();
+            BaseInfo.getInstance().clear();
         }
 
         ACNSp.setUserId(userId);
@@ -143,6 +143,7 @@ public class ACNAgent {
     public static void unregister() {
         if (client != null) {
             ACNSp.clear();
+            BaseInfo.getInstance().clear();
             client.getContext().unregisterReceiver(bindReceiver);
             SDKLogger.d("user unregister");
         }
