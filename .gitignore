@@ -58,14 +58,13 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
 
-/pay/*
-!/pay/build/
-/pay/build/generated/
-/pay/build/intermediates/
-/pay/build/tmp/
-/pay/build/kotlin/
-/pay/build/outputs/*
-!/pay/build/outputs/aar/
+/behavior/*
+!/behavior/build/
+/behavior/build/generated/
+/behavior/build/intermediates/
+/behavior/build/tmp/
+/behavior/build/outputs/*
+!/biz/build/outputs/aar/
 
 /biz/*
 !/biz/build/
@@ -74,3 +73,12 @@ fastlane/readme.md
 /biz/build/tmp/
 /biz/build/outputs/*
 !/biz/build/outputs/aar/
+
+/pay/*
+!/pay/build/
+/pay/build/generated/
+/pay/build/intermediates/
+/pay/build/tmp/
+/pay/build/kotlin/
+/pay/build/outputs/*
+!/pay/build/outputs/aar/

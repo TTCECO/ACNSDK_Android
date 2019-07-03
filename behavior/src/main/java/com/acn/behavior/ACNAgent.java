@@ -25,7 +25,7 @@ public class ACNAgent {
     private static boolean SERVER_ENABLE = true;
 
     private static Client client = null;
-    private static BindReceiver bindReceiver;
+    private static BindReceiver bindReceiver = null;
     private static String appId = "";
     private static String secretKey = "";
 //    private static String adMobAppId = "";
@@ -141,7 +141,10 @@ public class ACNAgent {
         if (client != null) {
             ACNSp.clear();
             BaseInfo.getInstance().clear();
-            client.getContext().unregisterReceiver(bindReceiver);
+            if (bindReceiver != null) {
+                client.getContext().unregisterReceiver(bindReceiver);
+                bindReceiver = null;
+            }
             SDKLogger.d("user unregister");
         }
     }
