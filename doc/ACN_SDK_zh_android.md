@@ -151,12 +151,22 @@ ACNAgent.updateUserInfo(Map<String, String> info,IManager.UserInfoCallback callb
 bindApp(Activity activity, String appIconUrl, int reqCode)
 ```
 
+
+## 获取绑定钱包地址
+如果已绑定，则返回绑定的钱包地址；如果未绑定，则返回空
+
+```
+String getBoundWalletAddress()
+```
+
 ## 解绑钱包
 解绑后，无法将TTC转入钱包。    
 
 ```
 ACNAgent.unbindApp(IManager.UnbindCallback callback)
 ```
+
+
 ## 待提取的ACN接口
 在此app中，还未转入钱包的所有ACN；
 

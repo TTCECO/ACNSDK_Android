@@ -153,6 +153,13 @@ bindApp(Activity activity, String appIconUrl, int reqCode)
 ```
 
 
+## Get bound wallet address
+If boud, return wallet address. otherwise, return empty.
+
+```
+String getBoundWalletAddress()
+```
+
 ## Unbind
 It is used to unbind the TTC Connect. 
 
