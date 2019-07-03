@@ -51,6 +51,7 @@ public class Repo {
         BizApi.getInstance().userRegister(new BizCallback<Map<String, String>>() {
             @Override
             public void success(final Map<String, String> stringStringMap) {
+                ACNAgent.getClient().getRepo().getBaseInfo();
                 if (callback != null) {
                     mainHandler.post(() -> callback.success(stringStringMap));
                 }

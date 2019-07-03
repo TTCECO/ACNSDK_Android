@@ -132,9 +132,7 @@ public class ACNAgent {
         BizApi.getInstance().updateUser(info, null);
 
         repo().registerUser(callback);
-        repo().getBaseInfo();
         client.retry();
-
 
         bindReceiver = new BindReceiver();
         IntentFilter filter = new IntentFilter("acn.bind.receiver");
