@@ -33,7 +33,7 @@ public class BehaviorActivity extends AppCompatActivity {
 
     private Context context = this;
     private Map<String, String> updateInfo = new HashMap<>();
-    private boolean isLogOn = false;
+    private boolean isLogOn = true;
     private boolean isSdkFunOn = true;
     private MyHandler handler = new MyHandler();
 

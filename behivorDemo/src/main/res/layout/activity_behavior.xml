@@ -180,7 +180,7 @@
                         android:id="@+id/main_log_btn"
                         style="@style/BtnStyle"
                         android:layout_width="wrap_content"
-                        android:text="@string/open_log_switch"
+                        android:text="@string/close_log_switch"
                         app:layout_flexGrow="1"/>
 
                 <Button

@@ -145,7 +145,8 @@ ACNAgent.updateUserInfo(Map<String, String> info,IManager.UserInfoCallback callb
 绑定是否成功 isBindSuc = data.getBooleanExtra(ACNKey.BIND\_STATE, false);     
 绑定的奖励数量 reward = data.getIntExtra(ACNKey.BIND\_REWARD, 0);  
 绑定奖励的虚拟币名称 rewardSymbol = data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL);  
-错误信息 errMsg = data.getStringExtra(ACNKey.ERROR\_MSG);  
+如果该钱包已经和别的用户已绑定，则返回错误信息：  
+errMsg = data.getStringExtra(ACNKey.ERROR\_MSG);  
 
 ```
 bindApp(Activity activity, String appIconUrl, int reqCode)

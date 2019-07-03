@@ -26,8 +26,11 @@ public class ACNAgent {
 
     private static Client client = null;
     private static BindReceiver bindReceiver;
+    private static String appId = "";
+    private static String secretKey = "";
+//    private static String adMobAppId = "";
 
-    /**
+    /***
      * init it in application.java
      *
      * @param context
@@ -46,8 +49,8 @@ public class ACNAgent {
             return errCode;
         }
 
-        String appId = Utils.getMeta(context, Constants.ACN_DAPP_ID);
-        String secretKey = Utils.getMeta(context, Constants.ACN_DAPP_SECRET_KEY);
+        appId = Utils.getMeta(context, Constants.ACN_DAPP_ID);
+        secretKey = Utils.getMeta(context, Constants.ACN_DAPP_SECRET_KEY);
         String adMobAppId = Utils.getMeta(context, Constants.AD_MOB_APP_ID);
 
         if (TextUtils.isEmpty(appId)) {
@@ -69,8 +72,8 @@ public class ACNAgent {
         client = new Client(context);
 //        ACNSp.setDappId(appId);
 //        ACNSp.setDappSecretKey(secretKey);
-        BaseInfo.getInstance().setAppId(appId);
-        BaseInfo.getInstance().setSecretKey(secretKey);
+//        BaseInfo.getInstance().setAppId(appId);
+//        BaseInfo.getInstance().setSecretKey(secretKey);
 
         return errCode;
     }
@@ -120,8 +123,7 @@ public class ACNAgent {
 
 //        ACNSp.setUserId(userId);
 
-        BizApi.getInstance().init(BaseInfo.getInstance().getAppId(), BaseInfo.getInstance().getSecretKey(), userId,
-                BuildConfig.VERSION_CODE);
+        BizApi.getInstance().init(appId, secretKey, userId, BuildConfig.VERSION_CODE);
 
         //upload device Id
         Map<String, String> info = new HashMap<>();
@@ -129,8 +131,8 @@ public class ACNAgent {
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
         BizApi.getInstance().updateUser(info, null);
 
-        repo().getBaseInfo();
         repo().registerUser(callback);
+        repo().getBaseInfo();
         client.retry();
 
 
