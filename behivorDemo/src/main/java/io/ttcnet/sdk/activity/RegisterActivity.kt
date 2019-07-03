@@ -8,6 +8,8 @@ import com.acn.behavior.IManager
 import io.ttcnet.sdk.R
 import io.ttcnet.sdk.utils.IntentKey
 import kotlinx.android.synthetic.main.activity_register.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -35,6 +37,10 @@ class RegisterActivity : AppCompatActivity() {
                 info = map.toString();
                 main_msg_tv.text = "register successfully, " + info
                 userId = userIdTemp
+
+                var ts = map.get("addtime")
+                var date = SimpleDateFormat().format(Date((ts?.toLong())!!*1000))
+                main_msg_tv.append(", addtime:" + date)
             }
 
             override fun error(msg: String) {

@@ -25,32 +25,11 @@ public class Repo {
 
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
-    public void getBaseInfo() {
-        BizApi.getInstance().getBaseInfo(new BizCallback<BaseInfo>() {
-            @Override
-            public void success(BaseInfo baseInfo) {
-                if (baseInfo != null) {
-                    if (!TextUtils.isEmpty(baseInfo.getMainChainRPCUrl())) {
-                        ACNSp.setMainChainRpcUrl(baseInfo.getMainChainRPCUrl());
-                    }
-
-                    if (!TextUtils.isEmpty(baseInfo.getSideChainRPCUrl())) {
-                        ACNSp.setSideChainRpcUrl(baseInfo.getSideChainRPCUrl());
-                    }
-                }
-            }
-
-            @Override
-            public void error(String msg) {
-
-            }
-        });
-    }
-
     public void registerUser(final IManager.UserInfoCallback callback) {
         BizApi.getInstance().userRegister(new BizCallback<Map<String, String>>() {
             @Override
             public void success(final Map<String, String> stringStringMap) {
+                BizApi.getInstance().getBaseInfo(null);
                 if (callback != null) {
                     mainHandler.post(() -> callback.success(stringStringMap));
                 }
@@ -178,9 +157,9 @@ public class Repo {
         }
         ACNAgent.getClient().getEventExecutorService().execute(() -> {
             long timestamp = System.currentTimeMillis();
-            String hash = AlgorithmUtil.hash(behaviorType, ACNSp.getUserId(), timestamp, extra);
+            String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
             String data = Utils.addHash2Ufo1OplogMd5(hash);
-            String txHash = EthClient.sendTransaction(ACNSp.getSideChainRpcUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
+            String txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
                     BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
 
             if (!TextUtils.isEmpty(txHash)) {

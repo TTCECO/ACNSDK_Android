@@ -9,7 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
-import com.acn.behavior.db.ACNSp;
+import com.acn.biz.model.BaseInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -152,9 +152,9 @@ public class Utils {
      */
     public static String addHash2Ufo1OplogMd5(String hash) {
         if (!TextUtils.isEmpty(hash)) {
-            return Constants.DATA_PREFIX + hash + ":" + ACNSp.getDappId();
+            return Constants.DATA_PREFIX + hash + ":" + BaseInfo.getInstance().getAppId();
         } else {
-            return Constants.DATA_PREFIX + ACNSp.getDappId();
+            return Constants.DATA_PREFIX + BaseInfo.getInstance().getAppId();
         }
     }
 }

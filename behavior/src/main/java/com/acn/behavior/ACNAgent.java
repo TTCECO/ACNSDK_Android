@@ -26,8 +26,11 @@ public class ACNAgent {
 
     private static Client client = null;
     private static BindReceiver bindReceiver;
+    private static String appId = "";
+    private static String secretKey = "";
+//    private static String adMobAppId = "";
 
-    /**
+    /***
      * init it in application.java
      *
      * @param context
@@ -46,8 +49,8 @@ public class ACNAgent {
             return errCode;
         }
 
-        String appId = Utils.getMeta(context, Constants.ACN_DAPP_ID);
-        String secretKey = Utils.getMeta(context, Constants.ACN_DAPP_SECRET_KEY);
+        appId = Utils.getMeta(context, Constants.ACN_DAPP_ID);
+        secretKey = Utils.getMeta(context, Constants.ACN_DAPP_SECRET_KEY);
         String adMobAppId = Utils.getMeta(context, Constants.AD_MOB_APP_ID);
 
         if (TextUtils.isEmpty(appId)) {
@@ -67,8 +70,6 @@ public class ACNAgent {
         }
 
         client = new Client(context);
-        ACNSp.setDappId(appId);
-        ACNSp.setDappSecretKey(secretKey);
 
         return errCode;
     }
@@ -110,16 +111,14 @@ public class ACNAgent {
             return;
         }
 
-        String userIdSaved = ACNSp.getUserId();
+        String userIdSaved = BaseInfo.getInstance().getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
             ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
             BaseInfo.getInstance().clear();
         }
 
-        ACNSp.setUserId(userId);
 
-        BizApi.getInstance().init(ACNSp.getDappId(), ACNSp.getDappSecretKey(), ACNSp.getUserId(),
-                BuildConfig.VERSION_CODE);
+        BizApi.getInstance().init(appId, secretKey, userId, BuildConfig.VERSION_CODE);
 
         //upload device Id
         Map<String, String> info = new HashMap<>();
@@ -127,10 +126,8 @@ public class ACNAgent {
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
         BizApi.getInstance().updateUser(info, null);
 
-        repo().getBaseInfo();
         repo().registerUser(callback);
         client.retry();
-
 
         bindReceiver = new BindReceiver();
         IntentFilter filter = new IntentFilter("acn.bind.receiver");
@@ -171,8 +168,8 @@ public class ACNAgent {
     public static void bindApp(Activity activity, String appIconUrl, int reqCode) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
-        intent.putExtra(ACNKey.USER_ID, ACNSp.getUserId());
-        intent.putExtra(ACNKey.APP_ID, ACNSp.getDappId());
+        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
+        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
         intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
         intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
         activity.startActivityForResult(intent, reqCode);
@@ -297,7 +294,7 @@ public class ACNAgent {
             SDKLogger.e(errMsg);
             return errCode;
         }
-        if (TextUtils.isEmpty(ACNSp.getUserId())) {
+        if (TextUtils.isEmpty(BaseInfo.getInstance().getUserId())) {
             errCode = SDKError.USER_ID_IS_EMPTY;
             errMsg = SDKError.getMessage(errCode);
             SDKLogger.e(errMsg);
