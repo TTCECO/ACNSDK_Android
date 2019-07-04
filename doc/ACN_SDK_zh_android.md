@@ -170,6 +170,7 @@ ACNAgent.unbindApp(IManager.UnbindCallback callback)
 
 ## 待提取的ACN接口
 在此app中，还未转入钱包的所有ACN；
+回调中balance的单位是ACN，例如：余额是10.32ACN，则balance=10.32
 
 ```
 ACNAgent.getAppBalance(IManager.BalanceCallback callback)
@@ -190,6 +191,7 @@ ACNAgent.getAppBalance(new IManager.BalanceCallback() {
 
 ## 钱包的ACN余额接口
 查询与此app绑定的钱包的余额；    
+回调中balance的单位是ACN，例如：余额是10.32ACN，则balance=10.32
 
 ```
 ACNAgent.getWalletBalance(IManager.BalanceCallback callback)

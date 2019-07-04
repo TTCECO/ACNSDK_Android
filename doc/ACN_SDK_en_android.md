@@ -167,18 +167,47 @@ It is used to unbind the TTC Connect.
 ACNAgent.unbindApp(IManager.UnbindCallback callback)
 ```
 ## Get account balance
-The account balance is the balance in the dapp that is not synchronized to the TTC Connect.
+The account balance is the balance in the dapp that is not synchronized to the TTC Connect.  
+The balance unit is ACN. e.g. If balance is 10.32ACN, then balance is 10.32.
 
 ```
 ACNAgent.getAppBalance(IManager.BalanceCallback callback)
 ```
+e.g.：
+
+```
+ACNAgent.getAppBalance(new IManager.BalanceCallback() {
+    @Override
+    public void success(BigDecimal balance) {
+    }
+
+    @Override
+    public void error(String msg) {
+    }
+});
+```
 
 ## Get wallet balance
+
+The balance unit is ACN. e.g. If balance is 10.32ACN, then balance is 10.32.
+
 
 ```
 ACNAgent.getWalletBalance(IManager.BalanceCallback callback)
 ```
+e.g.：
 
+```
+ACNAgent.getWalletBalance(new IManager.BalanceCallback() {
+    @Override
+        public void success(BigDecimal balance) {
+        }
+
+    @Override
+    public void error(String msg) {
+    }
+});
+```
 
 ## Configure 
 Configure log & sdk function switcher
