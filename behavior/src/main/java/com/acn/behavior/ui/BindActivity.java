@@ -27,6 +27,7 @@ public class BindActivity extends Activity {
 
     private String walletAddress;
     private int bindReward;
+    private int sdkMinVersionCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,10 @@ public class BindActivity extends Activity {
 
         if (isSDKRegisted()) {
             initView();
+        }
+
+        if (ACNAgent.getVersionCode() < sdkMinVersionCode) {
+            finishActivity(0, true, 0, getString(R.string.integrate_acn_sdk_too_low, Utils.getApplicationName(this)));
         }
     }
 
@@ -63,6 +68,7 @@ public class BindActivity extends Activity {
         setBold(tvApp);
         setBold(tvBind);
 
+
         if (bindReward > 0) {
             tvTitle.setText(getString(R.string.get_ttc_after_bind, bindReward));
         }
@@ -75,6 +81,7 @@ public class BindActivity extends Activity {
     private void initData() {
         walletAddress = getIntent().getStringExtra(ACNKey.WALLET_ADDRESS);
         bindReward = getIntent().getIntExtra(ACNKey.BIND_REWARD, 0);
+        sdkMinVersionCode = getIntent().getIntExtra(ACNKey.SDK_MIN_VERSION_CODE, 0);
 //        SDKLogger.e("walletAddress=" + walletAddress);
     }
 

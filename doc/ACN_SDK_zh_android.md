@@ -49,7 +49,7 @@ com.google.android.gms.ads.APPLICATION_ID： ca-app-pub-3940256099942544~3347511
     android:targetActivity="com.acn.behavior.ui.BindActivity">
 
     <intent-filter>
-        <action android:name="com.acn.wallet.BINDACTION" />
+        <action android:name="com.ttc.wallet.BINDACTION" />
         <category android:name="android.intent.category.DEFAULT"/>
         <data
             android:scheme="应用包名" />

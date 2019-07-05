@@ -19,5 +19,6 @@ public class ACNKey {
     public static final String OPERATE_TYPE = "operate_type";
     public static final String APP_ICON_URL = "app_icon_url";
     public static final String APP_NAME = "app_name";
+    public static final String SDK_MIN_VERSION_CODE = "sdk_min_version_code";
 
 }
