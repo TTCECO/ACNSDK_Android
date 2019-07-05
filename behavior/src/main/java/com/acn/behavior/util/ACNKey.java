@@ -10,6 +10,7 @@ public class ACNKey {
     public static final String APP_ID = "app_id";
     public static final String BIND_STATE = "bind_state";  // 绑定的状态 0 未绑定 1 已绑定
     public static final String AUTO_TRANSACTION = "auto_transaction";
+    public static final String ERROR_CODE = "error_code";
     public static final String ERROR_MSG = "error_msg";
     public static final String BIND_REWARD = "bind_reward";
     public static final String BIND_REWARD_SYMBOL = "bind_reward_symbol";

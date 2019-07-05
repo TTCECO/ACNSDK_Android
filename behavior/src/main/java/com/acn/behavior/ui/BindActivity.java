@@ -90,28 +90,29 @@ public class BindActivity extends Activity {
                 @Override
                 public void success(BindSucData data) {
                     bindReward = data.reward;
-                    finishActivity(1, auto, "");
+                    finishActivity(1, auto, 0, "");
                 }
 
                 @Override
                 public void error(String msg) {
-                    finishActivity(0, auto, msg);
+                    finishActivity(0, auto, 0, msg);
                 }
             });
         }
     }
 
     public void close(View v) {
-        finishActivity(0, false, "");
+        finishActivity(0, false, 0, "");
     }
 
-    private void finishActivity(int bindState, boolean autoTransaction, String errorMsg) {
+    private void finishActivity(int bindState, boolean autoTransaction, int errorCode, String errorMsg) {
         Intent data = new Intent();
         if (ACNAgent.getClient() != null) {
             data.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
         }
         data.putExtra(ACNKey.BIND_STATE, bindState);
         data.putExtra(ACNKey.AUTO_TRANSACTION, autoTransaction);
+        data.putExtra(ACNKey.ERROR_CODE, errorCode);   //0:错误原因不在列举的范围中
         data.putExtra(ACNKey.ERROR_MSG, errorMsg);
         data.putExtra(ACNKey.BIND_REWARD, bindReward);
 
@@ -120,26 +121,32 @@ public class BindActivity extends Activity {
     }
 
     private boolean isSDKRegisted() {
+        int errorCode = -1;
         String errorInfo = "";
-        if (TextUtils.isEmpty(ACNSp.getDappId())) {
-            errorInfo = SDKError.getMessage(SDKError.APP_ID_IS_EMPTY);
+        if (TextUtils.isEmpty(ACNSp.getUserId())) {
+            errorCode = SDKError.USER_ID_IS_EMPTY;
+//            errorInfo = SDKError.getMessage(SDKError.USER_ID_IS_EMPTY);
+        } else if (TextUtils.isEmpty(ACNSp.getDappId())) {
+            errorCode = SDKError.APP_ID_IS_EMPTY;
+//            errorInfo = SDKError.getMessage(SDKError.APP_ID_IS_EMPTY);
         } else if (TextUtils.isEmpty(ACNSp.getDappSecretKey())) {
-            errorInfo = SDKError.getMessage(SDKError.SECRET_KEY_IS_EMPTY);
-        } else if (TextUtils.isEmpty(ACNSp.getUserId())) {
-            errorInfo = SDKError.getMessage(SDKError.USER_ID_IS_EMPTY);
+            errorCode = SDKError.SECRET_KEY_IS_EMPTY;
+//            errorInfo = SDKError.getMessage(SDKError.SECRET_KEY_IS_EMPTY);
         } else if (TextUtils.isEmpty(walletAddress)) {
-            errorInfo = SDKError.getMessage(SDKError.WALLET_ADDRESS_IS_EMPTY);
+            errorCode = SDKError.WALLET_ADDRESS_IS_EMPTY;
+//            errorInfo = SDKError.getMessage(SDKError.WALLET_ADDRESS_IS_EMPTY);
         }
 //        else if (ACNAgent.getClient() == null || ACNAgent.getClient().getRepo() == null) {
 //            errorInfo = SDKError.getMessage(SDKError.NOT_INITIAL);
 //        }
 
-        if (TextUtils.isEmpty(errorInfo)) {
+        if (errorCode < 0) {
             ACNAgent.register(ACNSp.getUserId(), null);
             return true;
         } else {
+            errorInfo = SDKError.getMessage(errorCode);
             SDKLogger.e(errorInfo);
-            finishActivity(Constants.BIND_STATE_UNBOUND, false, errorInfo);
+            finishActivity(Constants.BIND_STATE_UNBOUND, false, errorCode, errorInfo);
             return false;
         }
     }

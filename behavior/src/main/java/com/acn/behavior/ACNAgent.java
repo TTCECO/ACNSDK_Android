@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.widget.Toast;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
@@ -16,6 +19,7 @@ import com.acn.biz.model.BaseInfo;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -178,7 +182,24 @@ public class ACNAgent {
         intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
         intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
         intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
-        activity.startActivityForResult(intent, reqCode);
+
+        PackageManager pm = activity.getPackageManager();
+        List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
+        boolean isInstalledTTCConnect = false;
+        for (PackageInfo pi : installedPackages) {
+            if ("com.ttc.wallet".equalsIgnoreCase(pi.packageName)) {
+                isInstalledTTCConnect = true;
+                if (pi.versionCode < 21) {
+                    Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
+                }else {
+                    activity.startActivityForResult(intent, reqCode);
+                }
+                break;
+            }
+        }
+        if (!isInstalledTTCConnect) {
+            Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

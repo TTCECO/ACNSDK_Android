@@ -4,4 +4,6 @@
     <string name="ttc_wallet">TTC Connect</string>
     <string name="loading">Loading…</string>
     <string name="get_ttc_after_bind">Receive %d TTC after binding</string>
+    <string name="please_upgrade_ttc_connect">请升级TTC Connect到最新版本</string>
+    <string name="please_install_ttc_connect">请安装TTC Connect</string>
 </resources>
