@@ -70,7 +70,6 @@ public class ACNAgent {
         }
 
         client = new Client(context);
-
         return errCode;
     }
 
@@ -117,6 +116,10 @@ public class ACNAgent {
             BaseInfo.getInstance().clear();
         }
 
+
+        ACNSp.setDappId(appId);
+        ACNSp.setUserId(userId);
+        ACNSp.setDappSecretKey(secretKey);
 
         BizApi.getInstance().init(appId, secretKey, userId, BuildConfig.VERSION_CODE);
 

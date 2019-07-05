@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.R;
+import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
 import com.acn.biz.model.BaseInfo;
 import com.acn.biz.model.BindSucData;
@@ -33,6 +34,8 @@ public class BindActivity extends Activity {
         setContentView(R.layout.activity_bind);
 
         initData();
+        ACNAgent.init(this.getApplicationContext());
+
         if (isSDKRegisted()) {
             initView();
         }
@@ -118,19 +121,21 @@ public class BindActivity extends Activity {
 
     private boolean isSDKRegisted() {
         String errorInfo = "";
-        if (TextUtils.isEmpty(BaseInfo.getInstance().getAppId())) {
+        if (TextUtils.isEmpty(ACNSp.getDappId())) {
             errorInfo = SDKError.getMessage(SDKError.APP_ID_IS_EMPTY);
-        } else if (TextUtils.isEmpty(BaseInfo.getInstance().getSecretKey())) {
+        } else if (TextUtils.isEmpty(ACNSp.getDappSecretKey())) {
             errorInfo = SDKError.getMessage(SDKError.SECRET_KEY_IS_EMPTY);
-        } else if (TextUtils.isEmpty(BaseInfo.getInstance().getUserId())) {
+        } else if (TextUtils.isEmpty(ACNSp.getUserId())) {
             errorInfo = SDKError.getMessage(SDKError.USER_ID_IS_EMPTY);
         } else if (TextUtils.isEmpty(walletAddress)) {
             errorInfo = SDKError.getMessage(SDKError.WALLET_ADDRESS_IS_EMPTY);
-        } else if (ACNAgent.getClient() == null || ACNAgent.getClient().getRepo() == null) {
-            errorInfo = SDKError.getMessage(SDKError.NOT_INITIAL);
         }
+//        else if (ACNAgent.getClient() == null || ACNAgent.getClient().getRepo() == null) {
+//            errorInfo = SDKError.getMessage(SDKError.NOT_INITIAL);
+//        }
 
         if (TextUtils.isEmpty(errorInfo)) {
+            ACNAgent.register(ACNSp.getUserId(), null);
             return true;
         } else {
             SDKLogger.e(errorInfo);

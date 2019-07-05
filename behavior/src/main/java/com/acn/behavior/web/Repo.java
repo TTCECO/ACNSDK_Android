@@ -30,6 +30,7 @@ public class Repo {
             @Override
             public void success(final Map<String, String> stringStringMap) {
                 BizApi.getInstance().getBaseInfo(null);
+
                 if (callback != null) {
                     mainHandler.post(() -> callback.success(stringStringMap));
                 }
