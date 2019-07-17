@@ -3,5 +3,9 @@
     <string name="bind">연동</string>
     <string name="ttc_wallet">TTC Connect</string>
     <string name="loading">로드 중…</string>
-    <string name="get_ttc_after_bind">Receive %d TTC after binding</string>
+    <string name="get_ttc_after_bind">바인딩 후 %d TTC 수신</string>
+    <string name="please_upgrade_ttc_connect">TTC Connect를 최신 버전으로 업그레이드하십시오.</string>
+    <string name="please_install_ttc_connect">TTC Connect를 설치하십시오.</string>
+    <string name="integrate_acn_sdk_too_low">tata에 통합 된 ACN SDK가 너무 낮습니다.</string>
+    <string name="error_userid_is_empty">로그인하지 않은 사용자</string>
 </resources>

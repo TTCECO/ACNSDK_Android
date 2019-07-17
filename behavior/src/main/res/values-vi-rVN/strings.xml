@@ -3,5 +3,9 @@
     <string name="bind">Kết nối</string>
     <string name="ttc_wallet">TTC Connect</string>
     <string name="loading">Đang tải…</string>
-    <string name="get_ttc_after_bind">Receive %d TTC after binding</string>
+    <string name="get_ttc_after_bind">Nhận %d TTC sau khi ràng buộc</string>
+    <string name="please_upgrade_ttc_connect">Vui lòng nâng cấp TTC Connect lên phiên bản mới nhất</string>
+    <string name="please_install_ttc_connect">Vui lòng cài đặt Kết nối TTC</string>
+    <string name="integrate_acn_sdk_too_low">ACN SDK tích hợp trong %s quá thấp</string>
+    <string name="error_userid_is_empty">Người dùng chưa đăng nhập</string>
 </resources>

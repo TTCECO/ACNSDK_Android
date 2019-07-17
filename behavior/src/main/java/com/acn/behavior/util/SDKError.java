@@ -1,5 +1,8 @@
 package com.acn.behavior.util;
 
+import com.acn.behavior.ACNAgent;
+import com.acn.behavior.R;
+
 /**
  * Created by lwq on 2018/8/8
  */
@@ -21,7 +24,7 @@ public class SDKError {
     public static final int PRV_KEY_ERROR = 301;
     public static final int ACTION_ADDRESS_IS_EMPTY = 302;
 
-    public static String getMessage(int errorCode) {
+    public static String getMessage( int errorCode) {
         String msg = "";
         switch (errorCode) {
             case CONTEXT_IS_NULL:
@@ -36,7 +39,7 @@ public class SDKError {
                 msg = "SecretKey cannot be empty";
                 break;
             case USER_ID_IS_EMPTY:
-                msg = "userID cannot be empty";
+                msg = ACNAgent.getClient().getContext().getString(R.string.error_userid_is_empty);
                 break;
             case NOT_INITIAL:
                 msg = "SDK is not initiated, please initiate";

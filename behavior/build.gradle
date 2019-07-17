@@ -8,7 +8,7 @@ android {
     defaultConfig {
         minSdkVersion MIN_SDK_VERSION
         targetSdkVersion TARGET_SDK_VERSION
-        versionCode 2
+        versionCode SDK_VERSION_CODE as int
         versionName SDK_VERSION_NAME
     }
     buildTypes {
@@ -51,7 +51,7 @@ dependencies {
 
 //    implementation project(':biz')
 
-    implementation(name:'acn_sdk_biz_0.2.2.5',ext:'aar')
+    implementation(name:'acn_sdk_biz_0.2.2.13',ext:'aar')
 }
 
 repositories {
