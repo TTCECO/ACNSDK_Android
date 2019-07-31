@@ -17,7 +17,7 @@ public class Constants {
     public static final String AD_MOB_APP_ID = "com.google.android.gms.ads.APPLICATION_ID";
 
     public static final String ONE_QUINTILLION = "1000000000000000000";
-    public static final int ACTION_TYPE_MIN_VALUE = 101;  //最小值
+//    public static final int ACTION_TYPE_MIN_VALUE = 101;  //最小值
 
     public static final int BIND_STATE_UNBOUND = 0;  //未绑定
     public static final int BIND_STATE_BOUND = 1;    //绑定

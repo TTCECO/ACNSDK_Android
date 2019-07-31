@@ -39,8 +39,10 @@ class RegisterActivity : AppCompatActivity() {
                 userId = userIdTemp
 
                 var ts = map.get("addtime")
-                var date = SimpleDateFormat().format(Date((ts?.toLong())!!*1000))
-                main_msg_tv.append(", addtime:" + date)
+                if (ts != null) {
+                    var date = SimpleDateFormat().format(Date((ts.toLong()) * 1000))
+                    main_msg_tv.append(", addtime:" + date)
+                }
             }
 
             override fun error(msg: String) {

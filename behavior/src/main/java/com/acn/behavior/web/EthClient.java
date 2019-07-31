@@ -1,11 +1,11 @@
 package com.acn.behavior.web;
 
 import android.text.TextUtils;
-import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
 import com.acn.biz.model.BaseInfo;
+import java8.util.Optional;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class EthClient {
 
-    public static BigDecimal getBalance(String address) {
+    public static BigDecimal getBalance(String rpcUrl, String address) {
         BigDecimal res = null;
         Web3j web3 = null;
         if (TextUtils.isEmpty(address)) {
@@ -44,7 +44,7 @@ public class EthClient {
         try {
             String hexAddress = Utils.format2ETHAddress(address);
 
-            web3 = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
+            web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
@@ -119,51 +119,51 @@ public class EthClient {
 
 
     //查询代币冻结余额
-    public static BigDecimal getFrozenAvailableAmount(String fromAddress, String tokenAddress, String contractAddress) throws Exception{
-            String methodName = "getAccountBalance";
-            String errMsg = "";
-            try {
-                Web3j web3j = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
+    public static BigDecimal getFrozenAvailableAmount(String fromAddress, String tokenAddress, String contractAddress) throws Exception {
+        String methodName = "getAccountBalance";
+        String errMsg = "";
+        try {
+            Web3j web3j = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
 
-                ArrayList<Type> inputParameters = new ArrayList<>();
-                ArrayList<TypeReference<?>> outputParameters = new ArrayList<>();
-                inputParameters.add(new Address(Utils.format2ETHAddress(tokenAddress)));
-                inputParameters.add(new Address(Utils.format2ETHAddress(fromAddress)));
+            ArrayList<Type> inputParameters = new ArrayList<>();
+            ArrayList<TypeReference<?>> outputParameters = new ArrayList<>();
+            inputParameters.add(new Address(Utils.format2ETHAddress(tokenAddress)));
+            inputParameters.add(new Address(Utils.format2ETHAddress(fromAddress)));
 
-                TypeReference<Uint256> frozenType = new TypeReference<Uint256>() {
-                };
-                TypeReference<Uint256> balanceType = new TypeReference<Uint256>() {
-                };
-                outputParameters.add(frozenType);
-                outputParameters.add(balanceType);
+            TypeReference<Uint256> frozenType = new TypeReference<Uint256>() {
+            };
+            TypeReference<Uint256> balanceType = new TypeReference<Uint256>() {
+            };
+            outputParameters.add(frozenType);
+            outputParameters.add(balanceType);
 
-                Function function = new Function(methodName, inputParameters, outputParameters);
-                String data = FunctionEncoder.encode(function);
-                Transaction transaction = Transaction.createEthCallTransaction(Utils.format2ETHAddress(fromAddress),
-                        contractAddress, data);
+            Function function = new Function(methodName, inputParameters, outputParameters);
+            String data = FunctionEncoder.encode(function);
+            Transaction transaction = Transaction.createEthCallTransaction(Utils.format2ETHAddress(fromAddress),
+                    contractAddress, data);
 
-                EthCall ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
-                if (ethCall.hasError()) {
-                    errMsg = ethCall.getError().getMessage();
-                } else {
-                    List<Type> results = FunctionReturnDecoder.decode(ethCall.getValue(),
-                            function.getOutputParameters());
+            EthCall ethCall = web3j.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get();
+            if (ethCall.hasError()) {
+                errMsg = ethCall.getError().getMessage();
+            } else {
+                List<Type> results = FunctionReturnDecoder.decode(ethCall.getValue(),
+                        function.getOutputParameters());
 
-                    if (results.size() >= 2) {
-                      BigInteger[]  balance = new BigInteger[2];
-                        balance[0] = (BigInteger) results.get(0).getValue();
-                        balance[1] = (BigInteger) results.get(1).getValue();
-                        BigDecimal res = new BigDecimal(balance[0].add(balance[1])).divide(new BigDecimal(Constants.ONE_QUINTILLION));
-                        return res;
-                    }
+                if (results.size() >= 2) {
+                    BigInteger[] balance = new BigInteger[2];
+                    balance[0] = (BigInteger) results.get(0).getValue();
+                    balance[1] = (BigInteger) results.get(1).getValue();
+                    BigDecimal res = new BigDecimal(balance[0].add(balance[1])).divide(new BigDecimal(Constants.ONE_QUINTILLION));
+                    return res;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
 //                errMsg = e.getMessage();
 //                LogUtils.INSTANCE.e(errMsg);
-            }
-            return null;
+        }
+        return null;
 
 //            if (handler == null) {
 //                return;
@@ -191,13 +191,11 @@ public class EthClient {
             Web3j web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(hexFrom,
                     DefaultBlockParameterName.LATEST).send();
-            if (ethGetTransactionCount != null) {
-                return ethGetTransactionCount.getTransactionCount();
-            }
+            return ethGetTransactionCount.getTransactionCount();
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
-        return BigInteger.ZERO;
     }
 
     /**
@@ -211,7 +209,8 @@ public class EthClient {
      * @throws IOException
      */
     public static String sendTransaction(String rpcUrl, String from, String to, String fromPrivateKey,
-                                         String gasPrice, int gasLimit, String data) {
+                                         String gasPrice, int gasLimit, String data) throws Exception {
+
 
         if (TextUtils.isEmpty(fromPrivateKey)) {
             SDKLogger.e("send transaction: fromPrivateKey is empty");
@@ -226,16 +225,15 @@ public class EthClient {
             String dataHex = Utils.stringToHex(data);
             Web3j web3 = null;
             BigInteger nonce = null;
-            BigInteger nextNonce = ACNSp.getNextNonce();
+//            BigInteger nextNonce = ACNSp.getNextNonce();
             Credentials credentials = null;
 
             credentials = Credentials.create(hexPrivateKey);
             web3 = Web3j.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, hexFrom);
-            if (nonce.compareTo(nextNonce) <= 0) {
-                nonce = nextNonce;  //nonce从0开始
-            }
-            SDKLogger.d("send transaction, nonce=" + nonce);
+//            if (nonce.compareTo(nextNonce) <= 0) {
+//                nonce = nextNonce;  //nonce从0开始
+//            }
 
             // create our transaction
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
@@ -249,30 +247,38 @@ public class EthClient {
                     SDKLogger.e(ethSendTransaction.getError().getMessage());
                 } else {
                     String transactionHash = ethSendTransaction.getTransactionHash();
-                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
+                    SDKLogger.d("send transaction, nonce=" + nonce + ",hash=" + transactionHash);
+
+//                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     return transactionHash;
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            SDKLogger.e(e.getMessage());
+            throw e;
         }
         return null;
     }
 
-    public static boolean isTransactionSuccess(String rpcUrl, String hash) {
+    public static boolean isTransactionSuccess(String rpcUrl, String hash) throws Exception {
         try {
+            String hexHash = Utils.format2ETHAddress(hash);
             Web3j web3 = Web3j.build(new HttpService(rpcUrl));
-            EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hash).send();
+            EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
             if (ethGetTransactionReceipt != null) {
-                TransactionReceipt transactionReceipt = ethGetTransactionReceipt.getTransactionReceipt().get();
-                if (transactionReceipt != null) {
-                    if ("0x1".equals(transactionReceipt.getStatus())) {
-                        return true;
+                Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
+                if (!receiptOptional.isEmpty()) {
+                    TransactionReceipt transactionReceipt = receiptOptional.get();
+                    if (transactionReceipt != null) {
+                        if ("0x1".equals(transactionReceipt.getStatus())) {
+                            return true;
+                        }
                     }
                 }
             }
         } catch (Exception e) {    //when testing, this exception occur
             e.printStackTrace();
+            throw e;
         }
 
         return false;

@@ -49,9 +49,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:17.2.0'
     implementation 'com.google.ads.mediation:facebook:5.4.0.0'
 
-//    implementation project(':biz')
+    implementation project(':biz')
 
-    implementation(name:'acn_sdk_biz_0.2.2.13',ext:'aar')
+//    implementation(name:'acn_sdk_biz_0.2.2.13',ext:'aar')
 }
 
 repositories {
