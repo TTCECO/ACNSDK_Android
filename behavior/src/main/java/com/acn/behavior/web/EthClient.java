@@ -1,7 +1,6 @@
 package com.acn.behavior.web;
 
 import android.text.TextUtils;
-import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
@@ -225,15 +224,15 @@ public class EthClient {
             String dataHex = Utils.stringToHex(data);
             Web3j web3 = null;
             BigInteger nonce = null;
-            BigInteger nextNonce = ACNSp.getNextNonce();
+//            BigInteger nextNonce = ACNSp.getNextNonce();
             Credentials credentials = null;
 
             credentials = Credentials.create(hexPrivateKey);
             web3 = Web3j.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, hexFrom);
-            if (nonce.compareTo(nextNonce) <= 0) {
-                nonce = nextNonce;  //nonce从0开始
-            }
+//            if (nonce.compareTo(nextNonce) <= 0) {
+//                nonce = nextNonce;  //nonce从0开始
+//            }
             SDKLogger.d("send transaction, nonce=" + nonce);
 
             // create our transaction
@@ -248,7 +247,7 @@ public class EthClient {
                     SDKLogger.e(ethSendTransaction.getError().getMessage());
                 } else {
                     String transactionHash = ethSendTransaction.getTransactionHash();
-                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
+//                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     return transactionHash;
                 }
             }

@@ -14,7 +14,6 @@ import android.widget.Toast;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
-import com.acn.behavior.web.EthClient;
 import com.acn.behavior.web.Repo;
 import com.acn.biz.BizApi;
 import com.acn.biz.model.BaseInfo;
@@ -146,11 +145,11 @@ public class ACNAgent {
 
         SDKLogger.d("userId:" + userId);
 
-        try {
-            ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getUserId()));
-        } catch (Exception e) {
-            SDKLogger.e(e.getMessage());
-        }
+//        try {
+//            ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getUserId()));
+//        } catch (Exception e) {
+//            SDKLogger.e(e.getMessage());
+//        }
     }
 
     public static void unregister() {

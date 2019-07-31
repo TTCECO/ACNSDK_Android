@@ -162,18 +162,19 @@ public class Repo {
 
         ACNAgent.getClient().getEventExecutorService().execute(() -> {
             long timestamp = behaviorTime;
-            if (timestamp <= 0) {
-                timestamp = System.currentTimeMillis();
-            }
+
 
             String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
             String data = Utils.addHash2Ufo1OplogMd5(hash);
             String txHash = null;
             try {
 
+                if (timestamp <= 0) {
+                    timestamp = System.currentTimeMillis();
 
-                //在发送之前，先存数据库，以防发送过程中崩溃
-                ACNAgent.getClient().getDbManager().add(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
+                    //在发送之前，先存数据库，以防发送过程中崩溃
+                    ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
+                }
 
                 txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
                         BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);

@@ -10,13 +10,13 @@ public class SDKLogger {
 
     public static void d(String msg) {
         if (ON) {
-            Log.e(TAG, msg);
+            Log.d(TAG, msg);
         }
     }
 
     public static void e(String msg) {
         if (ON) {
-            Log.d(TAG, msg);
+            Log.e(TAG, msg);
         }
     }
 
