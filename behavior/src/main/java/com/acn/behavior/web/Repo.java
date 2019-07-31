@@ -7,10 +7,7 @@ import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.db.BehaviorDBHelper;
-import com.acn.behavior.util.AlgorithmUtil;
-import com.acn.behavior.util.CommonType;
-import com.acn.behavior.util.Constants;
-import com.acn.behavior.util.Utils;
+import com.acn.behavior.util.*;
 import com.acn.biz.BizApi;
 import com.acn.biz.BizCallback;
 import com.acn.biz.model.BaseInfo;
@@ -164,17 +161,20 @@ public class Repo {
             long timestamp = behaviorTime;
 
 
+            SDKLogger.d("before send transaction, extra=" + extra);
+
+
             String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
             String data = Utils.addHash2Ufo1OplogMd5(hash);
             String txHash = null;
             try {
 
-                if (timestamp <= 0) {
-                    timestamp = System.currentTimeMillis();
-
-                    //在发送之前，先存数据库，以防发送过程中崩溃
-                    ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
-                }
+//                if (timestamp <= 0) {
+//                    timestamp = System.currentTimeMillis();
+//
+//                    //在发送之前，先存数据库，以防发送过程中崩溃
+//                    ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
+//                }
 
                 txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
                         BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);

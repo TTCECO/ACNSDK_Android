@@ -122,10 +122,15 @@ public class ACNAgent {
             BaseInfo.getInstance().clear();
         }
 
+        if (!TextUtils.isEmpty(appId)) {
+            ACNSp.setDappId(appId);
+        }
 
-        ACNSp.setDappId(appId);
+        if (!TextUtils.isEmpty(secretKey)) {
+            ACNSp.setDappSecretKey(secretKey);
+        }
+
         ACNSp.setUserId(userId);
-        ACNSp.setDappSecretKey(secretKey);
 
         BizApi.getInstance().init(appId, secretKey, userId, BuildConfig.VERSION_CODE);
 
@@ -323,9 +328,12 @@ public class ACNAgent {
 //            SDKLogger.e(SDKError.getMessage(errCode));
 //            return errCode;
 //        }
-        repo().onEvent(behaviorType, extra, 0);
+//        repo().onEvent(behaviorType, extra, 0);
 
-        client.checkSchedule();
+        long timestamp = System.currentTimeMillis();
+
+        //先存数据库，定时发送到链上
+        ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, null, 0, 0);
 
         return errCode;
     }

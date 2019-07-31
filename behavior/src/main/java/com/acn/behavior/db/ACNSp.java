@@ -26,7 +26,8 @@ public class ACNSp {
     }
 
     public static void clear() {
-        editor.remove(KEY_USER_ID).remove(KEY_DAPP_ID).remove(KEY_DAPP_SECRET_KEY).remove(LAST_OPEN_MS).apply();
+        //appid， secretKey不清除
+        editor.remove(KEY_USER_ID).remove(LAST_OPEN_MS).apply();
     }
 
 

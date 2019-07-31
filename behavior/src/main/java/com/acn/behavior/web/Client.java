@@ -47,9 +47,9 @@ public class Client {
         scheduledFuture = Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                SDKLogger.d("execute query database");
                 try {
                     List<BehaviorModel> models = dbManager.getAll(BaseInfo.getInstance().getUserId());
+                    SDKLogger.d("behavior count in db is " + models.size());
 
                     if (models != null && models.size() > 0) {
                         BehaviorModel m = models.get(0);
@@ -64,7 +64,7 @@ public class Client {
                     e.printStackTrace();
                 }
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 30, TimeUnit.SECONDS);
         if (ProcessUtil.isMainProcess(context)) {
             registerReceiver();
         } else {
@@ -87,12 +87,6 @@ public class Client {
 
     public BehaviorDBManager getDbManager() {
         return dbManager;
-    }
-
-    public void checkSchedule() {
-        if (scheduledFuture == null) {
-
-        }
     }
 
     public ScheduledFuture<?> getScheduledFuture() {

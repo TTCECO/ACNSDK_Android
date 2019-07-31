@@ -209,7 +209,8 @@ public class EthClient {
      * @throws IOException
      */
     public static String sendTransaction(String rpcUrl, String from, String to, String fromPrivateKey,
-                                         String gasPrice, int gasLimit, String data) throws  Exception{
+                                         String gasPrice, int gasLimit, String data) throws Exception {
+
 
         if (TextUtils.isEmpty(fromPrivateKey)) {
             SDKLogger.e("send transaction: fromPrivateKey is empty");
@@ -233,7 +234,6 @@ public class EthClient {
 //            if (nonce.compareTo(nextNonce) <= 0) {
 //                nonce = nextNonce;  //nonce从0开始
 //            }
-            SDKLogger.d("send transaction, nonce=" + nonce);
 
             // create our transaction
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
@@ -247,13 +247,15 @@ public class EthClient {
                     SDKLogger.e(ethSendTransaction.getError().getMessage());
                 } else {
                     String transactionHash = ethSendTransaction.getTransactionHash();
+                    SDKLogger.d("send transaction, nonce=" + nonce + ",hash=" + transactionHash);
+
 //                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     return transactionHash;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw  e;
+            throw e;
         }
         return null;
     }
@@ -276,7 +278,7 @@ public class EthClient {
             }
         } catch (Exception e) {    //when testing, this exception occur
             e.printStackTrace();
-            throw  e;
+            throw e;
         }
 
         return false;
