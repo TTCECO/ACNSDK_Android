@@ -42,10 +42,19 @@
 
         <meta-data
                 android:name="ACN_DAPP_ID"
-                android:value="SDKTest"/>
+                android:value="tataUFO"/>
         <meta-data
                 android:name="ACN_DAPP_SECRET_KEY"
                 android:value="9d1990b8fc9cf1328d88af73b8f89e4d"/>
+
+
+        <!--sdktest-->
+        <!--<meta-data-->
+                <!--android:name="ACN_DAPP_ID"-->
+                <!--android:value="SDKTest"/>-->
+        <!--<meta-data-->
+                <!--android:name="ACN_DAPP_SECRET_KEY"-->
+                <!--android:value="9d1990b8fc9cf1328d88af73b8f89e4d"/>-->
 
         <!-- 广告需要添加 -->
         <!-- add it if advertise -->

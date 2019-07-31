@@ -129,3 +129,5 @@
 -keep class com.igexin.** { *; }
 -keep class org.json.** { *; }
 
+-keep class com.acn.behavior.** {*;}
+-keep class com.acn.behavior.**
