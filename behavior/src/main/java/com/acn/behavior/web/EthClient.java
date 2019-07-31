@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class EthClient {
 
-    public static BigDecimal getBalance(String address) {
+    public static BigDecimal getBalance(String rpcUrl, String address) {
         BigDecimal res = null;
         Web3j web3 = null;
         if (TextUtils.isEmpty(address)) {
@@ -44,7 +44,7 @@ public class EthClient {
         try {
             String hexAddress = Utils.format2ETHAddress(address);
 
-            web3 = Web3j.build(new HttpService(BaseInfo.getInstance().getMainChainRPCUrl()));
+            web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
             BigInteger balance = send.getBalance();  //Wei
             res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
@@ -254,7 +254,7 @@ public class EthClient {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            SDKLogger.e(e.getMessage());
             throw e;
         }
         return null;

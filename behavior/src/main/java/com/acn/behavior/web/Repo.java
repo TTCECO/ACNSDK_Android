@@ -150,11 +150,11 @@ public class Repo {
 
     //behaviorTime:<=0 则获取当前时间
     public void onEvent(int behaviorType, String extra, long behaviorTime) {
-        if (behaviorType == CommonType.OPEN_DAPP) {
-            if (!isNeedUploadOpenBehavior()) {
-                return;
-            }
-        }
+//        if (behaviorType == CommonType.OPEN_DAPP) {
+//            if (!isNeedUploadOpenBehavior()) {
+//                return;
+//            }
+//        }
 
 
         ACNAgent.getClient().getEventExecutorService().execute(() -> {
@@ -207,10 +207,5 @@ public class Repo {
 
     }
 
-    private boolean isNeedUploadOpenBehavior() {
-        long lastOpenDay = ACNSp.getLastOpenTimestamp() / Constants.ONE_DAY_MILLISECOND;
-        long currentDay = System.currentTimeMillis() / Constants.ONE_DAY_MILLISECOND;
-        return currentDay > lastOpenDay;
-    }
 
 }

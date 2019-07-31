@@ -140,7 +140,7 @@ public class ACNAgent {
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
         BizApi.getInstance().updateUser(info, null);
 
-        repo().registerUser(callback);
+        repo().registerUser(callback);   //会调用getBaseInfo()
         client.retry();
 
         bindReceiver = new BindReceiver();
