@@ -8,11 +8,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.widget.Toast;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
+import com.acn.behavior.web.EthClient;
 import com.acn.behavior.web.Repo;
 import com.acn.biz.BizApi;
 import com.acn.biz.model.BaseInfo;
@@ -79,6 +81,7 @@ public class ACNAgent {
 
     /**
      * when the user register in dapp, pls call it
+     * when open dapp, must call it
      *
      * @param userId
      * @param callback
@@ -142,6 +145,12 @@ public class ACNAgent {
         client.getContext().registerReceiver(bindReceiver, filter);
 
         SDKLogger.d("userId:" + userId);
+
+        try {
+            ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getUserId()));
+        } catch (Exception e) {
+            SDKLogger.e(e.getMessage());
+        }
     }
 
     public static void unregister() {
@@ -191,7 +200,7 @@ public class ACNAgent {
                 isInstalledTTCConnect = true;
                 if (pi.versionCode < 21) {
                     Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     activity.startActivityForResult(intent, reqCode);
                 }
                 break;
@@ -199,6 +208,37 @@ public class ACNAgent {
         }
         if (!isInstalledTTCConnect) {
             Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //user can get result on OnActivityResult(), for fragment
+    public static void bindApp(Fragment fragment, String appIconUrl, int reqCode) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
+        intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
+        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
+        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
+        intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
+        intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
+
+        Activity activity = fragment.getActivity();
+        if (activity != null) {
+            PackageManager pm = activity.getPackageManager();
+            List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
+            boolean isInstalledTTCConnect = false;
+            for (PackageInfo pi : installedPackages) {
+                if ("com.ttc.wallet".equalsIgnoreCase(pi.packageName)) {
+                    isInstalledTTCConnect = true;
+                    if (pi.versionCode < 21) {
+                        Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
+                    } else {
+                        fragment.startActivityForResult(intent, reqCode);
+                    }
+                    break;
+                }
+            }
+            if (!isInstalledTTCConnect) {
+                Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -268,7 +308,7 @@ public class ACNAgent {
     }
 
     /**
-     * @param behaviorType 用户自定义，请传大于100的数；the num must be greater than 100, if u custom it
+     * @param behaviorType login type is defined in CommonType.java,
      * @param extra        json串; json string
      * @return
      */
@@ -279,12 +319,15 @@ public class ACNAgent {
         }
 
         SDKLogger.d("behaviorType:" + behaviorType + ", extra:" + extra);
-        if (behaviorType < Constants.ACTION_TYPE_MIN_VALUE) {
-            errCode = SDKError.BEHAVIOR_TYPE_IS_SMALLER;
-            SDKLogger.e(SDKError.getMessage(errCode));
-            return errCode;
-        }
-        repo().onEvent(behaviorType, extra);
+//        if (behaviorType < Constants.ACTION_TYPE_MIN_VALUE) {
+//            errCode = SDKError.BEHAVIOR_TYPE_IS_SMALLER;
+//            SDKLogger.e(SDKError.getMessage(errCode));
+//            return errCode;
+//        }
+        repo().onEvent(behaviorType, extra, 0);
+
+        client.checkSchedule();
+
         return errCode;
     }
 

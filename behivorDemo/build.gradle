@@ -76,12 +76,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //project
-//    implementation project(':behavior')
+    implementation project(':behavior')
 
     //aar
-    implementation 'org.web3j:core:4.2.0-android'
-    implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
-    implementation 'com.google.android.gms:play-services-ads:17.2.0'
-    implementation(name: 'acn_sdk_biz_0.2.2.13', ext: 'aar')
-    implementation(name: 'acn_sdk_0.2.2.13', ext: 'aar')
+//    implementation 'org.web3j:core:4.2.0-android'
+//    implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
+//    implementation 'com.google.android.gms:play-services-ads:17.2.0'
+//    implementation(name: 'acn_sdk_biz_0.2.2.13', ext: 'aar')
+//    implementation(name: 'acn_sdk_0.2.2.13', ext: 'aar')
 }

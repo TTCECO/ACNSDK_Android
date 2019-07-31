@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.db.ACNSp;
+import com.acn.behavior.db.BehaviorDBHelper;
 import com.acn.behavior.util.AlgorithmUtil;
 import com.acn.behavior.util.CommonType;
 import com.acn.behavior.util.Constants;
@@ -150,33 +151,55 @@ public class Repo {
         });
     }
 
-    public void onEvent(int behaviorType, String extra) {
+    //behaviorTime:<=0 则获取当前时间
+    public void onEvent(int behaviorType, String extra, long behaviorTime) {
         if (behaviorType == CommonType.OPEN_DAPP) {
             if (!isNeedUploadOpenBehavior()) {
                 return;
             }
         }
+
+
         ACNAgent.getClient().getEventExecutorService().execute(() -> {
-            long timestamp = System.currentTimeMillis();
+            long timestamp = behaviorTime;
+            if (timestamp <= 0) {
+                timestamp = System.currentTimeMillis();
+            }
+
             String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
             String data = Utils.addHash2Ufo1OplogMd5(hash);
-            String txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
-                    BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
+            String txHash = null;
+            try {
 
-            if (!TextUtils.isEmpty(txHash)) {
-                BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
-                    @Override
-                    public void success(String s) {
-                        if (behaviorType == CommonType.OPEN_DAPP) {
-                            ACNSp.setLastOpenTimestamp(System.currentTimeMillis());
+
+                //在发送之前，先存数据库，以防发送过程中崩溃
+                ACNAgent.getClient().getDbManager().add(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
+
+                txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
+                        BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
+
+                //生成hash后，再存一次，更新
+//                ACNAgent.getClient().getDbManager().add(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
+                ACNAgent.getClient().getDbManager().updateString(String.valueOf(timestamp), BehaviorDBHelper.HASH, txHash);
+
+
+                if (!TextUtils.isEmpty(txHash)) {
+                    BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
+                        @Override
+                        public void success(String s) {
+                            if (behaviorType == CommonType.OPEN_DAPP) {
+                                ACNSp.setLastOpenTimestamp(System.currentTimeMillis());
+                            }
                         }
-                    }
 
-                    @Override
-                    public void error(String msg) {
+                        @Override
+                        public void error(String msg) {
 
-                    }
-                });
+                        }
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
         });
