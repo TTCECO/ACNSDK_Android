@@ -52,29 +52,29 @@ public class Client {
             @Override
             public void run() {
                 try {
-                    List<BehaviorModel> models = dbManager.getAll(BaseInfo.getInstance().getUserId());
+                    List<BehaviorModel> models = dbManager.getAllASCTimestamp(BaseInfo.getInstance().getUserId());
                     if (models != null) {
                         SDKLogger.d("behavior count in db is " + models.size());
                     }
 
                     if (models != null && models.size() > 0) {
                         //先从最老的开始
-                        BehaviorModel m = models.get(models.size() - 1);
+                        BehaviorModel m = models.get(0);
 
                         if (m.behaviorType == CommonType.OPEN_DAPP) {
                             if (!isNeedUploadOpenBehavior()) {
-                               dbManager.delete(m.timestamp);
-                               SDKLogger.d("has login, delete it");
-                               return;
+                                dbManager.delete(m.timestamp);
+                                SDKLogger.d("has login, delete it. " + m.timestamp);
+                                return;
                             }
                         }
 
                         if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
                             dbManager.delete(m.timestamp);
-                            SDKLogger.d("has written in block chain, delete");
+                            SDKLogger.d("has written in block chain, delete. " + m.timestamp);
                         } else {
                             repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
-                            SDKLogger.d("write to block chain");
+                            SDKLogger.d("write to block chain. " + m.timestamp);
                         }
                     }
                 } catch (Exception e) {
@@ -134,7 +134,7 @@ public class Client {
             NetworkInfo networkInfo = cm.getActiveNetworkInfo();
             boolean connected = networkInfo != null && networkInfo.isConnected();
             if (connected) {
-                SDKLogger.e("net connected");
+                SDKLogger.d("network connected");
             }
         }
     }

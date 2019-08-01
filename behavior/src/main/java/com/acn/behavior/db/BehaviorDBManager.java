@@ -139,14 +139,14 @@ public class BehaviorDBManager {
     }
 
 
-    public List<BehaviorModel> getAll(String fromUserId) {
+    public List<BehaviorModel> getAllASCTimestamp(String fromUserId) {
         List<BehaviorModel> res = new ArrayList<>();
 
         String[] column = new String[]{BehaviorDBHelper.FROM_USER_ID};
         String[] values = new String[]{fromUserId};
         String selection = BehaviorDBHelper.FROM_USER_ID + " = ? ";
 
-        String query = "select * from " + BehaviorDBHelper.TABLE_NAME + " where " + BehaviorDBHelper.FROM_USER_ID + " = " + "\"" + fromUserId + "\"";
+        String query = "select * from " + BehaviorDBHelper.TABLE_NAME + " where " + BehaviorDBHelper.FROM_USER_ID + " = " + "\"" + fromUserId + "\" " + "order by "+ BehaviorDBHelper.TIMESTAMP + " asc";
         try {
             db.beginTransaction();
 //            Cursor cursor = db.query(BehaviorDBHelper.TABLE_NAME, column, selection, values, null, null, null);
