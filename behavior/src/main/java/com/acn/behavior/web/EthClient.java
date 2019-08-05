@@ -244,7 +244,8 @@ public class EthClient {
             EthSendTransaction ethSendTransaction = web3.ethSendRawTransaction(hexValue).send();
             if (ethSendTransaction != null) {
                 if (ethSendTransaction.hasError()) {
-                    SDKLogger.e(ethSendTransaction.getError().getMessage());
+                    String errMsg = ethSendTransaction.getError().getMessage();
+                    SDKLogger.e(errMsg);
                 } else {
                     String transactionHash = ethSendTransaction.getTransactionHash();
                     SDKLogger.d("send transaction, nonce=" + nonce + ",hash=" + transactionHash);
