@@ -27,6 +27,7 @@ public class Repo {
         BizApi.getInstance().userRegister(new BizCallback<Map<String, String>>() {
             @Override
             public void success(final Map<String, String> stringStringMap) {
+                SDKLogger.d("register suc.");
                 BizApi.getInstance().getBaseInfo(null);
 
                 if (callback != null) {
@@ -37,6 +38,7 @@ public class Repo {
             @Override
             public void error(final String msg) {
 
+                SDKLogger.e("register error." + msg);
                 if (callback != null) {
                     mainHandler.post(() -> callback.error(msg));
                 }
@@ -176,7 +178,7 @@ public class Repo {
 //                    ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
 //                }
 
-                txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getIndividualAddress(),
+                txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getDappActionAddress(),
                         BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
 
                 //生成hash后，再存一次，更新
