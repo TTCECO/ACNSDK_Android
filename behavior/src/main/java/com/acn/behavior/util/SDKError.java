@@ -23,6 +23,7 @@ public class SDKError {
     public static final int TRANSACTION_ERROR = 300;
     public static final int PRV_KEY_ERROR = 301;
     public static final int ACTION_ADDRESS_IS_EMPTY = 302;
+    public static final int TTC_CONNECT_NOT_INSTALLED = 303;   //wallet not installed
 
     public static String getMessage( int errorCode) {
         String msg = "";

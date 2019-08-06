@@ -187,36 +187,20 @@ public class ACNAgent {
         repo().updateUser(info, callback);
     }
 
-    //user can get result on OnActivityResult()
-    public static void bindApp(Activity activity, String appIconUrl, int reqCode) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
-        intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
-        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
-        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
-        intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
-        intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
-
-        PackageManager pm = activity.getPackageManager();
-        List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
-        boolean isInstalledTTCConnect = false;
-        for (PackageInfo pi : installedPackages) {
-            if ("com.ttc.wallet".equalsIgnoreCase(pi.packageName)) {
-                isInstalledTTCConnect = true;
-                if (pi.versionCode < 21) {
-                    Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
-                } else {
-                    activity.startActivityForResult(intent, reqCode);
-                }
-                break;
-            }
-        }
-        if (!isInstalledTTCConnect) {
-            Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
-        }
-    }
 
     //user can get result on OnActivityResult(), for fragment
-    public static void bindApp(Fragment fragment, String appIconUrl, int reqCode) {
+    //return errorCode. you can get error meassage by calling SDKError.getMessage(errCode)
+    //if not installed, you can get Wallet Download Url from Constant.java
+    public static int bindApp(Object object, String appIconUrl, int reqCode) {
+        int errCode = checkServerClientUserId();
+        if (errCode > 0) {
+            return errCode;
+        }
+
+        if (!(object instanceof Activity) && !(object instanceof Fragment)) {
+            return SDKError.CONTEXT_IS_NULL;  //todo lwq add error code
+        }
+
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
         intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
@@ -224,7 +208,13 @@ public class ACNAgent {
         intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
         intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
 
-        Activity activity = fragment.getActivity();
+        Activity activity = null;
+        if (object instanceof Activity) {
+            activity = (Activity) object;
+        } else {
+            activity = ((Fragment) object).getActivity();
+        }
+
         if (activity != null) {
             PackageManager pm = activity.getPackageManager();
             List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
@@ -235,15 +225,22 @@ public class ACNAgent {
                     if (pi.versionCode < 21) {
                         Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
                     } else {
-                        fragment.startActivityForResult(intent, reqCode);
+                        if (object instanceof Activity) {
+                            ((Activity) object).startActivityForResult(intent, reqCode);
+                        } else {
+                            ((Fragment) object).startActivityForResult(intent, reqCode);
+                        }
                     }
                     break;
                 }
             }
+
             if (!isInstalledTTCConnect) {
-                Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
+//                Constants.TTC_CONNECT_DOWNLOAD_URL
+                return SDKError.TTC_CONNECT_NOT_INSTALLED;
             }
         }
+        return 0;
     }
 
     /**

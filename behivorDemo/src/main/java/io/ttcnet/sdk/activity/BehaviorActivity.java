@@ -140,6 +140,7 @@ public class BehaviorActivity extends AppCompatActivity {
                         boolean isBindSuc = data.getBooleanExtra(ACNKey.BIND_STATE, false);
                         int reward = data.getIntExtra(ACNKey.BIND_REWARD, 0);
                         String rewardSymbol = data.getStringExtra(ACNKey.BIND_REWARD_SYMBOL);
+                        String walletAddress = data.getStringExtra(ACNKey.WALLET_ADDRESS);
                         String errMsg = data.getStringExtra(ACNKey.ERROR_MSG);
                         if (isBindSuc) {
                             tvMsg.setText("bind success.");

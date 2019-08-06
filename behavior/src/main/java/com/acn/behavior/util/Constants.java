@@ -1,11 +1,8 @@
 package com.acn.behavior.util;
 
 public class Constants {
-//    public static String MAIN_CHAIN_RPC_URL = "https://www.ttcnet.io/";
-//    public static String SIDE_CHAIN_RPC_URL = "https://www.ttcnet.io/";
-//
-//    public static String TEST_MAIN_CHAIN_RPC_URL = "http://test.ttcnet.io/";
-//    public static String TEST_SIDE_CHAIN_RPC_URL = "http://test.ttcnet.io/";
+
+    public static final String TTC_CONNECT_DOWNLOAD_URL = "https://wallet.ttc.eco/wallet/download/android";
 
     public static final String SIGN_TYPE = "MD5";
     public static final String DATA_PREFIX = "ufo:1:oplog:md5:";
