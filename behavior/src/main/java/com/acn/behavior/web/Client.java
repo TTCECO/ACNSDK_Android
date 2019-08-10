@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.db.BehaviorDBManager;
 import com.acn.behavior.model.BehaviorModel;
-import com.acn.behavior.util.CommonType;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.ProcessUtil;
 import com.acn.behavior.util.SDKLogger;
@@ -36,52 +35,45 @@ public class Client {
     private Handler handler;
     private ExecutorService eventExecutorService;
     private BehaviorDBManager dbManager;
-
-    //    private ScheduledExecutorService sendDBService;
     private ScheduledFuture<?> scheduledFuture;
 
     public Client(Context context) {
         this.context = context.getApplicationContext();
         handler = new Handler(Looper.getMainLooper());
-        eventExecutorService = Executors.newFixedThreadPool(5);
+        eventExecutorService = Executors.newFixedThreadPool(2);
 
         repo = new Repo();
         dbManager = new BehaviorDBManager(context);
         SDKLogger.d("create schedule thread");
+
         scheduledFuture = Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 try {
-                    List<BehaviorModel> models = dbManager.getAllASCTimestamp(BaseInfo.getInstance().getUserId());
-                    if (models != null) {
-                        SDKLogger.d("behavior count in db is " + models.size());
-                    }
+                    ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress()));
 
-                    if (models != null && models.size() > 0) {
-                        //先从最老的开始
-                        BehaviorModel m = models.get(0);
+                    List<BehaviorModel> allList = dbManager.getAll(BaseInfo.getInstance().getUserId());
+                    if (allList != null) {
 
-                        if (m.behaviorType == CommonType.OPEN_DAPP) {
-                            if (!isNeedUploadOpenBehavior()) {
-                                dbManager.delete(m.timestamp);
-                                SDKLogger.d("has login, delete it. " + m.timestamp);
-                                return;
+                        for (BehaviorModel m : allList) {
+                            if (System.currentTimeMillis() > Long.valueOf(m.timestamp) + 60 * 1000) {
+                                if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
+                                    dbManager.delete(m.timestamp);
+                                    SDKLogger.d("has written in block chain, delete. " + m.timestamp);
+                                } else {
+                                    repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
+                                    SDKLogger.d("write to block chain. " + m.timestamp);
+                                }
                             }
-                        }
-
-                        if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
-                            dbManager.delete(m.timestamp);
-                            SDKLogger.d("has written in block chain, delete. " + m.timestamp);
-                        } else {
-                            repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
-                            SDKLogger.d("write to block chain. " + m.timestamp);
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 30, TimeUnit.SECONDS);
+        }, 0, 1, TimeUnit.MINUTES);
+
+
         if (ProcessUtil.isMainProcess(context)) {
             registerReceiver();
         } else {
@@ -104,10 +96,6 @@ public class Client {
 
     public BehaviorDBManager getDbManager() {
         return dbManager;
-    }
-
-    public ScheduledFuture<?> getScheduledFuture() {
-        return scheduledFuture;
     }
 
     private void registerReceiver() {
@@ -145,4 +133,7 @@ public class Client {
         return currentDay > lastOpenDay;
     }
 
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
+    }
 }

@@ -117,7 +117,6 @@
                         android:id="@+id/like_btn"
                         style="@style/BtnStyle"
                         android:layout_width="wrap_content"
-                        android:onClick="login"
                         android:text="Like"
                         app:layout_flexGrow="1"/>
 
@@ -125,10 +124,45 @@
                         android:id="@+id/comment_btn"
                         style="@style/BtnStyle"
                         android:layout_width="wrap_content"
-                        android:onClick="login"
                         android:text="Comment"
                         app:layout_flexGrow="1"/>
 
+                <Button
+                        android:id="@+id/behavior1"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=1"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        android:id="@+id/behavior2"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=2"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/behavior3"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=3"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/behavior4"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=4"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        android:id="@+id/behavior5"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=5"
+                        app:layout_flexGrow="1"/>
                 <Button
                         style="@style/BtnStyle"
                         android:layout_width="wrap_content"

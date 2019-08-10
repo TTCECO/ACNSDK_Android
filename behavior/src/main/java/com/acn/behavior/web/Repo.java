@@ -7,13 +7,18 @@ import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.db.BehaviorDBHelper;
-import com.acn.behavior.util.*;
+import com.acn.behavior.model.BehaviorModel;
+import com.acn.behavior.util.AlgorithmUtil;
+import com.acn.behavior.util.CommonType;
+import com.acn.behavior.util.SDKLogger;
+import com.acn.behavior.util.Utils;
 import com.acn.biz.BizApi;
 import com.acn.biz.BizCallback;
 import com.acn.biz.model.BaseInfo;
 import com.acn.biz.model.BindSucData;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -21,6 +26,7 @@ import java.util.Map;
  */
 public class Repo {
 
+    private static ArrayList<BehaviorModel> behaviorModelArrayList = new ArrayList<>();
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public void registerUser(final IManager.UserInfoCallback callback) {
@@ -28,7 +34,28 @@ public class Repo {
             @Override
             public void success(final Map<String, String> stringStringMap) {
                 SDKLogger.d("register suc.");
-                BizApi.getInstance().getBaseInfo(null);
+                BizApi.getInstance().getBaseInfo(new BizCallback<BaseInfo>() {
+                    @Override
+                    public void success(BaseInfo baseInfo) {
+
+                        //have get slaveChain url
+                        ACNAgent.getClient().getEventExecutorService().submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress()));
+                                } catch (Exception e) {
+                                    SDKLogger.e(e.getMessage());
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void error(String msg) {
+
+                    }
+                });
 
                 if (callback != null) {
                     mainHandler.post(() -> callback.success(stringStringMap));
@@ -151,63 +178,66 @@ public class Repo {
     }
 
     //behaviorTime:<=0 则获取当前时间
-    public void onEvent(int behaviorType, String extra, long behaviorTime) {
-//        if (behaviorType == CommonType.OPEN_DAPP) {
-//            if (!isNeedUploadOpenBehavior()) {
-//                return;
-//            }
-//        }
-
-
-        ACNAgent.getClient().getEventExecutorService().execute(() -> {
-            long timestamp = behaviorTime;
-
-
-            SDKLogger.d("before send transaction, extra=" + extra);
-
-
-            String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
-            String data = Utils.addHash2Ufo1OplogMd5(hash);
-            String txHash = null;
-            try {
-
-//                if (timestamp <= 0) {
-//                    timestamp = System.currentTimeMillis();
-//
-//                    //在发送之前，先存数据库，以防发送过程中崩溃
-//                    ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
-//                }
-
-                txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getDappActionAddress(),
-                        BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
-
-                //生成hash后，再存一次，更新
-//                ACNAgent.getClient().getDbManager().add(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, txHash, 0, 0);
-                ACNAgent.getClient().getDbManager().updateString(String.valueOf(timestamp), BehaviorDBHelper.HASH, txHash);
-
-
-                if (!TextUtils.isEmpty(txHash)) {
-                    BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
-                        @Override
-                        public void success(String s) {
-                            if (behaviorType == CommonType.OPEN_DAPP) {
-                                ACNSp.setLastOpenTimestamp(System.currentTimeMillis());
-                            }
-                        }
-
-                        @Override
-                        public void error(String msg) {
-
-                        }
-                    });
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        });
-
+    //每次调用都用生成一个线程去写链，应该写链用一个线程
+    public void onEvent(int type, String content, long behaviorTime) {
+        BehaviorModel model = new BehaviorModel();
+        model.behaviorType = type;
+        model.extra = content;
+        model.timestamp = String.valueOf(behaviorTime);
+        behaviorModelArrayList.add(model);
     }
 
+
+    public void startSendTxThread(){
+        //生成hash后，再存一次，更新
+        Thread myThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!TextUtils.isEmpty(ACNSp.getUserId())) {
+                    try {
+                        if (behaviorModelArrayList.size() > 0) {
+                            BehaviorModel des = behaviorModelArrayList.get(0);
+                            int behaviorType = des.behaviorType;
+                            String extra = des.extra;
+                            long timestamp = Long.valueOf(des.timestamp);
+
+                            SDKLogger.d("before send transaction, extra=" + extra);
+
+                            String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
+                            String data = Utils.addHash2Ufo1OplogMd5(hash, behaviorType);
+                            String txHash = null;
+
+                            txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getDappActionAddress(),
+                                    BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
+                            behaviorModelArrayList.remove(des);
+
+
+                            //生成hash后，再存一次，更新
+                            ACNAgent.getClient().getDbManager().updateString(String.valueOf(timestamp), BehaviorDBHelper.HASH, txHash);
+
+                            if (!TextUtils.isEmpty(txHash)) {
+                                BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
+                                    @Override
+                                    public void success(String s) {
+                                        if (behaviorType == CommonType.OPEN_DAPP) {
+                                            ACNSp.setLastOpenTimestamp(System.currentTimeMillis());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void error(String msg) {
+
+                                    }
+                                });
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        myThread.start();
+    }
 
 }

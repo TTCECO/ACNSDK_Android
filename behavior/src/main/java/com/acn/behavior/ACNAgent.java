@@ -118,8 +118,9 @@ public class ACNAgent {
 
         String userIdSaved = BaseInfo.getInstance().getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
-            ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
-            BaseInfo.getInstance().clear();
+//            ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
+//            BaseInfo.getInstance().clear();
+            unregister();
         }
 
         if (!TextUtils.isEmpty(appId)) {
@@ -150,11 +151,7 @@ public class ACNAgent {
 
         SDKLogger.d("userId:" + userId);
 
-//        try {
-//            ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getUserId()));
-//        } catch (Exception e) {
-//            SDKLogger.e(e.getMessage());
-//        }
+        client.getRepo().startSendTxThread();
     }
 
     public static void unregister() {
@@ -166,7 +163,11 @@ public class ACNAgent {
                 bindReceiver = null;
             }
             SDKLogger.d("user unregister");
+
+            client.getScheduledFuture().cancel(true);
         }
+
+
     }
 
     /**
@@ -236,7 +237,6 @@ public class ACNAgent {
             }
 
             if (!isInstalledTTCConnect) {
-//                Constants.TTC_CONNECT_DOWNLOAD_URL
                 return SDKError.TTC_CONNECT_NOT_INSTALLED;
             }
         }
@@ -320,17 +320,12 @@ public class ACNAgent {
         }
 
         SDKLogger.d("behaviorType:" + behaviorType + ", extra:" + extra);
-//        if (behaviorType < Constants.ACTION_TYPE_MIN_VALUE) {
-//            errCode = SDKError.BEHAVIOR_TYPE_IS_SMALLER;
-//            SDKLogger.e(SDKError.getMessage(errCode));
-//            return errCode;
-//        }
-//        repo().onEvent(behaviorType, extra, 0);
 
         long timestamp = System.currentTimeMillis();
 
         //先存数据库，定时发送到链上
         ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, null, 0, 0);
+        repo().onEvent(behaviorType, extra, timestamp);
 
         return errCode;
     }

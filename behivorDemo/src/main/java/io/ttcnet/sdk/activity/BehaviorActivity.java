@@ -48,6 +48,11 @@ public class BehaviorActivity extends AppCompatActivity {
 //    private EditText etBehaviorExtra;
     private Button btnLike;
     private Button btnComment;
+    private Button btn1;
+    private Button btn2;
+    private Button btn3;
+    private Button btn4;
+    private Button btn5;
 
 
     @Override
@@ -70,6 +75,12 @@ public class BehaviorActivity extends AppCompatActivity {
 //        etBehaviorExtra = findViewById(R.id.main_behavior_extra);
         btnLike = findViewById(R.id.like_btn);
         btnComment = findViewById(R.id.comment_btn);
+        btn1 = findViewById(R.id.behavior1);
+        btn2 = findViewById(R.id.behavior2);
+        btn3 = findViewById(R.id.behavior3);
+        btn4 = findViewById(R.id.behavior4);
+        btn5 = findViewById(R.id.behavior5);
+
 
         btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +95,42 @@ public class BehaviorActivity extends AppCompatActivity {
                 behavior(CommonType.BEHAVIOR_COMMENT, "comment");
             }
         });
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                behavior(1, "1");
+            }
+        });
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                behavior(2, "2");
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                behavior(3, "3");
+            }
+        });
+
+        btn4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                behavior(4, "4");
+            }
+        });
+
+        btn5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                behavior(5, "5");
+            }
+        });
+
 
         btnLog.setOnClickListener(new View.OnClickListener() {
             @Override

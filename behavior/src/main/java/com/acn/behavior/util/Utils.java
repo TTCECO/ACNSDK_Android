@@ -111,7 +111,7 @@ public class Utils {
         return false;
     }
 
-    public static String getLocationCode( Context context) {
+    public static String getLocationCode(Context context) {
         Locale local = context.getResources().getConfiguration().locale;
         //local.getISO3Country():USA
         //local.getDisplayCountry():United States
@@ -119,18 +119,18 @@ public class Utils {
         return local.getCountry();
     }
 
-    public static String getClientId(){
+    public static String getClientId() {
         return Build.SERIAL;
     }
 
-    public static String format2ETHAddress(String ttcAddress)throws NullPointerException{
-        if (ttcAddress == null || ttcAddress .equals("") ) {
-            throw  new NullPointerException();
+    public static String format2ETHAddress(String ttcAddress) throws NullPointerException {
+        if (ttcAddress == null || ttcAddress.equals("")) {
+            throw new NullPointerException();
         }
 
         if (ttcAddress.startsWith("t") || ttcAddress.startsWith("T")) {
             return "0x" + ttcAddress.substring(2);
-        }else {
+        } else {
             return ttcAddress;
         }
     }
@@ -146,13 +146,12 @@ public class Utils {
     }
 
     /**
-     *
      * @param hash
-     * @return  the sample is : "ufo:1:oplog:md5:hash_value:appid"
+     * @return the sample is : "ufo:1:oplog:md5:hash_value:appid"
      */
-    public static String addHash2Ufo1OplogMd5(String hash) {
+    public static String addHash2Ufo1OplogMd5(String hash, int behaviorTye) {
         if (!TextUtils.isEmpty(hash)) {
-            return Constants.DATA_PREFIX + hash + ":" + BaseInfo.getInstance().getAppId();
+            return Constants.DATA_PREFIX + hash + ":" + BaseInfo.getInstance().getAppId() + ":" + behaviorTye;
         } else {
             return Constants.DATA_PREFIX + BaseInfo.getInstance().getAppId();
         }

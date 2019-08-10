@@ -1,6 +1,7 @@
 package com.acn.behavior.web;
 
 import android.text.TextUtils;
+import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
@@ -191,7 +192,9 @@ public class EthClient {
             Web3j web3 = Web3j.build(new HttpService(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(hexFrom,
                     DefaultBlockParameterName.LATEST).send();
-            return ethGetTransactionCount.getTransactionCount();
+            BigInteger count = ethGetTransactionCount.getTransactionCount();
+            SDKLogger.d("getTransactionCount:" + count);
+            return count;
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -225,15 +228,15 @@ public class EthClient {
             String dataHex = Utils.stringToHex(data);
             Web3j web3 = null;
             BigInteger nonce = null;
-//            BigInteger nextNonce = ACNSp.getNextNonce();
+            BigInteger nextNonce = ACNSp.getNextNonce();
             Credentials credentials = null;
 
             credentials = Credentials.create(hexPrivateKey);
             web3 = Web3j.build(new HttpService(rpcUrl));
             nonce = getNonce(rpcUrl, hexFrom);
-//            if (nonce.compareTo(nextNonce) <= 0) {
-//                nonce = nextNonce;  //nonce从0开始
-//            }
+            if (nonce.compareTo(nextNonce) <= 0) {
+                nonce = nextNonce;  //nonce从0开始
+            }
 
             // create our transaction
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
@@ -247,10 +250,10 @@ public class EthClient {
                     String errMsg = ethSendTransaction.getError().getMessage();
                     SDKLogger.e(errMsg);
                 } else {
+                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     String transactionHash = ethSendTransaction.getTransactionHash();
                     SDKLogger.d("send transaction, nonce=" + nonce + ",hash=" + transactionHash);
 
-//                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     return transactionHash;
                 }
             }

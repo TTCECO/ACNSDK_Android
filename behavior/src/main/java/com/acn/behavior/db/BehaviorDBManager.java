@@ -55,7 +55,7 @@ public class BehaviorDBManager {
             contentValues.put(BehaviorDBHelper.HASH, hash);
             contentValues.put(BehaviorDBHelper.TRY_COUNT, tryCount);
             contentValues.put(BehaviorDBHelper.STATE, state);
-            db.insert(BehaviorDBHelper.TABLE_NAME, null, contentValues);
+            long row = db.insert(BehaviorDBHelper.TABLE_NAME, null, contentValues);
 
 //            db.execSQL("insert into " + BehaviorDBHelper.TABLE_NAME + " (timestamp, fromUserId, behaviorType, extra, hash, tryCount, state) values ( " + timestamp + ", " + fromUserId + ", " + behaviorType + ", " + extra + ", " + hash + ", " + tryCount + ", " + state+ " )");
             db.setTransactionSuccessful();
@@ -88,19 +88,36 @@ public class BehaviorDBManager {
 //    }
 
     public void updateString(String timestamp, String key, String value) {
+        try {
 
-        ContentValues values = new ContentValues();
-        values.put(key, value);
-        String[] whereArgs = {timestamp};
-        db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
+
+            ContentValues values = new ContentValues();
+            values.put(key, value);
+            String[] whereArgs = {timestamp};
+            db.beginTransaction();
+            int res = db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
+            SDKLogger.d("update db res:" + res);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            db.endTransaction();
+        }
     }
 
     public void updateInt(String timestamp, String key, int value) {
-
-        ContentValues values = new ContentValues();
-        values.put(key, value);
-        String[] whereArgs = {timestamp};
-        db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
+        try {
+            ContentValues values = new ContentValues();
+            values.put(key, value);
+            String[] whereArgs = {timestamp};
+            db.beginTransaction();
+            db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            db.endTransaction();
+        }
     }
 
     public void delete(String timestamp) {
@@ -138,15 +155,17 @@ public class BehaviorDBManager {
         return model;
     }
 
-
-    public List<BehaviorModel> getAllASCTimestamp(String fromUserId) {
+    //获取没有hash值的记录，最多100条
+    public List<BehaviorModel> getAll(String fromUserId) {
         List<BehaviorModel> res = new ArrayList<>();
 
         String[] column = new String[]{BehaviorDBHelper.FROM_USER_ID};
         String[] values = new String[]{fromUserId};
         String selection = BehaviorDBHelper.FROM_USER_ID + " = ? ";
 
-        String query = "select * from " + BehaviorDBHelper.TABLE_NAME + " where " + BehaviorDBHelper.FROM_USER_ID + " = " + "\"" + fromUserId + "\" " + "order by "+ BehaviorDBHelper.TIMESTAMP + " asc";
+        //todo lwq 限制返回的个数，如何写？
+//        String query = "select * from " + BehaviorDBHelper.TABLE_NAME + " where " + BehaviorDBHelper.FROM_USER_ID + " = \" + fromUserId + \" AND ( " + BehaviorDBHelper.HASH + " = null  or " +BehaviorDBHelper.HASH + " = \"\" ) order by "+ BehaviorDBHelper.TIMESTAMP + " asc";
+        String query = "select * from " + BehaviorDBHelper.TABLE_NAME + " where " + BehaviorDBHelper.FROM_USER_ID + " = \"" + fromUserId + "\"  order by " + BehaviorDBHelper.TIMESTAMP + " asc";
         try {
             db.beginTransaction();
 //            Cursor cursor = db.query(BehaviorDBHelper.TABLE_NAME, column, selection, values, null, null, null);
@@ -166,6 +185,7 @@ public class BehaviorDBManager {
 
         return res;
     }
+
 
     private BehaviorModel parseCursor(Cursor cursor) {
         String timestamp = cursor.getString(cursor.getColumnIndex(BehaviorDBHelper.TIMESTAMP));
