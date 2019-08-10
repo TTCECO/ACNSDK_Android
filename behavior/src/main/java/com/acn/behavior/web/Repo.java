@@ -9,7 +9,6 @@ import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.db.BehaviorDBHelper;
 import com.acn.behavior.model.BehaviorModel;
 import com.acn.behavior.util.AlgorithmUtil;
-import com.acn.behavior.util.CommonType;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
 import com.acn.biz.BizApi;
@@ -216,19 +215,7 @@ public class Repo {
                             ACNAgent.getClient().getDbManager().updateString(String.valueOf(timestamp), BehaviorDBHelper.HASH, txHash);
 
                             if (!TextUtils.isEmpty(txHash)) {
-                                BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, new BizCallback<String>() {
-                                    @Override
-                                    public void success(String s) {
-                                        if (behaviorType == CommonType.OPEN_DAPP) {
-                                            ACNSp.setLastOpenTimestamp(System.currentTimeMillis());
-                                        }
-                                    }
-
-                                    @Override
-                                    public void error(String msg) {
-
-                                    }
-                                });
+                                BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, null);
                             }
                         }
                     } catch (Exception e) {

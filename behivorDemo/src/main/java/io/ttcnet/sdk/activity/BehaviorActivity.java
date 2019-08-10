@@ -17,7 +17,6 @@ import com.acn.behavior.ACNAgent;
 import com.acn.behavior.ACNConfigure;
 import com.acn.behavior.IManager;
 import com.acn.behavior.util.ACNKey;
-import com.acn.behavior.util.CommonType;
 import com.acn.behavior.util.SDKError;
 import io.ttcnet.sdk.R;
 import io.ttcnet.sdk.utils.IntentKey;
@@ -85,14 +84,14 @@ public class BehaviorActivity extends AppCompatActivity {
         btnLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                behavior(CommonType.BEHAVIOR_LIKE, "like");
+                behavior(113, "like");
             }
         });
 
         btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                behavior(CommonType.BEHAVIOR_COMMENT, "comment");
+                behavior(114, "comment");
             }
         });
 

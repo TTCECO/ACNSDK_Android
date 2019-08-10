@@ -6,8 +6,8 @@ package com.acn.behavior.util;
 public class CommonType {
 
     //NOT DELETE!!!
-    public static final int OPEN_DAPP = 112;
-    public static final int BEHAVIOR_LIKE = 113;
-    public static final int BEHAVIOR_COMMENT = 114;
+//    public static final int OPEN_DAPP = 112;
+//    public static final int BEHAVIOR_LIKE = 113;
+//    public static final int BEHAVIOR_COMMENT = 114;
 
 }

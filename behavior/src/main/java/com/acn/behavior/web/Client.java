@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.db.BehaviorDBManager;
 import com.acn.behavior.model.BehaviorModel;
-import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.ProcessUtil;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.biz.model.BaseInfo;
@@ -127,11 +126,11 @@ public class Client {
         }
     }
 
-    private boolean isNeedUploadOpenBehavior() {
-        long lastOpenDay = ACNSp.getLastOpenTimestamp() / Constants.ONE_DAY_MILLISECOND;
-        long currentDay = System.currentTimeMillis() / Constants.ONE_DAY_MILLISECOND;
-        return currentDay > lastOpenDay;
-    }
+//    private boolean isNeedUploadOpenBehavior() {
+//        long lastOpenDay = ACNSp.getLastOpenTimestamp() / Constants.ONE_DAY_MILLISECOND;
+//        long currentDay = System.currentTimeMillis() / Constants.ONE_DAY_MILLISECOND;
+//        return currentDay > lastOpenDay;
+//    }
 
     public ScheduledFuture<?> getScheduledFuture() {
         return scheduledFuture;
