@@ -203,7 +203,7 @@ public class Repo {
                             SDKLogger.d("before send transaction, extra=" + extra);
 
                             String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
-                            String data = Utils.addHash2Ufo1OplogMd5(hash, behaviorType);
+                            String data = Utils.addHash2Ufo1OplogMd5(hash);
                             String txHash = null;
 
                             txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getDappActionAddress(),

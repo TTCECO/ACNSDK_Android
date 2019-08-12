@@ -149,9 +149,9 @@ public class Utils {
      * @param hash
      * @return the sample is : "ufo:1:oplog:md5:hash_value:appid"
      */
-    public static String addHash2Ufo1OplogMd5(String hash, int behaviorTye) {
+    public static String addHash2Ufo1OplogMd5(String hash) {
         if (!TextUtils.isEmpty(hash)) {
-            return Constants.DATA_PREFIX + hash + ":" + BaseInfo.getInstance().getAppId() + ":" + behaviorTye;
+            return Constants.DATA_PREFIX + hash + ":" + BaseInfo.getInstance().getAppId();
         } else {
             return Constants.DATA_PREFIX + BaseInfo.getInstance().getAppId();
         }

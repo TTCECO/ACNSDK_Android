@@ -6,7 +6,7 @@ public class SDKLogger {
 
     private static final String TAG = "ACN_SDK";
 
-    public static boolean ON;
+    public static boolean ON = true;
 
     public static void d(String msg) {
         if (ON) {
@@ -16,7 +16,9 @@ public class SDKLogger {
 
     public static void e(String msg) {
         if (ON) {
-            Log.e(TAG, msg);
+            if (msg != null) {
+                Log.e(TAG, msg);
+            }
         }
     }
 
