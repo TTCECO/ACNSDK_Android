@@ -34,7 +34,7 @@ public class BehaviorDBManager {
 //        }
 //    }
 
-    public void insert(String timestamp, String fromUserId, int behaviorType, String extra, String hash, int tryCount, int state) {
+    public void insert(String timestamp, String fromUserId, int behaviorType, String extra) {
 
         SDKLogger.d("execute insert");
 
@@ -52,9 +52,10 @@ public class BehaviorDBManager {
             contentValues.put(BehaviorDBHelper.FROM_USER_ID, fromUserId);
             contentValues.put(BehaviorDBHelper.BEHAVIOR_TYPE, behaviorType);
             contentValues.put(BehaviorDBHelper.EXTRA, extra);
-            contentValues.put(BehaviorDBHelper.HASH, hash);
-            contentValues.put(BehaviorDBHelper.TRY_COUNT, tryCount);
-            contentValues.put(BehaviorDBHelper.STATE, state);
+            contentValues.put(BehaviorDBHelper.HASH, (String)null);
+            contentValues.put(BehaviorDBHelper.TRY_COUNT, 0);
+            contentValues.put(BehaviorDBHelper.STATE, 0);
+            contentValues.put(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP, (String)null);
             long row = db.insert(BehaviorDBHelper.TABLE_NAME, null, contentValues);
 
 //            db.execSQL("insert into " + BehaviorDBHelper.TABLE_NAME + " (timestamp, fromUserId, behaviorType, extra, hash, tryCount, state) values ( " + timestamp + ", " + fromUserId + ", " + behaviorType + ", " + extra + ", " + hash + ", " + tryCount + ", " + state+ " )");
@@ -89,14 +90,12 @@ public class BehaviorDBManager {
 
     public void updateString(String timestamp, String key, String value) {
         try {
-
-
             ContentValues values = new ContentValues();
             values.put(key, value);
             String[] whereArgs = {timestamp};
             db.beginTransaction();
             int res = db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
-            SDKLogger.d("update db res:" + res);
+            SDKLogger.d(key + "=" + value + ", update db res:" + res);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,6 +103,25 @@ public class BehaviorDBManager {
             db.endTransaction();
         }
     }
+
+
+    public void updateWriteChainTsHash(String timestamp, String writeChainTs, String txHash) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP, writeChainTs);
+            values.put(BehaviorDBHelper.HASH, txHash);
+            String[] whereArgs = {timestamp};
+            db.beginTransaction();
+            int res = db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
+            SDKLogger.d(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP + "=" + writeChainTs + ", " + BehaviorDBHelper.HASH + "=" + txHash + ", update db res:" + res);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
 
     public void updateInt(String timestamp, String key, int value) {
         try {

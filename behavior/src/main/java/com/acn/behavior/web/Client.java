@@ -53,20 +53,23 @@ public class Client {
                     ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress()));
 
                     List<BehaviorModel> allList = dbManager.getAll(BaseInfo.getInstance().getUserId());
-                    if (allList != null) {
+                    SDKLogger.d("checking data size:" + allList.size());
+                    for (BehaviorModel m : allList) {
+                        if (m.writeBlockTimestamp == null) {
+                            m.writeBlockTimestamp = "0";
+                        }
 
-                        for (BehaviorModel m : allList) {
-                            if (System.currentTimeMillis() > Long.valueOf(m.timestamp) + 60 * 1000) {
-                                if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
-                                    dbManager.delete(m.timestamp);
-                                    SDKLogger.d("has written in block chain, delete. " + m.timestamp);
-                                } else {
-                                    repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
-                                    SDKLogger.d("write to block chain. " + m.timestamp);
-                                }
+                        if (System.currentTimeMillis() > Long.valueOf(m.writeBlockTimestamp) + 60 * 1000) {
+                            if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
+                                dbManager.delete(m.timestamp);
+                                SDKLogger.d("delete. behaviorType=" + m.behaviorType);
+                            } else {
+                                repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
+                                SDKLogger.d("write to block chain. behaviorType=" + m.behaviorType);
                             }
                         }
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

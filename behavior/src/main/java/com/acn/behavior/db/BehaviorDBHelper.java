@@ -19,6 +19,7 @@ public class BehaviorDBHelper extends SQLiteOpenHelper {
     public static final String HASH = "hash";
     public static final String TRY_COUNT = "tryCount";
     public static final String STATE = "state";
+    public static final String WRITE_CHAIN_TIMESTAMP = "write_chain_timestamp";  //
 
     public BehaviorDBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -27,7 +28,7 @@ public class BehaviorDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // create table Orders(Id integer primary key, CustomName text, OrderPrice integer, Country text);
-        String sql = "create table if not exists " + TABLE_NAME + " (timestamp text primary key, fromUserId text, behaviorType int, extra text, hash text, tryCount int, state int)";
+        String sql = "create table if not exists " + TABLE_NAME + " (" + TIMESTAMP + " text primary key, " + FROM_USER_ID + " text, " + BEHAVIOR_TYPE + " int, " + EXTRA + " text, " + HASH + " text, " + TRY_COUNT + " int, " + STATE + " int, " + WRITE_CHAIN_TIMESTAMP + " text)";
         db.execSQL(sql);
     }
 

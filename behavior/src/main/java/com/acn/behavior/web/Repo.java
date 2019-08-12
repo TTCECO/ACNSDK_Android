@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.IManager;
 import com.acn.behavior.db.ACNSp;
-import com.acn.behavior.db.BehaviorDBHelper;
 import com.acn.behavior.model.BehaviorModel;
 import com.acn.behavior.util.AlgorithmUtil;
 import com.acn.behavior.util.SDKLogger;
@@ -188,7 +187,7 @@ public class Repo {
     }
 
 
-    public void startSendTxThread(){
+    public void startSendTxThread() {
         //生成hash后，再存一次，更新
         Thread myThread = new Thread(new Runnable() {
             @Override
@@ -201,7 +200,7 @@ public class Repo {
                             String extra = des.extra;
                             long timestamp = Long.valueOf(des.timestamp);
 
-                            SDKLogger.d("before send transaction, extra=" + extra);
+                            SDKLogger.d("before send transaction, behaviorType=" + behaviorType + ", extra=" + extra);
 
                             String hash = AlgorithmUtil.hash(behaviorType, BaseInfo.getInstance().getUserId(), timestamp, extra);
                             String data = Utils.addHash2Ufo1OplogMd5(hash);
@@ -211,11 +210,10 @@ public class Repo {
                                     BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
                             behaviorModelArrayList.remove(des);
 
-
-                            //生成hash后，再存一次，更新
-                            ACNAgent.getClient().getDbManager().updateString(String.valueOf(timestamp), BehaviorDBHelper.HASH, txHash);
-
                             if (!TextUtils.isEmpty(txHash)) {
+                                //生成hash后，再存一次，更新
+                                ACNAgent.getClient().getDbManager().updateWriteChainTsHash(String.valueOf(timestamp), String.valueOf(System.currentTimeMillis()), txHash);
+
                                 BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, null);
                             }
                         }

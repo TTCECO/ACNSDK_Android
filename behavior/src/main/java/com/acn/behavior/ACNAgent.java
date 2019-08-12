@@ -327,7 +327,7 @@ public class ACNAgent {
         long timestamp = System.currentTimeMillis();
 
         //先存数据库，定时发送到链上
-        ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, null, 0, 0);
+        ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra);
         repo().onEvent(behaviorType, extra, timestamp);
 
         return errCode;
