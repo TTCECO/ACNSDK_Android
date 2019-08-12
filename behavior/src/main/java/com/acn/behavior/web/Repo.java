@@ -192,7 +192,7 @@ public class Repo {
         Thread myThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!TextUtils.isEmpty(ACNSp.getUserId())) {
+                while (true) {
                     try {
                         if (behaviorModelArrayList.size() > 0) {
                             BehaviorModel des = behaviorModelArrayList.get(0);
