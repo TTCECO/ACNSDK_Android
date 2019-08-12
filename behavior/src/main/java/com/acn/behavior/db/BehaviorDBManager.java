@@ -59,7 +59,7 @@ public class BehaviorDBManager {
 
 //            db.execSQL("insert into " + BehaviorDBHelper.TABLE_NAME + " (timestamp, fromUserId, behaviorType, extra, hash, tryCount, state) values ( " + timestamp + ", " + fromUserId + ", " + behaviorType + ", " + extra + ", " + hash + ", " + tryCount + ", " + state+ " )");
             db.setTransactionSuccessful();
-            SDKLogger.d("insert to  db suc. " + timestamp + "," + fromUserId + "," + behaviorType + "," + extra);
+            SDKLogger.d("insert to  db suc. " + "ts=" + timestamp + ", userId=" + fromUserId + ", behaviorType=" + behaviorType + ", extra=" + extra);
         } catch (Exception e) {
             SDKLogger.e(e.getMessage());
         } finally {
@@ -100,7 +100,7 @@ public class BehaviorDBManager {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             db.endTransaction();
         }
     }
@@ -115,7 +115,7 @@ public class BehaviorDBManager {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             db.endTransaction();
         }
     }

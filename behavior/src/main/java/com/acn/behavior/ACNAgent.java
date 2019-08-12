@@ -167,7 +167,7 @@ public class ACNAgent {
             }
             SDKLogger.d("user unregister");
 
-            client.getScheduledFuture().cancel(true);
+//            client.getScheduledFuture().cancel(true);
         }
 
 

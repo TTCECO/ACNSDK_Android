@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
-import com.acn.behavior.util.SDKLogger;
 
 import java.math.BigInteger;
 
@@ -41,7 +40,6 @@ public class ACNSp {
 
     public static String getUserId() {
         String userId = sp.getString(KEY_USER_ID, "");
-        SDKLogger.d("sp userId:" + userId);
         return userId;
     }
 
