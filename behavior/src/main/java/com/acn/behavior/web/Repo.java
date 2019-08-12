@@ -180,6 +180,7 @@ public class Repo {
     //每次调用都用生成一个线程去写链，应该写链用一个线程
     public void onEvent(int type, String content, long behaviorTime) {
         BehaviorModel model = new BehaviorModel();
+        model.fromUserId = BaseInfo.getInstance().getUserId();
         model.behaviorType = type;
         model.extra = content;
         model.timestamp = String.valueOf(behaviorTime);
