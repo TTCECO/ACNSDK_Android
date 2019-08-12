@@ -48,6 +48,7 @@ public class Client {
         scheduledFuture = Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                SDKLogger.d("schedule thread");
                 try {
                     ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress()));
 
