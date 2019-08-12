@@ -43,6 +43,8 @@ class RegisterActivity : AppCompatActivity() {
                     var date = SimpleDateFormat().format(Date((ts.toLong()) * 1000))
                     main_msg_tv.append(", addtime:" + date)
                 }
+
+                ACNAgent.onEvent(112, "register callback login")
             }
 
             override fun error(msg: String) {
