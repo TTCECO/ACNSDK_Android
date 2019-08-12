@@ -75,6 +75,10 @@ public class ACNAgent {
         }
 
         client = new Client(context);
+
+        client.getRepo().startSendTxThread();
+
+
         return errCode;
     }
 
@@ -151,7 +155,6 @@ public class ACNAgent {
 
         SDKLogger.d("userId:" + userId);
 
-        client.getRepo().startSendTxThread();
     }
 
     public static void unregister() {
