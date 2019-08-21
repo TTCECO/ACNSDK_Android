@@ -287,4 +287,57 @@ public class EthClient {
 
         return false;
     }
+
+    public static boolean isTransactionFailed(String rpcUrl, String hash) throws Exception {
+
+        if (TextUtils.isEmpty(hash)) {
+            return true;
+        }
+
+        String hexHash = Utils.format2ETHAddress(hash);
+        Web3j web3 = Web3j.build(new HttpService(rpcUrl));
+        EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
+        if (ethGetTransactionReceipt == null) {
+            return true;
+        }
+
+        Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
+        if (receiptOptional.isEmpty()) {
+            return true;
+
+        }
+
+        TransactionReceipt transactionReceipt = receiptOptional.get();
+        if (transactionReceipt == null) {
+            return true;
+        }
+
+        if ("0x0".equals(transactionReceipt.getStatus())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean needRewriteBlock(String rpcUrl, String hash, int savedBlockNumber) {
+        try {
+            int currentBlockNumber = getBlockNumber(rpcUrl);
+            if (currentBlockNumber -1000 > savedBlockNumber) {
+                if (!isTransactionSuccess(rpcUrl, hash)){
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public static int getBlockNumber(String rpcUrl) throws Exception {
+        Web3j web3j = Web3j.build(new HttpService(rpcUrl));
+        BigInteger blockNumber = web3j.ethBlockNumber().send().getBlockNumber();
+        return blockNumber.intValue();
+
+    }
 }

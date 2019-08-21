@@ -122,8 +122,8 @@ public class ACNAgent {
 
         String userIdSaved = BaseInfo.getInstance().getUserId();
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
-//            ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
-//            BaseInfo.getInstance().clear();
+            ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
+            BaseInfo.getInstance().clear();
             unregister();
         }
 
@@ -148,10 +148,12 @@ public class ACNAgent {
         repo().registerUser(callback);   //会调用getBaseInfo()
         client.retry();
 
-        bindReceiver = new BindReceiver();
-        IntentFilter filter = new IntentFilter("acn.bind.receiver");
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        client.getContext().registerReceiver(bindReceiver, filter);
+        if (bindReceiver == null) {
+            bindReceiver = new BindReceiver();
+            IntentFilter filter = new IntentFilter("acn.bind.receiver");
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            client.getContext().registerReceiver(bindReceiver, filter);
+        }
 
         SDKLogger.d("userId:" + userId);
 
@@ -159,8 +161,6 @@ public class ACNAgent {
 
     public static void unregister() {
         if (client != null) {
-            ACNSp.clear();
-            BaseInfo.getInstance().clear();
             if (bindReceiver != null) {
                 client.getContext().unregisterReceiver(bindReceiver);
                 bindReceiver = null;

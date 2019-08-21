@@ -56,6 +56,7 @@ public class BehaviorDBManager {
             contentValues.put(BehaviorDBHelper.TRY_COUNT, 0);
             contentValues.put(BehaviorDBHelper.STATE, 0);
             contentValues.put(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP, (String)null);
+            contentValues.put(BehaviorDBHelper.BLOCK_NUMBER, 0);
             long row = db.insert(BehaviorDBHelper.TABLE_NAME, null, contentValues);
 
 //            db.execSQL("insert into " + BehaviorDBHelper.TABLE_NAME + " (timestamp, fromUserId, behaviorType, extra, hash, tryCount, state) values ( " + timestamp + ", " + fromUserId + ", " + behaviorType + ", " + extra + ", " + hash + ", " + tryCount + ", " + state+ " )");
@@ -68,35 +69,24 @@ public class BehaviorDBManager {
         }
     }
 
-//    public void update(String timestamp, String key, Object value) {
-//
-//        ContentValues values = new ContentValues();
-//        switch (key) {
-//            case "timestamp":
-//            case "fromUserId":
-//            case "extra":
-//            case "hash":
-//                values.put(key, String.valueOf(value));
-//                break;
-//
-//            case "behaviorType":
-//            case "tryCount":
-//            case "state":
-//                values.put(key, value);
-//                break;
-//
-//        }
-//    }
 
-    public void updateString(String timestamp, String key, String value) {
+    public void updateWriteChainTsHash(String timestamp, String writeChainTs, String txHash, int blockNumber) {
         try {
-            ContentValues values = new ContentValues();
-            values.put(key, value);
-            String[] whereArgs = {timestamp};
-            db.beginTransaction();
-            int res = db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
-            SDKLogger.d(key + "=" + value + ", update db res:" + res);
-            db.setTransactionSuccessful();
+            BehaviorModel model = getBehaviorModel(timestamp);
+
+            if (model != null) {
+                ContentValues values = new ContentValues();
+                values.put(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP, writeChainTs);
+                values.put(BehaviorDBHelper.HASH, txHash);
+                values.put(BehaviorDBHelper.TRY_COUNT, model.tryCount++);
+                values.put(BehaviorDBHelper.BLOCK_NUMBER, blockNumber);
+                String[] whereArgs = {timestamp};
+                db.beginTransaction();
+                int res = db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
+                SDKLogger.d(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP + "=" + writeChainTs + ", " + BehaviorDBHelper.HASH + "=" + txHash + ", update db res:" + res);
+                db.setTransactionSuccessful();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -104,39 +94,6 @@ public class BehaviorDBManager {
         }
     }
 
-
-    public void updateWriteChainTsHash(String timestamp, String writeChainTs, String txHash) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP, writeChainTs);
-            values.put(BehaviorDBHelper.HASH, txHash);
-            String[] whereArgs = {timestamp};
-            db.beginTransaction();
-            int res = db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
-            SDKLogger.d(BehaviorDBHelper.WRITE_CHAIN_TIMESTAMP + "=" + writeChainTs + ", " + BehaviorDBHelper.HASH + "=" + txHash + ", update db res:" + res);
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            db.endTransaction();
-        }
-    }
-
-
-    public void updateInt(String timestamp, String key, int value) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(key, value);
-            String[] whereArgs = {timestamp};
-            db.beginTransaction();
-            db.update(BehaviorDBHelper.TABLE_NAME, values, "timestamp=?", whereArgs);
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            db.endTransaction();
-        }
-    }
 
     public void delete(String timestamp) {
 

@@ -59,11 +59,12 @@ public class Client {
                             m.writeBlockTimestamp = "0";
                         }
 
-                        if (System.currentTimeMillis() > Long.valueOf(m.writeBlockTimestamp) + 60 * 1000) {
-                            if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
-                                dbManager.delete(m.timestamp);
-                                SDKLogger.d("delete. behaviorType=" + m.behaviorType);
-                            } else {
+
+                        if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
+                            dbManager.delete(m.timestamp);
+                            SDKLogger.d("delete. behaviorType=" + m.behaviorType);
+                        } else {
+                            if (EthClient.needRewriteBlock(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash, m.blockNumber)) {
                                 repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
                                 SDKLogger.d("write to block chain. behaviorType=" + m.behaviorType);
                             }
@@ -74,7 +75,7 @@ public class Client {
                     e.printStackTrace();
                 }
             }
-        }, 0, 1, TimeUnit.MINUTES);
+        }, 0, 30, TimeUnit.MINUTES);
 
 
         if (ProcessUtil.isMainProcess(context)) {
