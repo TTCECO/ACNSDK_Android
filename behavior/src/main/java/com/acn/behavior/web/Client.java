@@ -81,7 +81,7 @@ public class Client {
                     e.printStackTrace();
                 }
             }
-        }, 0, 30, TimeUnit.MINUTES);
+        }, 0, 10, TimeUnit.MINUTES);
 
 
         if (ProcessUtil.isMainProcess(context)) {
