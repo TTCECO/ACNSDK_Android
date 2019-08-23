@@ -1,12 +1,13 @@
 package com.acn.behavior.web;
 
 import android.text.TextUtils;
+
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
 import com.acn.biz.model.BaseInfo;
-import java8.util.Optional;
+
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -20,7 +21,12 @@ import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
-import org.web3j.protocol.core.methods.response.*;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
 
@@ -29,6 +35,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
+import java8.util.Optional;
 
 /**
  * 发送交易，查询交易是否成功，内存中nonce的更新
@@ -98,24 +106,22 @@ public class EthClient {
         }
 
         return res;
+    }
 
 
-//            if (handler == null) {
-//                return;
-//            }
-//
-//            Message msg = handler.obtainMessage();
-//            msg.arg1 = tokenId;
-//            if (decimals != null) {
-//                msg.what = GET_TOKEN_DECIMAL_SUC;
-//                msg.obj = decimals;
-//            } else {
-//                msg.what = GET_TOKEN_DECIMAL_FAIL;
-//                msg.obj = errMsg;
-//                com.ttc.wallet.util.LogUtils.INSTANCE.e("get token decimals fail," + errMsg + "," + tokenId);
-//            }
-//
-//            handler.sendMessage(msg);
+    public static BigDecimal getDappActionAddressBalance(String rpcUrl, String address) throws Exception {
+        BigDecimal res = null;
+        Web3j web3 = null;
+
+
+        String hexAddress = Utils.format2ETHAddress(address);
+
+        web3 = Web3j.build(new HttpService(rpcUrl));
+        EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
+        BigInteger balance = send.getBalance();  //Wei
+        res = new BigDecimal(balance.divide(new BigInteger(Constants.ONE_QUINTILLION)).toString()); //ttc
+
+        return res;
     }
 
 
@@ -219,6 +225,7 @@ public class EthClient {
             SDKLogger.e("send transaction: fromPrivateKey is empty");
             return null;
         }
+
         try {
 
             String hexFrom = Utils.format2ETHAddress(from);
@@ -322,8 +329,8 @@ public class EthClient {
     public static boolean needRewriteBlock(String rpcUrl, String hash, int savedBlockNumber) {
         try {
             int currentBlockNumber = getBlockNumber(rpcUrl);
-            if (currentBlockNumber -1000 > savedBlockNumber) {
-                if (!isTransactionSuccess(rpcUrl, hash)){
+            if (currentBlockNumber - 1000 > savedBlockNumber) {
+                if (!isTransactionSuccess(rpcUrl, hash)) {
                     return true;
                 }
             }

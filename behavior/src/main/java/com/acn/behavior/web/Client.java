@@ -16,6 +16,7 @@ import com.acn.behavior.util.ProcessUtil;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.biz.model.BaseInfo;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,8 +66,13 @@ public class Client {
                             SDKLogger.d("delete. behaviorType=" + m.behaviorType);
                         } else {
                             if (EthClient.needRewriteBlock(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash, m.blockNumber)) {
-                                repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
-                                SDKLogger.d("write to block chain. behaviorType=" + m.behaviorType);
+                                BigDecimal tgasBalance = EthClient.getDappActionAddressBalance(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress());
+                                if (tgasBalance.compareTo(new BigDecimal(BaseInfo.getInstance().getGasPrice()).multiply(new BigDecimal(BaseInfo.getInstance().getGasLimit()))) > 0) {
+                                    repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
+                                    SDKLogger.d("write to block chain. behaviorType=" + m.behaviorType);
+                                }else {
+                                    SDKLogger.e("TGas is not enough");
+                                }
                             }
                         }
                     }
