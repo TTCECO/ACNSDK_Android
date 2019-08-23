@@ -222,7 +222,7 @@ public class EthClient {
 
 
         if (TextUtils.isEmpty(fromPrivateKey)) {
-            SDKLogger.e("send transaction: fromPrivateKey is empty");
+            SDKLogger.e("sendTransaction(): fromPrivateKey is empty");
             return null;
         }
 
@@ -259,37 +259,36 @@ public class EthClient {
                 } else {
                     ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     String transactionHash = ethSendTransaction.getTransactionHash();
-                    SDKLogger.d("send transaction, nonce=" + nonce + ",hash=" + transactionHash);
+                    SDKLogger.d("sendTransaction() suc, nonce=" + nonce + ",hash=" + transactionHash);
 
                     return transactionHash;
                 }
             }
         } catch (Exception e) {
-            SDKLogger.e(e.getMessage());
+            SDKLogger.e("sendTransaction():" + e.getMessage());
             throw e;
         }
         return null;
     }
 
     public static boolean isTransactionSuccess(String rpcUrl, String hash) throws Exception {
-        try {
-            String hexHash = Utils.format2ETHAddress(hash);
-            Web3j web3 = Web3j.build(new HttpService(rpcUrl));
-            EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
-            if (ethGetTransactionReceipt != null) {
-                Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
-                if (!receiptOptional.isEmpty()) {
-                    TransactionReceipt transactionReceipt = receiptOptional.get();
-                    if (transactionReceipt != null) {
-                        if ("0x1".equals(transactionReceipt.getStatus())) {
-                            return true;
-                        }
+        if (TextUtils.isEmpty(hash)) {
+            return false;
+        }
+
+        String hexHash = Utils.format2ETHAddress(hash);
+        Web3j web3 = Web3j.build(new HttpService(rpcUrl));
+        EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
+        if (ethGetTransactionReceipt != null) {
+            Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
+            if (!receiptOptional.isEmpty()) {
+                TransactionReceipt transactionReceipt = receiptOptional.get();
+                if (transactionReceipt != null) {
+                    if ("0x1".equals(transactionReceipt.getStatus())) {
+                        return true;
                     }
                 }
             }
-        } catch (Exception e) {    //when testing, this exception occur
-            e.printStackTrace();
-            throw e;
         }
 
         return false;
