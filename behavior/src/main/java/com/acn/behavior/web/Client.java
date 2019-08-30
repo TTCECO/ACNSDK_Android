@@ -16,7 +16,7 @@ import com.acn.behavior.util.ProcessUtil;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.biz.model.BaseInfo;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,17 +60,17 @@ public class Client {
                             m.writeBlockTimestamp = "0";
                         }
 
-
                         if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
                             dbManager.delete(m.timestamp);
                             SDKLogger.d("delete. behaviorType=" + m.behaviorType);
                         } else {
                             if (EthClient.needRewriteBlock(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash, m.blockNumber)) {
-                                BigDecimal tgasBalance = EthClient.getDappActionAddressBalance(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress());
-                                if (tgasBalance.compareTo(new BigDecimal(BaseInfo.getInstance().getGasPrice()).multiply(new BigDecimal(BaseInfo.getInstance().getGasLimit()))) > 0) {
+                                BigInteger tgasBalance = EthClient.getDappActionAddressBalance(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress());
+                                BigInteger min = new BigInteger(BaseInfo.getInstance().getGasPrice()).multiply(new BigInteger(String.valueOf(BaseInfo.getInstance().getGasLimit())));
+                                if (tgasBalance.compareTo(min) > 0) {
                                     repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
                                     SDKLogger.d("write to block chain. behaviorType=" + m.behaviorType);
-                                }else {
+                                } else {
                                     SDKLogger.e("TGas is not enough");
                                 }
                             }
