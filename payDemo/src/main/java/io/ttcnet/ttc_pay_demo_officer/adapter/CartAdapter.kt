@@ -2,7 +2,7 @@ package io.ttcnet.ttc_pay_demo_officer.adapter
 
 import android.content.Context
 import android.content.DialogInterface
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,7 @@ import java.util.*
 /**
  * Created by lwq on 2018/12/18.
  */
-class CartAdapter : RecyclerView.Adapter<CartAdapter.CartHolder> {
+class CartAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<CartAdapter.CartHolder> {
     var context: Context? = null
     var data: ArrayList<FurnitureModel>? = null
     var cartViewModel: CartViewModel? = null
@@ -60,7 +60,7 @@ class CartAdapter : RecyclerView.Adapter<CartAdapter.CartHolder> {
     }
 
 
-    inner class CartHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CartHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         var ivCover = itemView.findViewById<ImageView>(R.id.item_goods_cover_iv)
         var tvTitle = itemView.findViewById<TextView>(R.id.item_goods_title)

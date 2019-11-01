@@ -2,7 +2,7 @@ package io.ttcnet.sdk.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.acn.behavior.ACNAgent
 import com.acn.behavior.IManager
 import io.ttcnet.sdk.R

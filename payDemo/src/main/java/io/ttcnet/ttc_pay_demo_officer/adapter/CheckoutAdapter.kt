@@ -1,7 +1,7 @@
 package io.ttcnet.ttc_pay_demo_officer.adapter
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +16,7 @@ import io.ttcnet.ttc_pay_demo_officer.viewmodel.ChannelViewModel
 /**
  * Created by lwq on 2018/12/18.
  */
-class CheckoutAdapter : RecyclerView.Adapter<CheckoutAdapter.CheckoutHolder> {
+class CheckoutAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<CheckoutAdapter.CheckoutHolder> {
 
     private var context: Context? = null
     private var data: ArrayList<PayChannelModel>? = null
@@ -68,7 +68,7 @@ class CheckoutAdapter : RecyclerView.Adapter<CheckoutAdapter.CheckoutHolder> {
     }
 
 
-    inner class CheckoutHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CheckoutHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         var root: ViewGroup = itemView.findViewById(R.id.item_checkout_root)
         var ivIcon: ImageView = itemView.findViewById(R.id.item_checkout_iv)
         var tvName: TextView = itemView.findViewById(R.id.item_checkout_name)

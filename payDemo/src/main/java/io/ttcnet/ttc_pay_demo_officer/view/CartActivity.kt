@@ -1,11 +1,11 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.adapter.CartAdapter
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
@@ -34,7 +34,7 @@ class CartActivity : BaseActivity() {
         appbar_left_text1.setText("Cart")
 
         adapter = CartAdapter(activity, furnitures, cartViewModel)
-        cart_fragment_rv.layoutManager = LinearLayoutManager(activity)
+        cart_fragment_rv.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         cart_fragment_rv.adapter = adapter
 
         cartViewModel.checkedFurniture.observe(this, Observer {

@@ -1,7 +1,7 @@
 package io.ttcnet.sdk;
 
 import android.content.Context;
-import android.support.multidex.MultiDex;
+import androidx.multidex.MultiDex;
 import android.util.Log;
 import com.acn.behavior.ACNAgent;
 import com.acn.behavior.util.SDKError;

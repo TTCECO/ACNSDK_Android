@@ -2,7 +2,7 @@ package io.ttcnet.ttc_pay_demo_officer.view
 
 import android.app.Activity
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
 open class BaseActivity : AppCompatActivity() {
 

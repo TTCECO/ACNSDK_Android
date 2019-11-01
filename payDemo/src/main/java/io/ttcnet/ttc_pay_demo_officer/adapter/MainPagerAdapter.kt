@@ -1,19 +1,20 @@
 package io.ttcnet.ttc_pay_demo_officer.adapter
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 
 /**
  * Created by lwq on 2018/12/17.
  */
-class MainPagerAdapter(fm: FragmentManager) :FragmentPagerAdapter(fm) {
+class MainPagerAdapter(fm: androidx.fragment.app.FragmentManager) :
+    androidx.fragment.app.FragmentPagerAdapter(fm) {
 //    private lateinit var context:Context
-     lateinit var fragments : List<Fragment>
+     lateinit var fragments : List<androidx.fragment.app.Fragment>
 //    private lateinit var tabIconResIds :List<Int>
 
 
-    override fun getItem(index: Int): Fragment {
+    override fun getItem(index: Int): androidx.fragment.app.Fragment {
 
        return fragments[index]
 

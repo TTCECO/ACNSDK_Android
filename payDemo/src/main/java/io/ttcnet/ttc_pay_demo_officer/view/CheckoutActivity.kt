@@ -1,11 +1,11 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
 import io.ttcnet.pay.ExchangeCallback
@@ -50,7 +50,7 @@ class CheckoutActivity : BaseActivity() {
 
         payChannels = channelViewModel.channels.value
         adapter = CheckoutAdapter(this, payChannels, channelViewModel)
-        checkout_rv.layoutManager = LinearLayoutManager(this)
+        checkout_rv.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         checkout_rv.adapter = adapter
 
         channelViewModel.channels.observe(this, Observer {

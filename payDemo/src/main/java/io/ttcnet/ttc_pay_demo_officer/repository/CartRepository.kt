@@ -1,7 +1,7 @@
 package io.ttcnet.ttc_pay_demo_officer.repository
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.ttcnet.ttc_pay_demo_officer.model.FurnitureModel
 
 /**
