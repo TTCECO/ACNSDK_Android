@@ -218,6 +218,8 @@ public class Repo {
                                 BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, null);
                             }
                         }
+                        Thread.sleep(100);
+                        SDKLogger.d("after send transaction, sleep 100ms");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
