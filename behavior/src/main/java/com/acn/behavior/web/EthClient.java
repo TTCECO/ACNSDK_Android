@@ -1,12 +1,13 @@
 package com.acn.behavior.web;
 
 import android.text.TextUtils;
+
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
 import com.acn.biz.model.BaseInfo;
-import java8.util.Optional;
+
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -18,9 +19,15 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jService;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
-import org.web3j.protocol.core.methods.response.*;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
 
@@ -30,10 +37,21 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import java8.util.Optional;
+
 /**
  * 发送交易，查询交易是否成功，内存中nonce的更新
  */
 public class EthClient {
+
+    private static Web3jService web3jService4SideChain = null;
+
+    private static Web3jService getWeb3jService4SideChain(String url) {
+        if (web3jService4SideChain == null && !TextUtils.isEmpty(url)) {
+            web3jService4SideChain = new HttpService(url);
+        }
+        return web3jService4SideChain;
+    }
 
     public static BigDecimal getBalance(String rpcUrl, String address) {
         BigDecimal res = null;
@@ -106,7 +124,7 @@ public class EthClient {
         Web3j web3 = null;
 
         String hexAddress = Utils.format2ETHAddress(address);
-        web3 = Web3j.build(new HttpService(rpcUrl));
+        web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
         EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
         BigInteger balance = send.getBalance();  //Wei
 
@@ -184,7 +202,7 @@ public class EthClient {
         try {
             String hexFrom = Utils.format2ETHAddress(from);
 
-            Web3j web3 = Web3j.build(new HttpService(rpcUrl));
+            Web3j web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(hexFrom,
                     DefaultBlockParameterName.LATEST).send();
             BigInteger count = ethGetTransactionCount.getTransactionCount();
@@ -228,7 +246,7 @@ public class EthClient {
             Credentials credentials = null;
 
             credentials = Credentials.create(hexPrivateKey);
-            web3 = Web3j.build(new HttpService(rpcUrl));
+            web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
             nonce = getNonce(rpcUrl, hexFrom);
             if (nonce.compareTo(nextNonce) <= 0) {
                 nonce = nextNonce;  //nonce从0开始
@@ -266,7 +284,7 @@ public class EthClient {
         }
 
         String hexHash = Utils.format2ETHAddress(hash);
-        Web3j web3 = Web3j.build(new HttpService(rpcUrl));
+        Web3j web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
         EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
         if (ethGetTransactionReceipt != null) {
             Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
@@ -330,7 +348,7 @@ public class EthClient {
 
 
     public static int getBlockNumber(String rpcUrl) throws Exception {
-        Web3j web3j = Web3j.build(new HttpService(rpcUrl));
+        Web3j web3j = Web3j.build(getWeb3jService4SideChain(rpcUrl));
         BigInteger blockNumber = web3j.ethBlockNumber().send().getBlockNumber();
         return blockNumber.intValue();
 
