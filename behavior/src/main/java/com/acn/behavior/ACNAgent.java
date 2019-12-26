@@ -8,9 +8,12 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+
 import androidx.fragment.app.Fragment;
+
 import android.text.TextUtils;
 import android.widget.Toast;
+
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
@@ -144,6 +147,7 @@ public class ACNAgent {
         info.put(UserAttr.CLIENT_ID, Utils.getClientId());
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
         BizApi.getInstance().updateUser(info, null);
+        BizApi.getInstance().getBindType();
 
         repo().registerUser(callback);   //会调用getBaseInfo()
         client.retry();
@@ -194,7 +198,7 @@ public class ACNAgent {
 
     //user can get result on OnActivityResult(), for fragment
     //return errorCode. you can get error meassage by calling SDKError.getMessage(errCode)
-    //if not installed, you can get Wallet Download Url from Constant.java
+    //if not installed, you can get Wallet Download Url by  Constants.getDownloadUrl()
     public static int bindApp(Object object, String appIconUrl, int reqCode) {
         int errCode = checkServerClientUserId();
         if (errCode > 0) {
@@ -205,7 +209,8 @@ public class ACNAgent {
             return SDKError.CONTEXT_IS_NULL;  //todo lwq add error code
         }
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.getBindScheme()));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
         intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
         intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
@@ -224,7 +229,7 @@ public class ACNAgent {
             List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
             boolean isInstalledTTCConnect = false;
             for (PackageInfo pi : installedPackages) {
-                if ("com.ttc.wallet".equalsIgnoreCase(pi.packageName)) {
+                if (Constants.getPackageName().equalsIgnoreCase(pi.packageName)) {
                     isInstalledTTCConnect = true;
                     if (pi.versionCode < 21) {
                         Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
@@ -239,6 +244,7 @@ public class ACNAgent {
                 }
             }
 
+            //you can get download url by  Constants.getDownloadUrl()
             if (!isInstalledTTCConnect) {
                 return SDKError.TTC_CONNECT_NOT_INSTALLED;
             }
