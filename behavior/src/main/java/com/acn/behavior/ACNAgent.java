@@ -330,6 +330,9 @@ public class ACNAgent {
         ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra);
         repo().onEvent(behaviorType, extra, timestamp);
 
+        //上传服务器
+        BizApi.getInstance().behaviour(behaviorType, "", extra, timestamp, null);
+
         return errCode;
     }
 

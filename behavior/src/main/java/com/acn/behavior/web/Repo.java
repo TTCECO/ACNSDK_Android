@@ -215,7 +215,6 @@ public class Repo {
                                 //生成hash后，再存一次，更新
                                 ACNAgent.getClient().getDbManager().updateWriteChainTsHash(String.valueOf(timestamp), String.valueOf(System.currentTimeMillis()), txHash, blockNumber);
 
-                                BizApi.getInstance().behaviour(behaviorType, txHash, extra, timestamp, null);
                             }
                         }
                         Thread.sleep(100);
