@@ -46,14 +46,14 @@ public class BindActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//
+//        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
     private void initView() {
 
@@ -76,6 +76,13 @@ public class BindActivity extends Activity {
         ivIconApp.setImageDrawable(drawable);
 
 //        tvApp.setText(Utils.getApplicationName(this));
+
+        tvBind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bind(v);
+            }
+        });
     }
 
     private void initData() {

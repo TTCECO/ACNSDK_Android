@@ -64,7 +64,7 @@ public class Constants {
             case 1:
                 packageName = "eco.acorn";
                 scheme = "acorn://bind";
-                downloadUrl = "";
+                downloadUrl = ACORN_BOX_DOWNLOAD_URL;
                 break;
         }
 

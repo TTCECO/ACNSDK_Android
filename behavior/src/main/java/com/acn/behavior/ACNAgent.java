@@ -19,6 +19,7 @@ import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
 import com.acn.behavior.web.Repo;
 import com.acn.biz.BizApi;
+import com.acn.biz.BizCallback;
 import com.acn.biz.model.BaseInfo;
 import com.google.android.gms.ads.MobileAds;
 
@@ -147,7 +148,7 @@ public class ACNAgent {
         info.put(UserAttr.CLIENT_ID, Utils.getClientId());
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
         BizApi.getInstance().updateUser(info, null);
-        BizApi.getInstance().getBindType();
+        BizApi.getInstance().getBindType(null);
 
         repo().registerUser(callback);   //会调用getBaseInfo()
         client.retry();
@@ -231,15 +232,13 @@ public class ACNAgent {
             for (PackageInfo pi : installedPackages) {
                 if (Constants.getPackageName().equalsIgnoreCase(pi.packageName)) {
                     isInstalledTTCConnect = true;
-                    if (pi.versionCode < 21) {
-                        Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
+
+                    if (object instanceof Activity) {
+                        ((Activity) object).startActivityForResult(intent, reqCode);
                     } else {
-                        if (object instanceof Activity) {
-                            ((Activity) object).startActivityForResult(intent, reqCode);
-                        } else {
-                            ((Fragment) object).startActivityForResult(intent, reqCode);
-                        }
+                        ((Fragment) object).startActivityForResult(intent, reqCode);
                     }
+
                     break;
                 }
             }
