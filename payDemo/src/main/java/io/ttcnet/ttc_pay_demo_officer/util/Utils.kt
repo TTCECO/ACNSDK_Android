@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import io.ttcnet.pay.model.PayInfo
 import io.ttcnet.ttc_pay_demo_officer.BuildConfig
+import io.ttcnet.ttc_pay_demo_officer.MyApplication
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
 import java.security.KeyFactory
@@ -99,7 +100,7 @@ object Utils {
 
 
     private fun getPkcs8Key(): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
+        if (MyApplication.ENV_PROD) {
             return "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAL7FIZZ45Q2A2ame\n" +
                     "ztfMdXr8Bip48NcbdhfYeummefDM6UZPg3EcmEu3TojxiNp0dQaK10M12IZnLA6Z\n" +
                     "T13a5oclEupSh6WuFrRcUkuhKmOvEjwnZGFJnQfpnmWQGdkgN1siYdzDof1TpVkp\n" +
@@ -133,7 +134,7 @@ object Utils {
     }
 
     fun getAppId(): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
+        if (MyApplication.ENV_PROD) {
             return "TTCMallDemo"
         } else {
             return "MeiTuan"
@@ -141,7 +142,7 @@ object Utils {
     }
 
     fun getTTCPublicKey(context: Context): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
+        if (MyApplication.ENV_PROD) {
             return "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDEBR/CV1B37hdOkNDUUaUEmWFvRFZkTue4x9XWCH/kfW+9BHtOTa/Zy" +
                     "+dwYxEvZXTqyfAAZyFU8yvkAJ4oSYy/AZ5Hw0ONli90KVrmfVW+V1SoRVhOmLfQGRf+bD3JD+BgEydwzT4+c" +
                     "+Sjc7GAEbghlhYNhkPCzI47MH2hPR/uOwIDAQAB"
@@ -154,7 +155,7 @@ object Utils {
     }
 
     fun getSymmetricKey(context: Context): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
+        if (MyApplication.ENV_PROD) {
             return "6d1b957a8df22a935987b7e761b3d368"
         } else {
             return "f0ec9e54bded7d60838f8d39c12e1db2"

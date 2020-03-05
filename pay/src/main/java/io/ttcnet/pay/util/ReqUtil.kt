@@ -56,9 +56,7 @@ object ReqUtil {
             request23506.params = params
 
             val post = HttpUtil.post(context, request23506, request23506.common.cmdId)
-            if (handler == null) {
-                return@execute
-            }
+
             var msg = Message.obtain()
             msg.what = CREATE_ORDER_FAIL;
             if (post != null) {
@@ -73,22 +71,20 @@ object ReqUtil {
                     msg.obj = response23506.common.message
                 }
             }
-            handler.sendMessage(msg)
+            handler?.sendMessage(msg)
         }
     }
 
-    fun getExchangeRate(context: Context,currencyType:Int, tokenId: Int, handler: Handler?) {
+    fun getExchangeRate(context: Context, currencyType: Int, tokenId: Int, handler: Handler?) {
         service.execute {
             var request23507 = Sdk.Request23507()
             var param = Sdk.Request23507.Params()
             param.currencyType = currencyType
             param.currencyId = tokenId
             request23507.common = genCommonRequest(context, 23507)
-            request23507.params  = param
+            request23507.params = param
             val response = HttpUtil.post(context, request23507, request23507.common.cmdId)
-            if (handler == null) {
-                return@execute
-            }
+
             var msg = Message.obtain()
             msg.what = GET_EXCHANGE_RATE_FAIL;
             if (response != null) {
@@ -98,16 +94,16 @@ object ReqUtil {
                     if (EncryptUtil.rsaVerifySha1(context, sha1, response23507.data.sign)) {
                         msg.what = GET_EXCHANGE_RATE_SUC
                         msg.obj = response23507.data.value
-                    }else{
+                    } else {
                         msg.obj = "verify response sign fail"
                     }
                 } else {
                     msg.obj = response23507.common.message
                 }
-            }else{
+            } else {
                 msg.obj = "response is null"
             }
-            handler.sendMessage(msg)
+            handler?.sendMessage(msg)
         }
     }
 
@@ -122,10 +118,8 @@ object ReqUtil {
             params.orderId = orderId
             request23508.params = params
             val res = HttpUtil.post(context, request23508, common.cmdId)
-            if (handler == null) {
-                return@execute
-            }
-            val msg = handler.obtainMessage()
+
+            val msg = Message.obtain()
 
             msg.what = GET_ORDER_DETAIL_FAIL
             if (res != null) {
@@ -135,7 +129,12 @@ object ReqUtil {
                         if (response23508.common.code == 0) {
                             if (response23508.data != null) {
                                 val sha1 = Util.genRes23508DataKVString(response23508.data)
-                                if (EncryptUtil.rsaVerifySha1(context, sha1, response23508.data.sign)) {
+                                if (EncryptUtil.rsaVerifySha1(
+                                        context,
+                                        sha1,
+                                        response23508.data.sign
+                                    )
+                                ) {
                                     msg.what = GET_ORDER_DETAIL_SUC
                                     msg.obj = Util.order2OrderInfo(response23508.data)
                                 }
@@ -148,7 +147,7 @@ object ReqUtil {
                     e.printStackTrace()
                 }
             }
-            handler.sendMessage(msg)
+            handler?.sendMessage(msg)
         }
     }
 
