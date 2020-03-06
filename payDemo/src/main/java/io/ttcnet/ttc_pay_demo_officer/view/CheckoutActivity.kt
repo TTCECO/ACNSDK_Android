@@ -16,6 +16,7 @@ import io.ttcnet.pay.model.Currency
 import io.ttcnet.pay.model.ErrorBean
 import io.ttcnet.pay.model.PayInfo
 import io.ttcnet.pay.model.Token
+import io.ttcnet.ttc_pay_demo_officer.MyApplication
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.adapter.CheckoutAdapter
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
@@ -132,7 +133,7 @@ class CheckoutActivity : BaseActivity() {
         payInfo.merchantOrderNo = format.format(now)
         payInfo.orderCreateTime = now
         payInfo.orderExpireTime = now + 3 * 60 * 1000   //3min
-        payInfo.signature = Utils.getSignFromServer(activity, payInfo, Utils.getAppId())
+        payInfo.signature = Utils.getSignFromServer(activity, payInfo, MyApplication.APP_ID)
         TTCPay.pay(activity, payInfo, object : PayCallback {
             override fun createTTCOrderOver(ttcOrderId: String) {
                 val intent = Intent(activity, PaymentDetailActivity::class.java)
