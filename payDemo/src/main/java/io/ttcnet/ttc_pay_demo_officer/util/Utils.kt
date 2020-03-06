@@ -138,37 +138,21 @@ object Utils {
                         "B7POIWeUIE64nw==\n"
 
             MyApplication.APP_ID_TATAUFO -> {
-                if (MyApplication.ENV_PROD) {
-                    "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAMj5IJHzmhXVX7np\n" +
-                            "XdD9rjAS/Wk3iliSFwfhHhWHMemuEZRPE1g7Iqp0wNmGfWp4ICHAuQYT0Iz4HS9w\n" +
-                            "TPxvO7rKYbR/CTxcX8LhH1YQj0fo8lDX/ftkU1U1BU4LHli4JPmRdBw6jbPaC/CJ\n" +
-                            "GH616740+xiW9e34kl3atAjuyFTDAgMBAAECgYBBzikXAS+75HECu+IHM3lcrmsh\n" +
-                            "j5kSJUu7PcAPBoSWYnPJHxdTdZGFRNN8pmfce9bxllw/HC/WaMuNo/ThVz6z9sq/\n" +
-                            "wDVzwaz1rpkTCPQurTuJWY7b8/eGImWcixYmpuCAWfc0B5lR/nKTdM3YTjTa0tSp\n" +
-                            "5wCdfpgcILTVFT0oqQJBAPbrNA1+bsmMrOgDn/DJHpimZKfevcDUzvKq8O/sB7du\n" +
-                            "fTioOhILsdq3Fvub/UoCmIL902fUxHEMialfkHrNjFUCQQDQXVXg9qLgIe/jAV/9\n" +
-                            "vGhDCkQxQ8mQgiNQosou7pUiFBVpX0NpZsDT++QYEgT+bgIc1oyu1MIhx2LTomXj\n" +
-                            "uPS3AkA6QUeon1m4B46Ltr83advkG+3HhU+zfQHOUvJBSKiRaGn2wgnhVA0EEwpD\n" +
-                            "Foxtt6sPzJ7h8lreaRzZbwiBUJl5AkAaZRhx7Qxo9COdUBlG3U0f4PcOfpXUFog+\n" +
-                            "uMB//X0q2fx0Yrr5aSjYMbqNSgsT5/+gg5VCuHT3LnjYcmQR2uY1AkEAlqoriVv/\n" +
-                            "pqm+k0jYSTKlXLU+MlXzo2EoLbS4FMi1tfv4Iy9tsDHM+c6UTPy492tLsYdI78e/\n" +
-                            "8QNh+jPnuxPKqA=="
-                } else {
-                    "MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAPay8kgwRFXoBNIw\n" +
-                            "IdIUTRA3YBVfYXT5rNGXqJHfO1wj8N8dzpdwNVUkVpWUjWgkQXjl9AeaYy/5EIBr\n" +
-                            "2lfQB8ohOJlix2rSMvN17/JfuOzMvei394Ua8VVutfC+TyzhFnaQDk5dGjw+oRuD\n" +
-                            "pqhx5nkVJK7Gq77w1mmsovhXmPAvAgMBAAECgYEAp5fFtHjl0559t/Tu5PLZr4yO\n" +
-                            "/7X+VSNQ3kozQHXws5XPCyQKtyKJeL/o+lEjB36p4+IEOC4P+AUxyqx6dnFi9/7G\n" +
-                            "afA+RStHQFIfk5fFb1arDY6fpYSCAumfulkbGuTXG5cWjiFhkelXCWVJLs2WwUbI\n" +
-                            "1T1CF5tyRZi+GXUzbKECQQD9pLIKMki/ssG5IVDsC/SPrWuNrnzev2a9rLqt2EEx\n" +
-                            "AuOHRCvwwJ5TfMDc8k6DK+u747v2itFS4rZZcGvEZTxHAkEA+P27xN1eF8+yFJNC\n" +
-                            "Fi/SL0YTywwjo3qI6GGoRt+1QkleWh3EN1ZMJhXQX8f1Ssy6gvOrNsIDp01WIpyr\n" +
-                            "WlRo2QJBAOLKq2MQmRnHFQ6aqoeVHQSHFL8ngIGO9KeuVXDyB0Byi807+GoZYLfX\n" +
-                            "uX8VrXv9/pcOxtdoQkhxbIjGS6XcuysCQApJ0bxsuTqapm0bOJvaFgFGEANP2Rkk\n" +
-                            "MwwHHQDwtXirt25Z1IXE1xirxhRvGr+gfgRzNRvqIGSFWY3Mk3gEDOECQQD2pKSC\n" +
-                            "+EB0k4OBiuzLu35+d1dSl0OrFUlx6HjmJwIHxCXgo6yYmENc1YKvc/LRfcq9UL48\n" +
-                            "BrgImu50/PtEVdSA"
-                }
+                "MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAPay8kgwRFXoBNIw\n" +
+                        "IdIUTRA3YBVfYXT5rNGXqJHfO1wj8N8dzpdwNVUkVpWUjWgkQXjl9AeaYy/5EIBr\n" +
+                        "2lfQB8ohOJlix2rSMvN17/JfuOzMvei394Ua8VVutfC+TyzhFnaQDk5dGjw+oRuD\n" +
+                        "pqhx5nkVJK7Gq77w1mmsovhXmPAvAgMBAAECgYEAp5fFtHjl0559t/Tu5PLZr4yO\n" +
+                        "/7X+VSNQ3kozQHXws5XPCyQKtyKJeL/o+lEjB36p4+IEOC4P+AUxyqx6dnFi9/7G\n" +
+                        "afA+RStHQFIfk5fFb1arDY6fpYSCAumfulkbGuTXG5cWjiFhkelXCWVJLs2WwUbI\n" +
+                        "1T1CF5tyRZi+GXUzbKECQQD9pLIKMki/ssG5IVDsC/SPrWuNrnzev2a9rLqt2EEx\n" +
+                        "AuOHRCvwwJ5TfMDc8k6DK+u747v2itFS4rZZcGvEZTxHAkEA+P27xN1eF8+yFJNC\n" +
+                        "Fi/SL0YTywwjo3qI6GGoRt+1QkleWh3EN1ZMJhXQX8f1Ssy6gvOrNsIDp01WIpyr\n" +
+                        "WlRo2QJBAOLKq2MQmRnHFQ6aqoeVHQSHFL8ngIGO9KeuVXDyB0Byi807+GoZYLfX\n" +
+                        "uX8VrXv9/pcOxtdoQkhxbIjGS6XcuysCQApJ0bxsuTqapm0bOJvaFgFGEANP2Rkk\n" +
+                        "MwwHHQDwtXirt25Z1IXE1xirxhRvGr+gfgRzNRvqIGSFWY3Mk3gEDOECQQD2pKSC\n" +
+                        "+EB0k4OBiuzLu35+d1dSl0OrFUlx6HjmJwIHxCXgo6yYmENc1YKvc/LRfcq9UL48\n" +
+                        "BrgImu50/PtEVdSA"
+
             }
 
             else -> ""
@@ -203,11 +187,7 @@ object Utils {
                 "f0ec9e54bded7d60838f8d39c12e1db2"
             }
             MyApplication.APP_ID_TATAUFO -> {
-                if (MyApplication.ENV_PROD) {
-                    "7681754fa721b16f833f2169f8c347ff"
-                } else {
-                    "9d1990b8fc9cf1328d88af73b8f89e4d"
-                }
+                "9d1990b8fc9cf1328d88af73b8f89e4d"
             }
             else -> ""
         }
