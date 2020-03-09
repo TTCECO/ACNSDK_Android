@@ -1,13 +1,12 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import io.ttcnet.pay.ExchangeCallback
 import io.ttcnet.pay.PayCallback
 import io.ttcnet.pay.PayUtil
@@ -68,16 +67,16 @@ class CheckoutActivity : BaseActivity() {
                         channel.checked = true;
 //                        selectedChannel = channel
                         checkout_pay_total.setBackgroundResource(channel.checkedBgColorId)
-                    }else {
+                    } else {
                         channel.checked = false;
                     }
                 }
 
                 if (channelId == Constant.PAY_CHANNEL_TTC_ID) {
-                    payInfo.payType = 0
+                    payInfo.payType = PayInfo.PAY_TYPE_TTC
                     getTTCExchangeRate(Token.ID_TTC)
                 } else if (channelId == Constant.PAY_CHANNEL_ACN_ID) {
-                    payInfo.payType = 1
+                    payInfo.payType = PayInfo.PAY_TYPE_ACN
                     getTTCExchangeRate(Token.ID_ACN)
                 }
 
@@ -114,7 +113,7 @@ class CheckoutActivity : BaseActivity() {
                     payInfo.totalTTCWei = PayUtil.ttc2Wei(totalTTC)
                     if (tokenId == Token.ID_TTC) {
                         checkout_pay_total.setText("Pay " + totalTTC + "TTC")
-                    }else if (tokenId == Token.ID_ACN) {
+                    } else if (tokenId == Token.ID_ACN) {
                         checkout_pay_total.setText("Pay " + totalTTC + "ACN")
                     }
                     checkout_pay_total.visibility = View.VISIBLE

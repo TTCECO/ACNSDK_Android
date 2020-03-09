@@ -11,7 +11,8 @@ object PayUtil {
 
     fun ttc2Wei(ttcCount: String): String {
         try {
-            return BigDecimal(ttcCount).multiply(BigDecimal(Util.ONE_18_ZERO)).toBigInteger().toString()
+            return BigDecimal(ttcCount).multiply(BigDecimal(Util.ONE_18_ZERO)).toBigInteger()
+                .toString()
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         }
@@ -19,11 +20,19 @@ object PayUtil {
     }
 
     fun legalTender2TTC(ttcPrice: String, totalLegalTender: Double): String {
-       try{
-            return BigDecimal(totalLegalTender).divide(BigDecimal(ttcPrice), 6, RoundingMode.HALF_UP).toString()
-        }catch (e:java.lang.NumberFormatException) {
-           e.printStackTrace()
-       }
+        try {
+            return BigDecimal(totalLegalTender).divide(
+                BigDecimal(ttcPrice),
+                6,
+                RoundingMode.HALF_UP
+            ).toString()
+        } catch (e: java.lang.NumberFormatException) {
+            e.printStackTrace()
+        }
         return ""
+    }
+
+    fun getAcornBoxDownloadUrl(): String {
+        return "https://acn.eco/acornbox/download"
     }
 }

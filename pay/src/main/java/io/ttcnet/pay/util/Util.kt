@@ -26,7 +26,8 @@ object Util {
     val TTC_WALLET_PK_NAME = "com.ttc.wallet"
 
     fun openTTCConnect(context: Context, orderId: String) {
-        var content = "order_id=$orderId&merchant_pk_name=${context.packageName}&random=${Random.nextInt()}"
+        var content =
+            "order_id=$orderId&merchant_pk_name=${context.packageName}&random=${Random.nextInt()}"
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse("ttc://pay?" + content))
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (intent.resolveActivity(context.packageManager) != null) {
@@ -35,6 +36,18 @@ object Util {
             Toast.makeText(context, "请安装TTC Connect", Toast.LENGTH_SHORT).show()
             var uri = Uri.parse("https://www.ttc.eco/TTCConnect/download")
             var intent = Intent(Intent.ACTION_VIEW, uri)
+            context.startActivity(intent)
+        }
+    }
+
+    //调用之前，请先检查是否安装AcornBox；
+    // 如果未安装，可通过PayUtil.getAcornBoxDownloadUrl()获取下载地址
+    fun openAcornBox(context: Context, orderId: String) {
+        var content =
+            "order_id=$orderId&merchant_pk_name=${context.packageName}&random=${Random.nextInt()}"
+        var intent = Intent(Intent.ACTION_VIEW, Uri.parse("acn://pay?" + content))
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (intent.resolveActivity(context.packageManager) != null) {
             context.startActivity(intent)
         }
     }
@@ -176,7 +189,8 @@ object Util {
 
     fun wei2TTC(ttcWei: String): String {
         try {
-            return BigDecimal(ttcWei).divide(BigDecimal(ONE_18_ZERO), 6, RoundingMode.HALF_UP).toString()
+            return BigDecimal(ttcWei).divide(BigDecimal(ONE_18_ZERO), 6, RoundingMode.HALF_UP)
+                .toString()
         } catch (e: NumberFormatException) {
             e.printStackTrace()
         }

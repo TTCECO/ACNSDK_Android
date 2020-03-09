@@ -30,7 +30,13 @@ object TTCPay {
     /**
      * place in application
      */
-    fun init(context: Context, userId: String, appId: String, ttcPublicKey: String, secretKey: String) {
+    fun init(
+        context: Context,
+        userId: String,
+        appId: String,
+        ttcPublicKey: String,
+        secretKey: String
+    ) {
         SPUtil.setUserId(context, userId)
         SPUtil.setAppId(context, appId)
         SPUtil.setTTCPublicKey(context, ttcPublicKey)
@@ -65,8 +71,14 @@ object TTCPay {
 
     /**
      * @param currencyType from Currency.kt
+     * @param tokenId from Token.kt
      */
-    fun getExchangeRate(context: Context, currencyType: Int, tokenId:Int, callback: ExchangeCallback?) {
+    fun getExchangeRate(
+        context: Context,
+        currencyType: Int,
+        tokenId: Int,
+        callback: ExchangeCallback?
+    ) {
         var errorBean = Util.checkInit(context)
         if (errorBean != null) {
             callback?.error(errorBean)
@@ -75,33 +87,37 @@ object TTCPay {
                 progressDialog = Util.showProgressDialog(context, false)
             }
 
-            ReqUtil.getExchangeRate(context, currencyType, tokenId, object : Handler(Looper.getMainLooper()) {
-                override fun handleMessage(msg: Message?) {
-                    super.handleMessage(msg)
+            ReqUtil.getExchangeRate(
+                context,
+                currencyType,
+                tokenId,
+                object : Handler(Looper.getMainLooper()) {
+                    override fun handleMessage(msg: Message?) {
+                        super.handleMessage(msg)
 
-                    when (msg!!.what) {
-                        ReqUtil.GET_EXCHANGE_RATE_SUC -> {
-                            progressDialog?.dismiss()
-                            progressDialog = null
-                            if (msg.obj is String) {
-                                var price = msg.obj as String
-                                callback?.done(price)
+                        when (msg!!.what) {
+                            ReqUtil.GET_EXCHANGE_RATE_SUC -> {
+                                progressDialog?.dismiss()
+                                progressDialog = null
+                                if (msg.obj is String) {
+                                    var price = msg.obj as String
+                                    callback?.done(price)
+                                }
                             }
-                        }
 
-                        ReqUtil.GET_EXCHANGE_RATE_FAIL -> {
-                            progressDialog?.dismiss()
-                            progressDialog = null
-                            var err = ErrorBean()
-                            if (msg.obj is String) {
-                                err.setErrorMsg(msg.obj as String)
-                                LogUtil.e(err.getErrorMsg())
+                            ReqUtil.GET_EXCHANGE_RATE_FAIL -> {
+                                progressDialog?.dismiss()
+                                progressDialog = null
+                                var err = ErrorBean()
+                                if (msg.obj is String) {
+                                    err.setErrorMsg(msg.obj as String)
+                                    LogUtil.e(err.getErrorMsg())
+                                }
+                                callback?.error(err)
                             }
-                            callback?.error(err)
                         }
                     }
-                }
-            })
+                })
         }
     }
 
@@ -133,7 +149,7 @@ object TTCPay {
         }
     }
 
-    fun setEnvProd(context: Context, isProd :Boolean){
+    fun setEnvProd(context: Context, isProd: Boolean) {
         SPUtil.setEnvType(context, isProd)
     }
 
@@ -158,8 +174,13 @@ object TTCPay {
                     progressDialog?.dismiss()
                     progressDialog = null
                     if (msg.obj is String) {
-                        payCallback?.createTTCOrderOver(msg.obj as String)
-                        Util.openTTCConnect(context, msg.obj as String)
+                        val orderId = msg.obj as String;
+                        payCallback?.createTTCOrderOver(orderId)
+                        if (payInfo?.payType == PayInfo.PAY_TYPE_TTC) {
+                            Util.openTTCConnect(context, orderId)
+                        } else if (payInfo?.payType == PayInfo.PAY_TYPE_ACN) {
+                            Util.openAcornBox(context, orderId)
+                        }
                     } else {
                         var bean = ErrorBean(ErrorBean.CREATE_TTC_ORDER_ERROR)
                         payCallback?.error(bean)
@@ -176,7 +197,6 @@ object TTCPay {
             }
         }
     }
-
 
 
 }
