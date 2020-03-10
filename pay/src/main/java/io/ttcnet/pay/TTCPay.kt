@@ -21,14 +21,14 @@ import io.ttcnet.pay.util.Util
 @SuppressLint("StaticFieldLeak")
 object TTCPay {
 
-    private lateinit var context: Context
+    private lateinit var activity: Activity
     private var payCallback: PayCallback? = null
     private var handler = PayHandler(Looper.getMainLooper())
     private var payInfo: PayInfo? = null
     private var progressDialog: AlertDialog? = null
 
     /**
-     * place in application
+     * place in Main or Home activity
      */
     fun init(
         context: Context,
@@ -47,14 +47,14 @@ object TTCPay {
      * @param orderCreateTime millisecond
      * @param orderExpireTime millisecond
      *
-     * return ttcOrderId
+     * 在调用pay的activity的onActivityResult中通过intent返回txHash. intent.getString
      */
-    fun pay(context: Context, payInfo: PayInfo, callback: PayCallback?) {
-        this.context = context
+    fun pay(context: Activity, payInfo: PayInfo, callback: PayCallback?) {
+        this.activity = context
         this.payCallback = callback
         this.payInfo = payInfo
 
-        if (context is Activity && progressDialog == null) {
+        if ( progressDialog == null) {
             progressDialog = Util.showProgressDialog(context, false)
         }
 
@@ -177,9 +177,9 @@ object TTCPay {
                         val orderId = msg.obj as String;
                         payCallback?.createTTCOrderOver(orderId)
                         if (payInfo?.payType == PayInfo.PAY_TYPE_TTC) {
-                            Util.openTTCConnect(context, orderId)
+                            Util.openTTCConnect(activity, orderId)
                         } else if (payInfo?.payType == PayInfo.PAY_TYPE_ACN) {
-                            Util.openAcornBox(context, orderId)
+                            Util.openAcornBox(activity, orderId)
                         }
                     } else {
                         var bean = ErrorBean(ErrorBean.CREATE_TTC_ORDER_ERROR)

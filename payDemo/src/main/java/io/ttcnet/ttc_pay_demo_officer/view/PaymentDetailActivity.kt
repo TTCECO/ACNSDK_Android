@@ -1,8 +1,8 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.widget.TextView
 import io.ttcnet.pay.GetOrderDetailCallback
 import io.ttcnet.pay.TTCPay
@@ -17,8 +17,8 @@ import kotlinx.android.synthetic.main.appbar_layout.*
 
 class PaymentDetailActivity : BaseActivity() {
 
-    private var orderId :String ?=null
-    private var handler = MyHandler()
+    private var orderId: String? = null
+//    private var handler = MyHandler()
 
     lateinit var itemOrderNoTitle: TextView
     lateinit var itemOrderNoContent: TextView
@@ -52,7 +52,7 @@ class PaymentDetailActivity : BaseActivity() {
 
     fun queryOrderState() {
         if (orderId == null) {
-            Utils.toast(activity,"order Id is null")
+            Utils.toast(activity, "order Id is null")
             return
         }
         TTCPay.getOrderDetail(activity, orderId!!, object : GetOrderDetailCallback {
@@ -74,14 +74,13 @@ class PaymentDetailActivity : BaseActivity() {
             OrderState.STATE_FINISH -> {
                 detail_status.setText("Success")
                 detail_status.setTextColor(activity.resources.getColor(R.color.green))
-                handler.removeMessages(0)
             }
             OrderState.STATE_OVERDUE -> detail_status.setText("overdue")
             OrderState.STATE_INVALID -> detail_status.setText("invalid")
         }
         if (orderInfo.tokenId == 0) {
             detail_price.setText("Amount:" + orderInfo.totalTTC + "TTC")
-        }else if (orderInfo.tokenId == 1) {
+        } else if (orderInfo.tokenId == 1) {
             detail_price.setText("Amount:" + orderInfo.totalTTC + "ACN")
         }
 
@@ -90,21 +89,17 @@ class PaymentDetailActivity : BaseActivity() {
         itemInfoContent.setText(orderInfo.description)
     }
 
-    override fun onResume() {
-        super.onResume()
-        handler.sendEmptyMessage(0)
-    }
 
-    override fun onPause() {
-        super.onPause()
-        handler.removeMessages(0)
-    }
-
-    inner class MyHandler : Handler() {
-        override fun handleMessage(msg: Message?) {
-            super.handleMessage(msg)
-            queryOrderState()
-            handler.sendEmptyMessageDelayed(0, 2000)
+    //在此获取返回的交易结果
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            val isSuc= data.getBooleanExtra("pay_suc", false)
+            val txHash = data.getStringExtra("tx_hash")
+            if (isSuc) {
+                queryOrderState()
+            }
         }
     }
+
 }

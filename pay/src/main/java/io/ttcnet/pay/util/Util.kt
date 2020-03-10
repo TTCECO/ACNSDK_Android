@@ -42,13 +42,13 @@ object Util {
 
     //调用之前，请先检查是否安装AcornBox；
     // 如果未安装，可通过PayUtil.getAcornBoxDownloadUrl()获取下载地址
-    fun openAcornBox(context: Context, orderId: String) {
+    fun openAcornBox(activity: Activity, orderId: String) {
         var content =
-            "order_id=$orderId&merchant_pk_name=${context.packageName}&random=${Random.nextInt()}"
+            "order_id=$orderId&merchant_pk_name=${activity.packageName}&random=${Random.nextInt()}"
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse("acn://pay?" + content))
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
+        if (intent.resolveActivity(activity.packageManager) != null) {
+            activity.startActivityForResult(intent, 0)
         }
     }
 
