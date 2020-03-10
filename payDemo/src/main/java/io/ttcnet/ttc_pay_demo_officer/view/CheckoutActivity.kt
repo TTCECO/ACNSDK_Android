@@ -36,6 +36,7 @@ class CheckoutActivity : BaseActivity() {
     private lateinit var adapter: CheckoutAdapter
     private var payChannels: ArrayList<PayChannelModel>? = null
     private var payInfo = PayInfo()
+    private var orderId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,11 +136,13 @@ class CheckoutActivity : BaseActivity() {
         payInfo.signature = Utils.getSignFromServer(activity, payInfo, MyApplication.APP_ID)
         TTCPay.pay(activity, payInfo, object : PayCallback {
             override fun createTTCOrderOver(ttcOrderId: String) {
-                val intent = Intent(activity, PaymentDetailActivity::class.java)
-                intent.putExtra(Constant.TTC_ORDER_ID, ttcOrderId)
-                startActivityForResult(intent, 0)
-                cartViewModel.clear()
-                finish()
+//                val intent = Intent(activity, PaymentDetailActivity::class.java)
+//                intent.putExtra(Constant.TTC_ORDER_ID, ttcOrderId)
+//                startActivityForResult(intent, 0)
+//                cartViewModel.clear()
+//                finish()
+
+                this@CheckoutActivity.orderId = ttcOrderId
             }
 
             override fun error(errorBean: ErrorBean) {
@@ -153,8 +156,18 @@ class CheckoutActivity : BaseActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            finish()
+        if (resultCode == Activity.RESULT_OK && data != null) {
+
+            val isSuc = data.getBooleanExtra("pay_suc", false)
+            val txHash = data.getStringExtra("tx_hash")
+            if (isSuc) {
+                val intent = Intent(activity, PaymentDetailActivity::class.java)
+                intent.putExtra(Constant.TTC_ORDER_ID, orderId)
+                startActivityForResult(intent, 0)
+                cartViewModel.clear()
+                finish()
+            }
+
         }
     }
 

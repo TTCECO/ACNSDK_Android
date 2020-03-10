@@ -46,7 +46,7 @@ object Util {
         var content =
             "order_id=$orderId&merchant_pk_name=${activity.packageName}&random=${Random.nextInt()}"
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse("acn://pay?" + content))
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (intent.resolveActivity(activity.packageManager) != null) {
             activity.startActivityForResult(intent, 0)
         }

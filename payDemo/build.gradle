@@ -74,7 +74,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
 
-//    implementation project(":pay")
+    implementation project(":pay")
 
-    implementation(name: 'ttc_pay_0.2.0_1', ext: 'aar')
+//    implementation(name: 'ttc_pay_0.2.0_1', ext: 'aar')
 }

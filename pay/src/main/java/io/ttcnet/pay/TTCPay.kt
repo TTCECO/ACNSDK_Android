@@ -60,7 +60,6 @@ object TTCPay {
 
         var errorBean = Util.checkInit(context)
         if (errorBean == null) {
-
             ReqUtil.createOrder(context, payInfo, handler)
         } else {
             callback?.error(errorBean)
