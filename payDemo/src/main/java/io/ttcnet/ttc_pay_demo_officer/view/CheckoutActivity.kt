@@ -1,7 +1,5 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -149,27 +147,33 @@ class CheckoutActivity : BaseActivity() {
                 Utils.toast(activity, errorBean.getErrorMsg())
             }
 
-            override fun payFinish(ttcOrderId: String, txHash: String, orderState: Int) {
+            override fun payFinish(
+                isSuc: Boolean,
+                txHash: String,
+                ttcOrderId: String,
+                orderState: Int
+            ) {
+                PaymentDetailActivity.open(activity, orderId)
+                finish()
             }
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && data != null) {
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode == Activity.RESULT_OK && data != null) {
+//
+//            val isSuc = data.getBooleanExtra("pay_suc", false)
+//            val txHash = data.getStringExtra("tx_hash")
+//            if (isSuc) {
+//                PaymentDetailActivity.open(activity, orderId)
+//                cartViewModel.clear()
+//                finish()
+//            }
+//
+//        }
+//    }
 
-            val isSuc = data.getBooleanExtra("pay_suc", false)
-            val txHash = data.getStringExtra("tx_hash")
-            if (isSuc) {
-                val intent = Intent(activity, PaymentDetailActivity::class.java)
-                intent.putExtra(Constant.TTC_ORDER_ID, orderId)
-                startActivityForResult(intent, 0)
-                cartViewModel.clear()
-                finish()
-            }
-
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

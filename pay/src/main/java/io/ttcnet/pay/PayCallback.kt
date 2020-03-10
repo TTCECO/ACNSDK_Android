@@ -7,6 +7,6 @@ import io.ttcnet.pay.model.ErrorBean
  */
 interface PayCallback {
     fun createTTCOrderOver(ttcOrderId: String)
-    fun payFinish(ttcOrderId: String, txHash: String, orderState: Int)
+    fun payFinish(isSuc: Boolean, txHash: String, ttcOrderId: String, orderState: Int)
     fun error(errorBean: ErrorBean)
 }

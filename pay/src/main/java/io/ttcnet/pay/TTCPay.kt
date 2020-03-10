@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import io.ttcnet.pay.model.ErrorBean
 import io.ttcnet.pay.model.OrderInfo
 import io.ttcnet.pay.model.PayInfo
+import io.ttcnet.pay.receiver.PayTxHashReceiver
 import io.ttcnet.pay.util.LogUtil
 import io.ttcnet.pay.util.ReqUtil
 import io.ttcnet.pay.util.SPUtil
@@ -26,7 +29,8 @@ object TTCPay {
     private var handler = PayHandler(Looper.getMainLooper())
     private var payInfo: PayInfo? = null
     private var progressDialog: AlertDialog? = null
-
+    private var sleepTime = Long.MAX_VALUE;  //ms
+    private lateinit var getTxHashThread: Thread
     /**
      * place in Main or Home activity
      */
@@ -41,6 +45,37 @@ object TTCPay {
         SPUtil.setAppId(context, appId)
         SPUtil.setTTCPublicKey(context, ttcPublicKey)
         SPUtil.setSymmetricKey(context, secretKey)
+
+        var receiver = PayTxHashReceiver()
+        var filter = IntentFilter()
+        filter.addAction("acn.pay.SEND.TX_HASH")
+        filter.addCategory(Intent.CATEGORY_DEFAULT)
+
+        context.registerReceiver(receiver, filter)
+
+        getTxHashThread = Thread(Runnable {
+            while (true) {
+                if (PayTxHashReceiver.receivedData) {
+                    handler.post {
+                        payCallback?.payFinish(
+                            PayTxHashReceiver.isSuc,
+                            PayTxHashReceiver.txHash,
+                            PayTxHashReceiver.orderId,
+                            PayTxHashReceiver.orderState
+                        )
+                    }
+                    PayTxHashReceiver.receivedData = false
+                    sleepTime = Long.MAX_VALUE
+                }
+                try {
+                    LogUtil.d("get txhash receiver sleep:$sleepTime")
+                    Thread.sleep(sleepTime)
+                } catch (t: Throwable) {
+                    t.printStackTrace()
+                }
+            }
+        })
+        getTxHashThread.start()
     }
 
     /**
@@ -54,7 +89,7 @@ object TTCPay {
         this.payCallback = callback
         this.payInfo = payInfo
 
-        if ( progressDialog == null) {
+        if (progressDialog == null) {
             progressDialog = Util.showProgressDialog(context, false)
         }
 
@@ -180,6 +215,10 @@ object TTCPay {
                         } else if (payInfo?.payType == PayInfo.PAY_TYPE_ACN) {
                             Util.openAcornBox(activity, orderId)
                         }
+
+                        sleepTime = 100L
+                        getTxHashThread.interrupt()
+
                     } else {
                         var bean = ErrorBean(ErrorBean.CREATE_TTC_ORDER_ERROR)
                         payCallback?.error(bean)

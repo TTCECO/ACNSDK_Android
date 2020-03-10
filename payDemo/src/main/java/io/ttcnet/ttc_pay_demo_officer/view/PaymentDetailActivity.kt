@@ -1,5 +1,7 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -17,7 +19,16 @@ import kotlinx.android.synthetic.main.appbar_layout.*
 
 class PaymentDetailActivity : BaseActivity() {
 
-    private var orderId :String ?=null
+    companion object {
+        fun open(activity: Activity, orderId: String) {
+            val intent = Intent(activity, PaymentDetailActivity::class.java)
+            intent.putExtra(Constant.TTC_ORDER_ID, orderId)
+            activity.startActivity(intent)
+        }
+
+    }
+
+    private var orderId: String? = null
     private var handler = MyHandler()
 
     lateinit var itemOrderNoTitle: TextView
@@ -52,7 +63,7 @@ class PaymentDetailActivity : BaseActivity() {
 
     fun queryOrderState() {
         if (orderId == null) {
-            Utils.toast(activity,"order Id is null")
+            Utils.toast(activity, "order Id is null")
             return
         }
         TTCPay.getOrderDetail(activity, orderId!!, object : GetOrderDetailCallback {
@@ -81,7 +92,7 @@ class PaymentDetailActivity : BaseActivity() {
         }
         if (orderInfo.tokenId == 0) {
             detail_price.setText("Amount:" + orderInfo.totalTTC + "TTC")
-        }else if (orderInfo.tokenId == 1) {
+        } else if (orderInfo.tokenId == 1) {
             detail_price.setText("Amount:" + orderInfo.totalTTC + "ACN")
         }
 
