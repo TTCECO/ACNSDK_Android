@@ -1,3 +1,6 @@
 <resources>
     <string name="loading">加载中…</string>
+    <string name="pls_update_acorn_box">请升级AcornBox</string>
+    <string name="pls_install_ttc_connect">请安装TTC Connect</string>
+    <string name="pls_update_ttc_connect">请升级TTC Connect</string>
 </resources>

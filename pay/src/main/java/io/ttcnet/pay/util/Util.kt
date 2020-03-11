@@ -23,32 +23,64 @@ import kotlin.random.Random
  */
 object Util {
     val ONE_18_ZERO = "1000000000000000000"  //1*10^18
-    val TTC_WALLET_PK_NAME = "com.ttc.wallet"
+    val TTC_CONNECT_PK_NAME = "com.ttc.wallet"
+    val ACORN_BOX_PK_NAME = "eco.acorn"
+    val TTC_CONNECT_DOWNLOAD_URL = "https://www.ttc.eco/TTCConnect/download"
+    val ACORN_BOX_DOWNLOAD_URL = "https://acn.eco/acornbox/download"
+
 
     fun openTTCConnect(context: Context, orderId: String) {
+        var isInstalled = isAppInstalled(context, TTC_CONNECT_PK_NAME)
         var content =
             "order_id=$orderId&merchant_pk_name=${context.packageName}&random=${Random.nextInt()}"
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse("ttc://pay?" + content))
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
+        if (isInstalled) {
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(intent)
+            } else {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.pls_update_ttc_connect),
+                    Toast.LENGTH_SHORT
+                ).show()
+                var uri = Uri.parse(TTC_CONNECT_DOWNLOAD_URL)
+                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+            }
         } else {
-            Toast.makeText(context, "请安装TTC Connect", Toast.LENGTH_SHORT).show()
-            var uri = Uri.parse("https://www.ttc.eco/TTCConnect/download")
-            var intent = Intent(Intent.ACTION_VIEW, uri)
-            context.startActivity(intent)
+            Toast.makeText(
+                context,
+                context.getString(R.string.pls_install_ttc_connect),
+                Toast.LENGTH_SHORT
+            ).show()
+            var uri = Uri.parse(TTC_CONNECT_DOWNLOAD_URL)
+            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
         }
+
     }
 
     //调用之前，请先检查是否安装AcornBox；
     // 如果未安装，可通过PayUtil.getAcornBoxDownloadUrl()获取下载地址
     fun openAcornBox(activity: Activity, orderId: String) {
+        var isInstalled = isAppInstalled(activity, ACORN_BOX_PK_NAME)
         var content =
             "order_id=$orderId&merchant_pk_name=${activity.packageName}&random=${Random.nextInt()}"
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse("acn://pay?" + content))
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        if (intent.resolveActivity(activity.packageManager) != null) {
-            activity.startActivityForResult(intent, 0)
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)  //加了这句后，无法使用onActivityResult
+
+        if (isInstalled) {
+            if (intent.resolveActivity(activity.packageManager) != null) {
+                activity.startActivityForResult(intent, 0)
+            } else {
+                Toast.makeText(
+                    activity,
+                    activity.getString(R.string.pls_update_acorn_box),
+                    Toast.LENGTH_SHORT
+                ).show()
+                var uri = Uri.parse(Util.ACORN_BOX_DOWNLOAD_URL)
+                var intent = Intent(Intent.ACTION_VIEW, uri)
+                activity.startActivity(intent)
+            }
         }
     }
 
@@ -58,7 +90,7 @@ object Util {
             val manager = activity.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
             val runningAppProcesses = manager.runningAppProcesses
             for (process in runningAppProcesses) {
-                return process.processName.startsWith(TTC_WALLET_PK_NAME)
+                return process.processName.startsWith(TTC_CONNECT_PK_NAME)
             }
         }
         return false
@@ -203,6 +235,19 @@ object Util {
         } else {
             "http://sdk-ft.ttcnet.io/v1/"
         }
+    }
+
+    private fun isAppInstalled(context: Context, packageName: String): Boolean {
+        var isInstalled = false
+        val packageManager = context.packageManager
+        val installedPackages = packageManager.getInstalledPackages(0)
+        for (info in installedPackages) {
+            if (info.packageName == packageName) {
+                isInstalled = true
+                break
+            }
+        }
+        return isInstalled
     }
 
 }

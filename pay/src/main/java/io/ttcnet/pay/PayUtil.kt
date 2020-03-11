@@ -31,8 +31,4 @@ object PayUtil {
         }
         return ""
     }
-
-    fun getAcornBoxDownloadUrl(): String {
-        return "https://acn.eco/acornbox/download"
-    }
 }

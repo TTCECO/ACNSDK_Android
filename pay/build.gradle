@@ -9,7 +9,7 @@ android {
         minSdkVersion MIN_SDK_VERSION
         targetSdkVersion TARGET_SDK_VERSION
         versionCode 1
-        versionName "0.2.0_3"
+        versionName "0.2.0_4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
