@@ -31,7 +31,7 @@ class FurnitureFragment : androidx.fragment.app.Fragment() {
     private lateinit var furnitureViewModel: FurnitureViewModel
     private lateinit var cartViewModel: CartViewModel
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
     }
 

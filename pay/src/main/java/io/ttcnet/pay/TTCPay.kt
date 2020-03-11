@@ -23,7 +23,6 @@ import io.ttcnet.pay.util.Util
  */
 @SuppressLint("StaticFieldLeak")
 object TTCPay {
-
     private lateinit var activity: Activity
     private var payCallback: PayCallback? = null
     private var handler = PayHandler(Looper.getMainLooper())
@@ -210,18 +209,22 @@ object TTCPay {
                     if (msg.obj is String) {
                         val orderId = msg.obj as String;
                         payCallback?.createTTCOrderOver(orderId)
+                        var openRes = 0
                         if (payInfo?.payType == PayInfo.PAY_TYPE_TTC) {
-                            Util.openTTCConnect(activity, orderId)
+                            openRes = Util.openTTCConnect(activity, orderId)
                         } else if (payInfo?.payType == PayInfo.PAY_TYPE_ACN) {
-                            Util.openAcornBox(activity, orderId)
+                            openRes = Util.openAcornBox(activity, orderId)
                         }
 
-                        sleepTime = 100L
-                        getTxHashThread.interrupt()
+                        if (openRes == 0) {
+                            sleepTime = 100L
+                            getTxHashThread.interrupt()
+                        } else {
+                            payCallback?.error(ErrorBean(openRes))
+                        }
 
                     } else {
-                        var bean = ErrorBean(ErrorBean.CREATE_TTC_ORDER_ERROR)
-                        payCallback?.error(bean)
+                        payCallback?.error(ErrorBean(ErrorBean.CREATE_TTC_ORDER_ERROR))
                     }
                 }
 

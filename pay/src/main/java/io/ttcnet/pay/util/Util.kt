@@ -9,7 +9,6 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import eco.ttc.proto.nano.Sdk
 import io.ttcnet.pay.R
 import io.ttcnet.pay.model.ErrorBean
@@ -29,7 +28,8 @@ object Util {
     val ACORN_BOX_DOWNLOAD_URL = "https://acn.eco/acornbox/download"
 
 
-    fun openTTCConnect(context: Context, orderId: String) {
+    fun openTTCConnect(context: Context, orderId: String): Int {
+        var openRes = 0
         var isInstalled = isAppInstalled(context, TTC_CONNECT_PK_NAME)
         var content =
             "order_id=$orderId&merchant_pk_name=${context.packageName}&random=${Random.nextInt()}"
@@ -39,29 +39,18 @@ object Util {
             if (intent.resolveActivity(context.packageManager) != null) {
                 context.startActivity(intent)
             } else {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.pls_update_ttc_connect),
-                    Toast.LENGTH_SHORT
-                ).show()
-                var uri = Uri.parse(TTC_CONNECT_DOWNLOAD_URL)
-                context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+                openRes = ErrorBean.TTC_CONENCT_VERSION_LOW
             }
         } else {
-            Toast.makeText(
-                context,
-                context.getString(R.string.pls_install_ttc_connect),
-                Toast.LENGTH_SHORT
-            ).show()
-            var uri = Uri.parse(TTC_CONNECT_DOWNLOAD_URL)
-            context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+            openRes = ErrorBean.TTC_CONNECT_NOT_INSTALLED
         }
-
+        return openRes
     }
 
     //调用之前，请先检查是否安装AcornBox；
-    // 如果未安装，可通过PayUtil.getAcornBoxDownloadUrl()获取下载地址
-    fun openAcornBox(activity: Activity, orderId: String) {
+    // return: 0-正常打开，1-未安装， 2-版本过低
+    fun openAcornBox(activity: Activity, orderId: String): Int {
+        var openRes = 0
         var isInstalled = isAppInstalled(activity, ACORN_BOX_PK_NAME)
         var content =
             "order_id=$orderId&merchant_pk_name=${activity.packageName}&random=${Random.nextInt()}"
@@ -72,16 +61,12 @@ object Util {
             if (intent.resolveActivity(activity.packageManager) != null) {
                 activity.startActivityForResult(intent, 0)
             } else {
-                Toast.makeText(
-                    activity,
-                    activity.getString(R.string.pls_update_acorn_box),
-                    Toast.LENGTH_SHORT
-                ).show()
-                var uri = Uri.parse(Util.ACORN_BOX_DOWNLOAD_URL)
-                var intent = Intent(Intent.ACTION_VIEW, uri)
-                activity.startActivity(intent)
+                openRes = ErrorBean.ACORN_BOX_VERSION_LOW
             }
+        } else {
+            openRes = ErrorBean.ACORN_BOX_NOT_INSTALLED
         }
+        return openRes;
     }
 
     fun isTTCBackground(context: Context): Boolean {

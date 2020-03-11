@@ -76,5 +76,5 @@ dependencies {
 
 //    implementation project(":pay")
 
-    implementation(name: 'ttc_pay_0.2.0_4', ext: 'aar')
+    implementation(name: 'ttc_pay_0.2.0', ext: 'aar')
 }
