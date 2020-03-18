@@ -170,11 +170,11 @@ object TTCPay {
                         }
 
                         ReqUtil.GET_ORDER_DETAIL_FAIL -> {
+                            val error = ErrorBean(ErrorBean.GET_ORDER_DETAIL_EEOR)
                             if (msg.obj is String) {
-                                var error = ErrorBean()
                                 error.setErrorMsg(msg.obj as String)
-                                callback?.error(error)
                             }
+                            callback?.error(error)
                         }
                     }
                 }
@@ -229,8 +229,10 @@ object TTCPay {
                 }
 
                 ReqUtil.CREATE_ORDER_FAIL -> {
-                    var bean = ErrorBean()
-                    bean.setErrorMsg(msg.obj as String)
+                    val bean = ErrorBean(ErrorBean.CREATE_TTC_ORDER_ERROR)
+                    if (msg.obj is String) {
+                        bean.setErrorMsg(msg.obj as String)
+                    }
                     payCallback?.error(bean)
                     progressDialog?.dismiss()
                     progressDialog = null

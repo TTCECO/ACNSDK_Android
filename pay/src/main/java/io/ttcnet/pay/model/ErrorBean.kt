@@ -26,6 +26,7 @@ class ErrorBean {
         val ACORN_BOX_VERSION_LOW = 8
         val TTC_CONNECT_NOT_INSTALLED = 9
         val TTC_CONENCT_VERSION_LOW = 10
+        val GET_ORDER_DETAIL_EEOR = 11
 
 
         val APP_ID_IS_EMPTY_MSG = "appId is empty";
