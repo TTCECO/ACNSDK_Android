@@ -216,7 +216,7 @@ object Util {
 
     fun getServerUrl(context: Context): String {
         return if (SPUtil.isEnvProd(context)) {
-            "http://sdk.ttcnet.io/v1/"
+            "http://sdk-pro.ttcnet.io/v1/"
         } else {
             "http://sdk-ft.ttcnet.io/v1/"
         }
