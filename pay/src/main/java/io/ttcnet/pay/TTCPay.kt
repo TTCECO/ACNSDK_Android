@@ -141,7 +141,7 @@ object TTCPay {
                             ReqUtil.GET_EXCHANGE_RATE_FAIL -> {
                                 progressDialog?.dismiss()
                                 progressDialog = null
-                                var err = ErrorBean()
+                                var err = ErrorBean(ErrorBean.GET_EXCHANGE_RATE_ERROR)
                                 if (msg.obj is String) {
                                     err.setErrorMsg(msg.obj as String)
                                     LogUtil.e(err.getErrorMsg())
@@ -196,11 +196,11 @@ object TTCPay {
                 }
 
                 ReqUtil.GET_EXCHANGE_RATE_FAIL -> {
+                    var errorBean = ErrorBean(ErrorBean.GET_EXCHANGE_RATE_ERROR)
                     if (msg.obj is String) {
-                        var errorBean = ErrorBean()
                         errorBean.setErrorMsg(msg.obj as String)
-                        payCallback?.error(errorBean)
                     }
+                    payCallback?.error(errorBean)
                 }
 
                 ReqUtil.CREATE_ORDER_SUC -> {
