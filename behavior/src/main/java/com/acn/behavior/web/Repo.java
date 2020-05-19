@@ -18,6 +18,8 @@ import com.acn.biz.model.BindSucData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,9 +27,8 @@ import java.util.Map;
  */
 public class Repo {
 
-    private static ArrayList<BehaviorModel> behaviorModelArrayList = new ArrayList<>();
+    private static List<BehaviorModel> behaviorModelArrayList = Collections.synchronizedList(new ArrayList<>());
     private static Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final Object lock = new Object();
 
     public void registerUser(final IManager.UserInfoCallback callback) {
         BizApi.getInstance().userRegister(new BizCallback<Map<String, String>>() {
@@ -185,9 +186,7 @@ public class Repo {
         model.behaviorType = type;
         model.extra = content;
         model.timestamp = String.valueOf(behaviorTime);
-        synchronized (lock) {
-            behaviorModelArrayList.add(model);
-        }
+        behaviorModelArrayList.add(model);
     }
 
 
@@ -213,9 +212,7 @@ public class Repo {
                             txHash = EthClient.sendTransaction(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress(), BaseInfo.getInstance().getDappActionAddress(),
                                     BaseInfo.getInstance().getPrivateKey(), BaseInfo.getInstance().getGasPrice(), BaseInfo.getInstance().getGasLimit(), data);
 
-                            synchronized (lock) {
-                                behaviorModelArrayList.remove(des);
-                            }
+                            behaviorModelArrayList.remove(des);
 
                             if (!TextUtils.isEmpty(txHash)) {
                                 int blockNumber = EthClient.getBlockNumber(BaseInfo.getInstance().getSideChainRPCUrl());
