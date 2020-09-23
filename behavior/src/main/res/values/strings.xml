@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="bind">Connect</string>
-    <string name="ttc_wallet">MARO Connect</string>
     <string name="loading">Loading…</string>
     <string name="get_ttc_after_bind">Receive %d MARO after binding</string>
-    <string name="please_upgrade_ttc_connect">Please upgrade MARO Connect to the latest version</string>
-    <string name="please_install_ttc_connect">Please install MARO Connect</string>
     <string name="integrate_acn_sdk_too_low">ACN SDK integrated in %s is too low</string>
     <string name="error_userid_is_empty">User not logged in</string>
 </resources>
