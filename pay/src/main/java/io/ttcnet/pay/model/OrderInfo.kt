@@ -16,6 +16,6 @@ class OrderInfo {
     var txHash = ""
     var payGasLimit = 0
     var payGasPrice = ""
-    var tokenId = 0    //0:TTC, ...
+    var tokenId = 0    //0:MARO, ...
 
 }

@@ -1,6 +1,4 @@
 <resources>
     <string name="loading">Đang tải…</string>
     <string name="pls_update_acorn_box">Vui lòng nâng cấp Acorn Box</string>
-    <string name="pls_install_ttc_connect">Vui lòng cài đặt TTC Connect</string>
-    <string name="pls_update_ttc_connect">Vui lòng nâng cấp TTC Connect</string>
 </resources>

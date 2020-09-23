@@ -184,7 +184,7 @@
 
 #EventType没用，都是用户自定义
 -keep class io.ttcnet.pay.model.**{*;}
--keep class io.ttcnet.pay.TTCPay{*;}
+-keep class io.ttcnet.pay.MaroPay{*;}
 -keep class io.ttcnet.pay.PayCallback{*;}
 -keep class io.ttcnet.pay.ExchangeCallback{*;}
 -keep class io.ttcnet.pay.GetOrderDetailCallback{*;}

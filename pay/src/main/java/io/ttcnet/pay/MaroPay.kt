@@ -22,7 +22,7 @@ import io.ttcnet.pay.util.Util
  * Created by lwq on 2018/12/4.
  */
 @SuppressLint("StaticFieldLeak")
-object TTCPay {
+object MaroPay {
     private lateinit var activity: Activity
     private var payCallback: PayCallback? = null
     private var handler = PayHandler(Looper.getMainLooper())
@@ -37,12 +37,12 @@ object TTCPay {
         context: Context,
         userId: String,
         appId: String,
-        ttcPublicKey: String,
+        maroPublicKey: String,
         secretKey: String
     ) {
         SPUtil.setUserId(context, userId)
         SPUtil.setAppId(context, appId)
-        SPUtil.setTTCPublicKey(context, ttcPublicKey)
+        SPUtil.setTTCPublicKey(context, maroPublicKey)
         SPUtil.setSymmetricKey(context, secretKey)
 
         var receiver = PayTxHashReceiver()
