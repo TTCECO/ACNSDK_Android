@@ -167,7 +167,7 @@ String getBoundWalletAddress()
 ```
 
 ## 解绑钱包
-解绑后，无法将TTC转入钱包。    
+解绑后，无法将MARO转入钱包。
 
 ```
 ACNAgent.unbindApp(IManager.UnbindCallback callback)

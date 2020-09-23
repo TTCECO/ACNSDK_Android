@@ -163,13 +163,13 @@ String getBoundWalletAddress()
 ```
 
 ## Unbind
-It is used to unbind the TTC Connect. 
+It is used to unbind the MARO Connect.
 
 ```
 ACNAgent.unbindApp(IManager.UnbindCallback callback)
 ```
 ## Get account balance
-The account balance is the balance in the dapp that is not synchronized to the TTC Connect.
+The account balance is the balance in the dapp that is not synchronized to the MARO Connect.
 
 ```
 ACNAgent.getAppBalance(IManager.BalanceCallback callback)
