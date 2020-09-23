@@ -29,7 +29,7 @@ android {
     //自定义aar的名称
     android.libraryVariants.all { variant ->
         variant.outputs.all {
-            def fileName = "ttc_pay_${defaultConfig.versionName}.aar"
+            def fileName = "maro_pay_${defaultConfig.versionName}.aar"
             outputFileName = fileName
         }
     }
