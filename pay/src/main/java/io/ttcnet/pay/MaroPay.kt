@@ -208,7 +208,7 @@ object MaroPay {
                     progressDialog = null
                     if (msg.obj is String) {
                         val orderId = msg.obj as String;
-                        payCallback?.createTTCOrderOver(orderId)
+                        payCallback?.createMaroOrderOver(orderId)
                         var openRes = 0
                         if (payInfo?.payType == PayInfo.PAY_TYPE_TTC) {
                             openRes = Util.openTTCConnect(activity, orderId)
