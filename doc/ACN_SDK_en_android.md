@@ -21,10 +21,7 @@ dependencies {
   implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
   implementation(name: 'acn_sdk_xxx', ext: 'aar')
   implementation(name: 'acn_sdk_biz_xxx', ext: 'aar')
-  
-  //kotlin
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    
+ 
   //add it if use ad function
   implementation 'com.google.android.gms:play-services-ads:17.2.0'
 }
@@ -137,20 +134,22 @@ ACNAgent.updateUserInfo(Map<String, String> info, IManager.UserInfoCallback call
 ```
 
 ## Bind
-The mothod result can received onActivityResult(int requestCode, int resultCode, @Nullable Intent data):  
-resultCode = RESULT\_OK  
-The bind result:  
-isBindSuc = data.getBooleanExtra(ACNKey.BIND\_STATE, false);     
-if has bound reward, return the count.  
-reward = data.getIntExtra(ACNKey.BIND\_REWARD, 0);  
-The symbol of reward Token.  
-rewardSymbol = data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL);  
-If bind fail, return the error message.  
-errMsg = data.getStringExtra(ACNKey.ERROR\_MSG);  
 
 ```
 bindApp(Activity activity, String appIconUrl, int reqCode)
 ```
+
+The mothod result can received onActivityResult(int requestCode, int resultCode, Intent data): 
+resultCode = RESULT\_OK  
+
+| name | value | description 
+| ---- | ----   | ---        
+| isBindSuc | data.getBooleanExtra(ACNKey.BIND\_STATE, false)   |The bind result 
+| reward | data.getIntExtra(ACNKey.BIND\_REWARD, 0) |  if has bound reward, return the count.   
+| rewardSymbol	| data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL)   |The symbol of reward Token
+| walletAddress | data.getStringExtra(ACNKey.WALLET_ADDRESS) |The bound wallet address
+| errMsg | data.getStringExtra(ACNKey.ERROR\_MSG) |If bind fail, return the error message.
+  
 
 
 ## Get bound wallet address
@@ -161,14 +160,13 @@ String getBoundWalletAddress()
 ```
 
 ## Unbind
-It is used to unbind the TTC Connect. 
+It is used to unbind the MARO Connect.
 
 ```
 ACNAgent.unbindApp(IManager.UnbindCallback callback)
 ```
 ## Get account balance
-The account balance is the balance in the dapp that is not synchronized to the TTC Connect.  
-The balance unit is ACN. e.g. If balance is 10.32ACN, then balance is 10.32.
+The account balance is the balance in the dapp that is not synchronized to the MARO Connect.
 
 ```
 ACNAgent.getAppBalance(IManager.BalanceCallback callback)

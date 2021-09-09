@@ -22,8 +22,6 @@ dependencies {
   implementation(name: 'acn_sdk_xxx', ext: 'aar')
   implementation(name: 'acn_sdk_biz_xxx', ext: 'aar')
   
-  //kotlin
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     
   //add it if use ad function
   implementation 'com.google.android.gms:play-services-ads:17.2.0'

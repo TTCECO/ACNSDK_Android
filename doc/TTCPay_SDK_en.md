@@ -1,8 +1,8 @@
-# TTCPay Tutorials
+# MaroPay Tutorials
 
 ## Basics
 
-Download [TTCPay SDK](https://github.com/TTCECO/TTCSDK_Android/releases)
+Download [MaroPay SDK](https://github.com/TTCECO/TTCSDK_Android/releases)
 
 ## Integration
 Add sdk in libs directory, and add dependency in build.gradle.
@@ -17,27 +17,27 @@ android {
 }
 
 dependencies {
-  implementation(name: 'ttc_pay_xxx', ext: 'aar')
+  implementation(name: 'maro_pay_xxx', ext: 'aar')
 }
 
 ```
 ## Initiate
-Please invoke it in Application. APP\_ID, TTCPay\_PUBLIC\_KEY and TTCPay\_SECRET\_KEY are given when you apply.
+Please invoke it in Application. APP\_ID, MaroPay\_PUBLIC\_KEY and MaroPay\_SECRET\_KEY are given when you apply.
 
 ```
 @Override
 public void onCreate() {
     super.onCreate();
-    TTCPay.init(applicationContext, "USER_ID", "APP_ID", "TTCPay_PUBLIC_KEY", "TTCPay_SECRET_KEY")
+    MaroPay.init(applicationContext, "USER_ID", "APP_ID", "MaroPay_PUBLIC_KEY", "MaroPay_SECRET_KEY")
 }
 ```
 ## Query exchange rate
-Query the rate of TTC to legal tender. The second parameter is legal tender type which are defined in Currency.kt.
+Query the rate of MARO to legal tender. The second parameter is legal tender type which are defined in Currency.kt.
 
 ```
-TTCPay.getExchangeRate(this, Currency.dollar, object : ExchangeCallback {
-    override fun done(ttcPrice: String) {
-        //Utils.toast(activity, ttcPrice)
+MaroPay.getExchangeRate(this, Currency.dollar, object : ExchangeCallback {
+    override fun done(maroPrice: String) {
+        //Utils.toast(activity, maroPrice)
     }
 
     override fun error(errorBean: ErrorBean) {
@@ -46,28 +46,28 @@ TTCPay.getExchangeRate(this, Currency.dollar, object : ExchangeCallback {
 })
 ```
 ## Payment
-Before invoking this, dapp should get sign from server. The second parameter is order object. The result of success callback is TTC order id.
+Before invoking this, dapp should get sign from server. The second parameter is order object. The result of success callback is MARO order id.
 
 ```
 payInfo.signature = Utils.getSignFromServer()
-TTCPay.pay(activity, payInfo, object : PayCallback {
-    override fun createTTCOrderOver(ttcOrderId: String) {
-         //Utils.toast(activity, ttcOrderId)
+MaroPay.pay(activity, payInfo, object : PayCallback {
+    override fun createMaroOrderOver(maroOrderId: String) {
+         //Utils.toast(activity, maroOrderId)
     }
 
     override fun error(errorBean: ErrorBean) {
         //Utils.toast(activity, errorBean.getErrorMsg())
     }
 
-    override fun payFinish(ttcOrderId: String, txHash: String, orderState: Int) {
+    override fun payFinish(maroOrderId: String, txHash: String, orderState: Int) {
     }
 })
 ```
 ## Query order detail
-Query order detail by TTC order id.
+Query order detail by MARO order id.
 
 ```
-TTCPay.getOrderDetail(activity, ttcOrderId, object : GetOrderDetailCallback {
+MaroPay.getOrderDetail(activity, maroOrderId, object : GetOrderDetailCallback {
     override fun done(orderInfo: OrderInfo) {
         //display(orderInfo)
     }

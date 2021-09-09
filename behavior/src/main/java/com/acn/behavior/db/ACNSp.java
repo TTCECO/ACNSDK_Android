@@ -2,8 +2,10 @@ package com.acn.behavior.db;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import com.acn.behavior.ACNAgent;
-import com.acn.behavior.util.SDKLogger;
+
+import java.math.BigInteger;
 
 public class ACNSp {
 
@@ -14,8 +16,8 @@ public class ACNSp {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_DAPP_ID = "key_dapp_id";
     private static final String KEY_DAPP_SECRET_KEY = "key_dapp_secret_key";
-//    private static final String NEXT_NONCE = "next_nonce";  //compare easily
-    private static final String LAST_OPEN_MS = "last_open_ms";  //上次登录的时间戳，只记录每天的第一次；the earliest one of one day
+    private static final String NEXT_NONCE = "next_nonce";  //compare easily
+//    private static final String LAST_OPEN_MS = "last_open_ms";  //上次登录的时间戳，只记录每天的第一次；the earliest one of one day
 //    private static final String MAIN_RPC_URL = "main_rpc_url";
 //    private static final String SIDE_RPC_URL = "side_rpc_url";
 
@@ -27,7 +29,7 @@ public class ACNSp {
 
     public static void clear() {
         //appid， secretKey不清除
-        editor.remove(KEY_USER_ID).remove(LAST_OPEN_MS).apply();
+        editor.remove(KEY_USER_ID).apply();
     }
 
 
@@ -38,7 +40,6 @@ public class ACNSp {
 
     public static String getUserId() {
         String userId = sp.getString(KEY_USER_ID, "");
-        SDKLogger.d("sp userId:" + userId);
         return userId;
     }
 
@@ -61,33 +62,33 @@ public class ACNSp {
     }
 
     //write the last nonce
-//    public static void setNextNonce(BigInteger nonce) {
-//        if (nonce != null) {
-//            editor.putString(NEXT_NONCE, nonce.toString()).apply();
-//        }
-//    }
-//
-//    public static BigInteger getNextNonce() {
-//        String sNonce = sp.getString(NEXT_NONCE, "");
-//        if (!TextUtils.isEmpty(sNonce) && TextUtils.isDigitsOnly(sNonce)) {
-//            return new BigInteger(sNonce);
-//        }
-//
-//
-//        return BigInteger.ZERO;
-//
-//    }
+    public static void setNextNonce(BigInteger nonce) {
+        if (nonce != null) {
+            editor.putString(NEXT_NONCE, nonce.toString()).apply();
+        }
+    }
+
+    public static BigInteger getNextNonce() {
+        String sNonce = sp.getString(NEXT_NONCE, "");
+        if (!TextUtils.isEmpty(sNonce) && TextUtils.isDigitsOnly(sNonce)) {
+            return new BigInteger(sNonce);
+        }
+
+
+        return BigInteger.ZERO;
+
+    }
 
     /**
      * @param lastLogin mm
      */
-    public static void setLastOpenTimestamp(long lastLogin) {
-        editor.putLong(LAST_OPEN_MS, lastLogin).apply();
-    }
-
-    public static long getLastOpenTimestamp() {
-        return sp.getLong(LAST_OPEN_MS, 0L);
-    }
+//    public static void setLastOpenTimestamp(long lastLogin) {
+//        editor.putLong(LAST_OPEN_MS, lastLogin).apply();
+//    }
+//
+//    public static long getLastOpenTimestamp() {
+//        return sp.getLong(LAST_OPEN_MS, 0L);
+//    }
 
 //    public static void setMainChainRpcUrl(String mainRpcUrl) {
 //        editor.putString(MAIN_RPC_URL, mainRpcUrl);

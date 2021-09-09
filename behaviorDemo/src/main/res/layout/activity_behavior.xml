@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_300"
+        android:orientation="vertical"
+        tools:context=".activity.BehaviorActivity">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+        <TextView
+                android:id="@+id/main_msg_tv"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/white"
+                android:elevation="6dp"
+                android:gravity="center"
+                android:hint="@string/display_result"
+                android:padding="@dimen/margin_half"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+    </LinearLayout>
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/margin_half">
+
+
+            <!--更新用户信息-->
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_half"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <TextView
+                            android:text="Update: "
+                            android:layout_width="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="18sp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_height="wrap_content"/>
+
+                    <EditText
+                            android:id="@+id/main_update_info_key"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="2"
+                            android:hint="@string/add_key"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:text=""/>
+
+                    <EditText
+                            android:id="@+id/main_update_info_value"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="2"
+                            android:hint="@string/add_value"
+                            android:imeOptions="actionDone"
+                            android:inputType="text"
+                            android:maxLines="1"/>
+
+                    <Button
+                            android:id="@+id/main_update_info_add"
+                            style="@style/BtnStyle"
+                            android:layout_width="20dp"
+                            android:layout_weight="1"
+                            android:text="@string/add"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <com.google.android.flexbox.FlexboxLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/margin_half"
+                    android:background="@color/white"
+                    app:alignContent="flex_start"
+                    app:alignItems="flex_start"
+                    app:flexWrap="wrap"
+                    app:justifyContent="flex_start">
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="login"
+                        android:text="@string/login"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/like_btn"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="Like"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/comment_btn"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="Comment"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/behavior1"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=1"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        android:id="@+id/behavior2"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=2"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/behavior3"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=3"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/behavior4"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=4"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        android:id="@+id/behavior5"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="behaviorType=5"
+                        app:layout_flexGrow="1"/>
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="unregister"
+                        android:text="@string/unregister"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="getBoundAddress"
+                        android:text="get bound address"
+                        android:visibility="visible"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="bind"
+                        android:text="@string/bind_dapp"
+                        android:visibility="visible"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="unbind"
+                        android:visibility="visible"
+                        android:text="@string/unbind_dapp"/>
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="walletBalance"
+                        android:text="@string/get_wallet_balance"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:onClick="appBalance"
+                        android:text="@string/get_app_balance"
+                        app:layout_flexGrow="1"/>
+
+
+                <Button
+                        android:id="@+id/main_log_btn"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="@string/close_log_switch"
+                        app:layout_flexGrow="1"/>
+
+                <Button
+                        android:id="@+id/main_sdk_fun"
+                        style="@style/BtnStyle"
+                        android:layout_width="wrap_content"
+                        android:text="@string/close_sdk_fun_switch"
+                        app:layout_flexGrow="1"/>
+
+
+            </com.google.android.flexbox.FlexboxLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

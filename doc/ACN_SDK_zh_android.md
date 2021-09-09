@@ -21,9 +21,6 @@ dependencies {
   implementation 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
   implementation(name: 'acn_sdk_xxx', ext: 'aar')
   implementation(name: 'acn_sdk_biz_xxx', ext: 'aar')
-  
-  //kotlin
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     
   //广告功能，需要添加此依赖
   implementation 'com.google.android.gms:play-services-ads:17.2.0'
@@ -140,17 +137,23 @@ ACNAgent.updateUserInfo(Map<String, String> info,IManager.UserInfoCallback callb
 ```
 
 ## 绑定钱包
-该方法的返回可以在onActivityResult(int requestCode, int resultCode, @Nullable Intent data)中接收返回值:    
-返回 resultCode = RESULT\_OK  
-绑定是否成功 isBindSuc = data.getBooleanExtra(ACNKey.BIND\_STATE, false);     
-绑定的奖励数量 reward = data.getIntExtra(ACNKey.BIND\_REWARD, 0);  
-绑定奖励的虚拟币名称 rewardSymbol = data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL);  
-如果该钱包已经和别的用户已绑定，则返回错误信息：  
-errMsg = data.getStringExtra(ACNKey.ERROR\_MSG);  
+
 
 ```
 bindApp(Activity activity, String appIconUrl, int reqCode)
 ```
+
+该方法的返回可以在onActivityResult(int requestCode, int resultCode, @Nullable Intent data)中接收返回值:    
+返回 resultCode = RESULT\_OK  
+ 
+
+| name | value | description 
+| ---- | ----   | ---        
+| isBindSuc | data.getBooleanExtra(ACNKey.BIND\_STATE, false) |绑定是否成功  
+| reward | data.getIntExtra(ACNKey.BIND\_REWARD, 0) |  绑定的奖励数量  
+| rewardSymbol	| data.getStringExtra(ACNKey.BIND\_REWARD\_SYMBOL)   |绑定奖励的虚拟币名称 
+| walletAddress | data.getStringExtra(ACNKey.WALLET_ADDRESS) |绑定的钱包地址 
+| errMsg | data.getStringExtra(ACNKey.ERROR\_MSG)|返回错误信息
 
 
 ## 获取绑定钱包地址
@@ -161,7 +164,7 @@ String getBoundWalletAddress()
 ```
 
 ## 解绑钱包
-解绑后，无法将TTC转入钱包。    
+解绑后，无法将MARO转入钱包。
 
 ```
 ACNAgent.unbindApp(IManager.UnbindCallback callback)

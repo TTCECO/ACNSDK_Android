@@ -1,7 +1,7 @@
 package io.ttcnet.ttc_pay_demo_officer.repository
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
 import io.ttcnet.ttc_pay_demo_officer.model.FurnitureModel
@@ -22,7 +22,7 @@ object FurnitureRepository {
         goods1.title = "Mellow"
         goods1.description = "Get Harmonious Moment"
         goods1.priceType = Constant.PRICE_TYPE_DOLLAR
-        goods1.price = 1.0
+        goods1.price = 0.01
         furnitures.add(goods1)
 
         var goods2 = FurnitureModel()
@@ -32,7 +32,7 @@ object FurnitureRepository {
         goods2.title = "Shell"
         goods2.description = "Elegant Curve Creator"
         goods2.priceType = Constant.PRICE_TYPE_DOLLAR
-        goods2.price = 2.0
+        goods2.price = 0.02
         furnitures.add(goods2)
 
         var goods3 = FurnitureModel()

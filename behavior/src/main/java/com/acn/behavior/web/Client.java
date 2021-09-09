@@ -12,12 +12,11 @@ import android.text.TextUtils;
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.db.BehaviorDBManager;
 import com.acn.behavior.model.BehaviorModel;
-import com.acn.behavior.util.CommonType;
-import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.ProcessUtil;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.biz.model.BaseInfo;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,52 +35,55 @@ public class Client {
     private Handler handler;
     private ExecutorService eventExecutorService;
     private BehaviorDBManager dbManager;
-
-    //    private ScheduledExecutorService sendDBService;
     private ScheduledFuture<?> scheduledFuture;
 
     public Client(Context context) {
         this.context = context.getApplicationContext();
         handler = new Handler(Looper.getMainLooper());
-        eventExecutorService = Executors.newFixedThreadPool(5);
+        eventExecutorService = Executors.newFixedThreadPool(2);
 
         repo = new Repo();
         dbManager = new BehaviorDBManager(context);
         SDKLogger.d("create schedule thread");
+
         scheduledFuture = Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                SDKLogger.d("schedule thread");
                 try {
-                    List<BehaviorModel> models = dbManager.getAllASCTimestamp(BaseInfo.getInstance().getUserId());
-                    if (models != null) {
-                        SDKLogger.d("behavior count in db is " + models.size());
-                    }
+                    ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress()));
 
-                    if (models != null && models.size() > 0) {
-                        //先从最老的开始
-                        BehaviorModel m = models.get(0);
-
-                        if (m.behaviorType == CommonType.OPEN_DAPP) {
-                            if (!isNeedUploadOpenBehavior()) {
-                                dbManager.delete(m.timestamp);
-                                SDKLogger.d("has login, delete it. " + m.timestamp);
-                                return;
-                            }
+                    List<BehaviorModel> allList = dbManager.getAll(BaseInfo.getInstance().getUserId());
+                    SDKLogger.d("checking data size:" + allList.size());
+                    for (BehaviorModel m : allList) {
+                        if (m.writeBlockTimestamp == null) {
+                            m.writeBlockTimestamp = "0";
                         }
 
                         if (!TextUtils.isEmpty(m.hash) && EthClient.isTransactionSuccess(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash)) {
                             dbManager.delete(m.timestamp);
-                            SDKLogger.d("has written in block chain, delete. " + m.timestamp);
+                            SDKLogger.d("delete. behaviorType=" + m.behaviorType);
                         } else {
-                            repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
-                            SDKLogger.d("write to block chain. " + m.timestamp);
+                            if (EthClient.needRewriteBlock(BaseInfo.getInstance().getSideChainRPCUrl(), m.hash, m.blockNumber)) {
+                                BigInteger tgasBalance = EthClient.getDappActionAddressBalance(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getDappActionAddress());
+                                BigInteger min = new BigInteger(BaseInfo.getInstance().getGasPrice()).multiply(new BigInteger(String.valueOf(BaseInfo.getInstance().getGasLimit())));
+                                if (tgasBalance.compareTo(min) > 0) {
+                                    repo.onEvent(m.behaviorType, m.extra, Long.valueOf(m.timestamp));
+                                    SDKLogger.d("write to block chain. behaviorType=" + m.behaviorType);
+                                } else {
+                                    SDKLogger.e("TGas is not enough");
+                                }
+                            }
                         }
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }, 0, 30, TimeUnit.SECONDS);
+        }, 0, 10, TimeUnit.MINUTES);
+
+
         if (ProcessUtil.isMainProcess(context)) {
             registerReceiver();
         } else {
@@ -104,10 +106,6 @@ public class Client {
 
     public BehaviorDBManager getDbManager() {
         return dbManager;
-    }
-
-    public ScheduledFuture<?> getScheduledFuture() {
-        return scheduledFuture;
     }
 
     private void registerReceiver() {
@@ -139,10 +137,13 @@ public class Client {
         }
     }
 
-    private boolean isNeedUploadOpenBehavior() {
-        long lastOpenDay = ACNSp.getLastOpenTimestamp() / Constants.ONE_DAY_MILLISECOND;
-        long currentDay = System.currentTimeMillis() / Constants.ONE_DAY_MILLISECOND;
-        return currentDay > lastOpenDay;
-    }
+//    private boolean isNeedUploadOpenBehavior() {
+//        long lastOpenDay = ACNSp.getLastOpenTimestamp() / Constants.ONE_DAY_MILLISECOND;
+//        long currentDay = System.currentTimeMillis() / Constants.ONE_DAY_MILLISECOND;
+//        return currentDay > lastOpenDay;
+//    }
 
+    public ScheduledFuture<?> getScheduledFuture() {
+        return scheduledFuture;
+    }
 }

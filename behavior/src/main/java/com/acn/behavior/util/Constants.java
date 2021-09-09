@@ -1,11 +1,11 @@
 package com.acn.behavior.util;
 
+import com.acn.biz.model.BaseInfo;
+
 public class Constants {
-//    public static String MAIN_CHAIN_RPC_URL = "https://www.ttcnet.io/";
-//    public static String SIDE_CHAIN_RPC_URL = "https://www.ttcnet.io/";
-//
-//    public static String TEST_MAIN_CHAIN_RPC_URL = "http://test.ttcnet.io/";
-//    public static String TEST_SIDE_CHAIN_RPC_URL = "http://test.ttcnet.io/";
+
+    public static final String TTC_CONNECT_DOWNLOAD_URL = "https://wallet.ttc.eco/wallet/download/android";
+    public static final String ACORN_BOX_DOWNLOAD_URL = "https://acn.eco/acornbox/download";
 
     public static final String SIGN_TYPE = "MD5";
     public static final String DATA_PREFIX = "ufo:1:oplog:md5:";
@@ -32,5 +32,56 @@ public class Constants {
 
     public static final int OPERATE_BIND = 1;
     public static final int OPERATE_UNBIND = 2;
+
+
+    public static String getDownloadUrl() {
+        return getWallet(2);
+    }
+
+    public static String getBindScheme() {
+
+        return getWallet(1);
+    }
+
+    public static String getPackageName() {
+
+        return getWallet(0);
+    }
+
+
+    //0-package, 1-scheme, 2-downloadUrl
+    private static String getWallet(int infoType) {
+        String packageName = "";
+        String scheme = "";
+        String downloadUrl = "";
+        switch (BaseInfo.getInstance().walletType) {
+            case 0:
+                packageName = "com.ttc.wallet";
+                scheme = "ttc://bind";
+                downloadUrl = TTC_CONNECT_DOWNLOAD_URL;
+                break;
+
+            case 1:
+                packageName = "eco.acorn";
+                scheme = "acorn://bind";
+                downloadUrl = ACORN_BOX_DOWNLOAD_URL;
+                break;
+        }
+
+        switch (infoType) {
+            case 0:
+                return packageName;
+
+            case 1:
+                return scheme;
+
+            case 2:
+                return downloadUrl;
+
+            default:
+                return "";
+        }
+
+    }
 
 }

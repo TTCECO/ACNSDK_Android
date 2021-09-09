@@ -1,11 +1,13 @@
 package com.acn.behavior.web;
 
 import android.text.TextUtils;
+
+import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.Constants;
 import com.acn.behavior.util.SDKLogger;
 import com.acn.behavior.util.Utils;
 import com.acn.biz.model.BaseInfo;
-import java8.util.Optional;
+
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
@@ -17,9 +19,15 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jService;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
-import org.web3j.protocol.core.methods.response.*;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Numeric;
 
@@ -29,10 +37,21 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import java8.util.Optional;
+
 /**
  * 发送交易，查询交易是否成功，内存中nonce的更新
  */
 public class EthClient {
+
+    private static Web3jService web3jService4SideChain = null;
+
+    private static Web3jService getWeb3jService4SideChain(String url) {
+        if (web3jService4SideChain == null && !TextUtils.isEmpty(url)) {
+            web3jService4SideChain = new HttpService(url);
+        }
+        return web3jService4SideChain;
+    }
 
     public static BigDecimal getBalance(String rpcUrl, String address) {
         BigDecimal res = null;
@@ -97,24 +116,19 @@ public class EthClient {
         }
 
         return res;
+    }
 
 
-//            if (handler == null) {
-//                return;
-//            }
-//
-//            Message msg = handler.obtainMessage();
-//            msg.arg1 = tokenId;
-//            if (decimals != null) {
-//                msg.what = GET_TOKEN_DECIMAL_SUC;
-//                msg.obj = decimals;
-//            } else {
-//                msg.what = GET_TOKEN_DECIMAL_FAIL;
-//                msg.obj = errMsg;
-//                com.ttc.wallet.util.LogUtils.INSTANCE.e("get token decimals fail," + errMsg + "," + tokenId);
-//            }
-//
-//            handler.sendMessage(msg);
+    //返回单位wei
+    public static BigInteger getDappActionAddressBalance(String rpcUrl, String address) throws Exception {
+        Web3j web3 = null;
+
+        String hexAddress = Utils.format2ETHAddress(address);
+        web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
+        EthGetBalance send = web3.ethGetBalance(hexAddress, DefaultBlockParameterName.LATEST).send();
+        BigInteger balance = send.getBalance();  //Wei
+
+        return balance;
     }
 
 
@@ -188,10 +202,12 @@ public class EthClient {
         try {
             String hexFrom = Utils.format2ETHAddress(from);
 
-            Web3j web3 = Web3j.build(new HttpService(rpcUrl));
+            Web3j web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
             EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(hexFrom,
                     DefaultBlockParameterName.LATEST).send();
-            return ethGetTransactionCount.getTransactionCount();
+            BigInteger count = ethGetTransactionCount.getTransactionCount();
+            SDKLogger.d("getTransactionCount:" + count);
+            return count;
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -213,9 +229,10 @@ public class EthClient {
 
 
         if (TextUtils.isEmpty(fromPrivateKey)) {
-            SDKLogger.e("send transaction: fromPrivateKey is empty");
+            SDKLogger.e("sendTransaction(): fromPrivateKey is empty");
             return null;
         }
+
         try {
 
             String hexFrom = Utils.format2ETHAddress(from);
@@ -225,15 +242,15 @@ public class EthClient {
             String dataHex = Utils.stringToHex(data);
             Web3j web3 = null;
             BigInteger nonce = null;
-//            BigInteger nextNonce = ACNSp.getNextNonce();
+            BigInteger nextNonce = ACNSp.getNextNonce();
             Credentials credentials = null;
 
             credentials = Credentials.create(hexPrivateKey);
-            web3 = Web3j.build(new HttpService(rpcUrl));
+            web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
             nonce = getNonce(rpcUrl, hexFrom);
-//            if (nonce.compareTo(nextNonce) <= 0) {
-//                nonce = nextNonce;  //nonce从0开始
-//            }
+            if (nonce.compareTo(nextNonce) <= 0) {
+                nonce = nextNonce;  //nonce从0开始
+            }
 
             // create our transaction
             RawTransaction rawTransaction = RawTransaction.createTransaction(nonce, new BigInteger(gasPrice), new
@@ -247,41 +264,93 @@ public class EthClient {
                     String errMsg = ethSendTransaction.getError().getMessage();
                     SDKLogger.e(errMsg);
                 } else {
+                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     String transactionHash = ethSendTransaction.getTransactionHash();
-                    SDKLogger.d("send transaction, nonce=" + nonce + ",hash=" + transactionHash);
+                    SDKLogger.d("sendTransaction() suc, nonce=" + nonce + ",hash=" + transactionHash);
 
-//                    ACNSp.setNextNonce(nonce.add(BigInteger.ONE));
                     return transactionHash;
                 }
             }
         } catch (Exception e) {
-            SDKLogger.e(e.getMessage());
+            SDKLogger.e("sendTransaction():" + e.getMessage());
             throw e;
         }
         return null;
     }
 
     public static boolean isTransactionSuccess(String rpcUrl, String hash) throws Exception {
-        try {
-            String hexHash = Utils.format2ETHAddress(hash);
-            Web3j web3 = Web3j.build(new HttpService(rpcUrl));
-            EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
-            if (ethGetTransactionReceipt != null) {
-                Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
-                if (!receiptOptional.isEmpty()) {
-                    TransactionReceipt transactionReceipt = receiptOptional.get();
-                    if (transactionReceipt != null) {
-                        if ("0x1".equals(transactionReceipt.getStatus())) {
-                            return true;
-                        }
+        if (TextUtils.isEmpty(hash)) {
+            return false;
+        }
+
+        String hexHash = Utils.format2ETHAddress(hash);
+        Web3j web3 = Web3j.build(getWeb3jService4SideChain(rpcUrl));
+        EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
+        if (ethGetTransactionReceipt != null) {
+            Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
+            if (!receiptOptional.isEmpty()) {
+                TransactionReceipt transactionReceipt = receiptOptional.get();
+                if (transactionReceipt != null) {
+                    if ("0x1".equals(transactionReceipt.getStatus())) {
+                        return true;
                     }
                 }
             }
-        } catch (Exception e) {    //when testing, this exception occur
-            e.printStackTrace();
-            throw e;
         }
 
         return false;
+    }
+
+    public static boolean isTransactionFailed(String rpcUrl, String hash) throws Exception {
+
+        if (TextUtils.isEmpty(hash)) {
+            return true;
+        }
+
+        String hexHash = Utils.format2ETHAddress(hash);
+        Web3j web3 = Web3j.build(new HttpService(rpcUrl));
+        EthGetTransactionReceipt ethGetTransactionReceipt = web3.ethGetTransactionReceipt(hexHash).send();
+        if (ethGetTransactionReceipt == null) {
+            return true;
+        }
+
+        Optional<TransactionReceipt> receiptOptional = ethGetTransactionReceipt.getTransactionReceipt();
+        if (receiptOptional.isEmpty()) {
+            return true;
+
+        }
+
+        TransactionReceipt transactionReceipt = receiptOptional.get();
+        if (transactionReceipt == null) {
+            return true;
+        }
+
+        if ("0x0".equals(transactionReceipt.getStatus())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean needRewriteBlock(String rpcUrl, String hash, int savedBlockNumber) {
+        try {
+            int currentBlockNumber = getBlockNumber(rpcUrl);
+            if (currentBlockNumber - 1000 > savedBlockNumber) {
+                if (!isTransactionSuccess(rpcUrl, hash)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public static int getBlockNumber(String rpcUrl) throws Exception {
+        Web3j web3j = Web3j.build(getWeb3jService4SideChain(rpcUrl));
+        BigInteger blockNumber = web3j.ethBlockNumber().send().getBlockNumber();
+        return blockNumber.intValue();
+
     }
 }

@@ -8,14 +8,17 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
+
 import android.text.TextUtils;
-import android.widget.Toast;
+
 import com.acn.behavior.db.ACNSp;
 import com.acn.behavior.util.*;
 import com.acn.behavior.web.Client;
 import com.acn.behavior.web.Repo;
 import com.acn.biz.BizApi;
+import com.acn.biz.BizCallback;
 import com.acn.biz.model.BaseInfo;
 import com.google.android.gms.ads.MobileAds;
 
@@ -75,6 +78,10 @@ public class ACNAgent {
         }
 
         client = new Client(context);
+
+        client.getRepo().startSendTxThread();
+
+
         return errCode;
     }
 
@@ -120,6 +127,7 @@ public class ACNAgent {
         if (!TextUtils.isEmpty(userIdSaved) && !userIdSaved.equals(userId)) {
             ACNSp.clear();   //先清空，避免用户上次退出没有调用unregister
             BaseInfo.getInstance().clear();
+            unregister();
         }
 
         if (!TextUtils.isEmpty(appId)) {
@@ -139,34 +147,34 @@ public class ACNAgent {
         info.put(UserAttr.CLIENT_ID, Utils.getClientId());
         info.put(UserAttr.COUNTRY_CODE, Utils.getLocationCode(ACNAgent.getClient().getContext()));
         BizApi.getInstance().updateUser(info, null);
+        BizApi.getInstance().getBindType(null);
 
         repo().registerUser(callback);   //会调用getBaseInfo()
         client.retry();
 
-        bindReceiver = new BindReceiver();
-        IntentFilter filter = new IntentFilter("acn.bind.receiver");
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        client.getContext().registerReceiver(bindReceiver, filter);
+        if (bindReceiver == null) {
+            bindReceiver = new BindReceiver();
+            IntentFilter filter = new IntentFilter("acn.bind.receiver");
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            client.getContext().registerReceiver(bindReceiver, filter);
+        }
 
         SDKLogger.d("userId:" + userId);
 
-//        try {
-//            ACNSp.setNextNonce(EthClient.getNonce(BaseInfo.getInstance().getSideChainRPCUrl(), BaseInfo.getInstance().getUserId()));
-//        } catch (Exception e) {
-//            SDKLogger.e(e.getMessage());
-//        }
     }
 
     public static void unregister() {
         if (client != null) {
-            ACNSp.clear();
-            BaseInfo.getInstance().clear();
             if (bindReceiver != null) {
                 client.getContext().unregisterReceiver(bindReceiver);
                 bindReceiver = null;
             }
             SDKLogger.d("user unregister");
+
+//            client.getScheduledFuture().cancel(true);
         }
+
+
     }
 
     /**
@@ -187,63 +195,59 @@ public class ACNAgent {
         repo().updateUser(info, callback);
     }
 
-    //user can get result on OnActivityResult()
-    public static void bindApp(Activity activity, String appIconUrl, int reqCode) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
-        intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
-        intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
-        intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
-        intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
-        intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
-
-        PackageManager pm = activity.getPackageManager();
-        List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
-        boolean isInstalledTTCConnect = false;
-        for (PackageInfo pi : installedPackages) {
-            if ("com.ttc.wallet".equalsIgnoreCase(pi.packageName)) {
-                isInstalledTTCConnect = true;
-                if (pi.versionCode < 21) {
-                    Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
-                } else {
-                    activity.startActivityForResult(intent, reqCode);
-                }
-                break;
-            }
-        }
-        if (!isInstalledTTCConnect) {
-            Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
-        }
-    }
 
     //user can get result on OnActivityResult(), for fragment
-    public static void bindApp(Fragment fragment, String appIconUrl, int reqCode) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
+    //return errorCode. you can get error meassage by calling SDKError.getMessage(errCode)
+    //if not installed, you can get Wallet Download Url by  Constants.getDownloadUrl()
+    public static int bindApp(Object object, String appIconUrl, int reqCode) {
+        int errCode = checkServerClientUserId();
+        if (errCode > 0) {
+            return errCode;
+        }
+
+        if (!(object instanceof Activity) && !(object instanceof Fragment)) {
+            return SDKError.CONTEXT_IS_NULL;  //todo lwq add error code
+        }
+
+//        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("ttc://bind"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.getBindScheme()));
         intent.putExtra(ACNKey.OPERATE_TYPE, Constants.OPERATE_BIND);
         intent.putExtra(ACNKey.USER_ID, BaseInfo.getInstance().getUserId());
         intent.putExtra(ACNKey.APP_ID, BaseInfo.getInstance().getAppId());
         intent.putExtra(ACNKey.APP_ICON_URL, appIconUrl);
         intent.putExtra(ACNKey.APP_NAME, Utils.getApplicationName(client.getContext()));
 
-        Activity activity = fragment.getActivity();
+        Activity activity = null;
+        if (object instanceof Activity) {
+            activity = (Activity) object;
+        } else {
+            activity = ((Fragment) object).getActivity();
+        }
+
         if (activity != null) {
             PackageManager pm = activity.getPackageManager();
             List<PackageInfo> installedPackages = pm.getInstalledPackages(0);
             boolean isInstalledTTCConnect = false;
             for (PackageInfo pi : installedPackages) {
-                if ("com.ttc.wallet".equalsIgnoreCase(pi.packageName)) {
+                if (Constants.getPackageName().equalsIgnoreCase(pi.packageName)) {
                     isInstalledTTCConnect = true;
-                    if (pi.versionCode < 21) {
-                        Toast.makeText(activity, R.string.please_upgrade_ttc_connect, Toast.LENGTH_SHORT).show();
+
+                    if (object instanceof Activity) {
+                        ((Activity) object).startActivityForResult(intent, reqCode);
                     } else {
-                        fragment.startActivityForResult(intent, reqCode);
+                        ((Fragment) object).startActivityForResult(intent, reqCode);
                     }
+
                     break;
                 }
             }
+
+            //you can get download url by  Constants.getDownloadUrl()
             if (!isInstalledTTCConnect) {
-                Toast.makeText(activity, R.string.please_install_ttc_connect, Toast.LENGTH_SHORT).show();
+                return SDKError.TTC_CONNECT_NOT_INSTALLED;
             }
         }
+        return 0;
     }
 
     /**
@@ -323,17 +327,15 @@ public class ACNAgent {
         }
 
         SDKLogger.d("behaviorType:" + behaviorType + ", extra:" + extra);
-//        if (behaviorType < Constants.ACTION_TYPE_MIN_VALUE) {
-//            errCode = SDKError.BEHAVIOR_TYPE_IS_SMALLER;
-//            SDKLogger.e(SDKError.getMessage(errCode));
-//            return errCode;
-//        }
-//        repo().onEvent(behaviorType, extra, 0);
 
         long timestamp = System.currentTimeMillis();
 
         //先存数据库，定时发送到链上
-        ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra, null, 0, 0);
+        ACNAgent.getClient().getDbManager().insert(String.valueOf(timestamp), BaseInfo.getInstance().getUserId(), behaviorType, extra);
+        repo().onEvent(behaviorType, extra, timestamp);
+
+        //上传服务器
+        BizApi.getInstance().behaviour(behaviorType, "", extra, timestamp, null);
 
         return errCode;
     }

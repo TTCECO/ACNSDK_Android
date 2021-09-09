@@ -7,7 +7,7 @@ import android.util.Base64
 import android.util.Log
 import android.widget.Toast
 import io.ttcnet.pay.model.PayInfo
-import io.ttcnet.ttc_pay_demo_officer.BuildConfig
+import io.ttcnet.ttc_pay_demo_officer.MyApplication
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
 import java.security.KeyFactory
@@ -35,7 +35,11 @@ object Utils {
         return format.format(numble)
     }
 
-    fun showDialog(context: Context?, tipsResId: Int, confirmListener: DialogInterface.OnClickListener): AlertDialog {
+    fun showDialog(
+        context: Context?,
+        tipsResId: Int,
+        confirmListener: DialogInterface.OnClickListener
+    ): AlertDialog {
         var alertDialog = AlertDialog.Builder(context)
             .setMessage(tipsResId)
             .setCancelable(true)
@@ -51,6 +55,7 @@ object Utils {
         Toast.makeText(context, content, Toast.LENGTH_SHORT).show()
     }
 
+    //这是模拟后台生成订单
     fun getSignFromServer(
         context: Context,
         payInfo: PayInfo,
@@ -98,50 +103,72 @@ object Utils {
     }
 
 
+    //商家的私钥，正常不会在客户端存放，这是模拟服务器
     private fun getPkcs8Key(): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
-            return "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAL7FIZZ45Q2A2ame\n" +
-                    "ztfMdXr8Bip48NcbdhfYeummefDM6UZPg3EcmEu3TojxiNp0dQaK10M12IZnLA6Z\n" +
-                    "T13a5oclEupSh6WuFrRcUkuhKmOvEjwnZGFJnQfpnmWQGdkgN1siYdzDof1TpVkp\n" +
-                    "HR+/qjd8pIZvh62pDTqqivGYJktVAgMBAAECgYBED+UZ4GwoUy5VPBmkGIhZpo00\n" +
-                    "ng2fUWbivxOrRQAAj7syoK/OrVsQuIfGiBZBiocuHF8M1as42Jp5Yu1UGQNh2l0/\n" +
-                    "o9Q7Er2Yr8EVDRWjc9Y8c3Iu045HC2mVQpKQjAFQtEuI7LKIszGAfT6SV2QioILV\n" +
-                    "2ZOtqve3Sv+Kr2DXCQJBAOaMlbuGDZKWe+iZ6C2x4AB2KF7WfKLIyb6EFzsI+cK7\n" +
-                    "3CB4wxePG5FPs3xEyJsUzaui1k2H18vbu9HlsFs7A0MCQQDT1F84WJqMnUjLYJJr\n" +
-                    "L6J5qmqyYys1D6Sxw3ntibX5Jqidy0NRbOLKkNEca+j6g5Ei/tv9BSopP79pyvcb\n" +
-                    "HXGHAkBn/NEsm/JTQ/zvlTvcIHbgvmrHHAdrhRU6EWpI/mtpIkLPgqi8X5gXmtNi\n" +
-                    "IcQ57tA1smTm43a6RIoayncZLyzxAkBBrosr7IVXbnmg3jvoUmfds9LLp2ZBWK1n\n" +
-                    "lUYcOmQbcjo8W0dvWwTjbI36cxdVfjAlmsLZrJ1LFwIiKpX+aV3HAkB6FxLCpOfi\n" +
-                    "kLLZDL7EDQkxdCpOEqCUOKhRknumqhnZxKiN7oZOH++jAo0gNcWEvrJ9/uoUrCKS\n" +
-                    "5HAl4aZfLkGd"
-        } else {
-            return "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOb5RYqtnX6A7f7x\n" +
-                    "QzPgQtH6+wrFHF8frWEGWEh2xOqkJ7LGuDIo59p0QhNrao0rm4JdHpn/xPEwqeqG\n" +
-                    "iMTQWCcb2ffonbLPdoAmUb1xDqRj7UPx1AmgBxMEciMg6P7oRhwKx93s/wKGQqNF\n" +
-                    "MXnvftrMWimZ6LLLbwF8Szj9vIcTAgMBAAECgYBaD4RQKJYqh3dFWymLBrzHR4ev\n" +
-                    "kWAYry9Zj7HIv5bUryFTkiysUkrlYUOKcu3fEcvXLxwJjDNsoD8A1Whq5ZoZGB4G\n" +
-                    "9DKCunxciMvX92bw7p2A0jaSvlDFnS4Wzozwn4ruCezDtMi2lvQGfPFMO0Kw5eij\n" +
-                    "wu1mv9HeO3/06vhusQJBAPUB8OOiOD+O81zpB391s4DHkLp+yaluqEjBupfYAaGb\n" +
-                    "q/jh3s/hDX22eZuYrQ6OD9f22x6M0epA87RRp3FMJJcCQQDxViSwxsE4GIca3yLJ\n" +
-                    "b6nYFUGTJN+UyNMZ5r8BH+eIOmFvYNxqeMlg1wr6SLRjmy1n0eiaZy6WR3V+a7rA\n" +
-                    "3BTlAkALr7oDwZsZPQJSrjLTW5PiUqKOormPwV15ivQRhhYd1UUQrAVquPthwbBv\n" +
-                    "QYsPpKsQzA+Ll3/zwoFdWn+4Ib+lAkA9k+9Us8IFYCzI7Hphz34Uxoeu1c++lOdY\n" +
-                    "Sood7VgUaGEIHDzhZeRsMzJ33ik46RVS0jp5ey5l5eHS2gYSw5UJAkEA4kSNTUnB\n" +
-                    "VrQ+KXT7/KJAze6zY3thHTKT8s9Q4ryX3VEkr1LFTTU3wbfoMpYFAzIrl1bRayET\n" +
-                    "B7POIWeUIE64nw==\n"
+        return when (MyApplication.APP_ID) {
+            "TTCMallDemo" ->
+                "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAL7FIZZ45Q2A2ame\n" +
+                        "ztfMdXr8Bip48NcbdhfYeummefDM6UZPg3EcmEu3TojxiNp0dQaK10M12IZnLA6Z\n" +
+                        "T13a5oclEupSh6WuFrRcUkuhKmOvEjwnZGFJnQfpnmWQGdkgN1siYdzDof1TpVkp\n" +
+                        "HR+/qjd8pIZvh62pDTqqivGYJktVAgMBAAECgYBED+UZ4GwoUy5VPBmkGIhZpo00\n" +
+                        "ng2fUWbivxOrRQAAj7syoK/OrVsQuIfGiBZBiocuHF8M1as42Jp5Yu1UGQNh2l0/\n" +
+                        "o9Q7Er2Yr8EVDRWjc9Y8c3Iu045HC2mVQpKQjAFQtEuI7LKIszGAfT6SV2QioILV\n" +
+                        "2ZOtqve3Sv+Kr2DXCQJBAOaMlbuGDZKWe+iZ6C2x4AB2KF7WfKLIyb6EFzsI+cK7\n" +
+                        "3CB4wxePG5FPs3xEyJsUzaui1k2H18vbu9HlsFs7A0MCQQDT1F84WJqMnUjLYJJr\n" +
+                        "L6J5qmqyYys1D6Sxw3ntibX5Jqidy0NRbOLKkNEca+j6g5Ei/tv9BSopP79pyvcb\n" +
+                        "HXGHAkBn/NEsm/JTQ/zvlTvcIHbgvmrHHAdrhRU6EWpI/mtpIkLPgqi8X5gXmtNi\n" +
+                        "IcQ57tA1smTm43a6RIoayncZLyzxAkBBrosr7IVXbnmg3jvoUmfds9LLp2ZBWK1n\n" +
+                        "lUYcOmQbcjo8W0dvWwTjbI36cxdVfjAlmsLZrJ1LFwIiKpX+aV3HAkB6FxLCpOfi\n" +
+                        "kLLZDL7EDQkxdCpOEqCUOKhRknumqhnZxKiN7oZOH++jAo0gNcWEvrJ9/uoUrCKS\n" +
+                        "5HAl4aZfLkGd"
+            MyApplication.APP_ID_MEITUAN ->
+                "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAOb5RYqtnX6A7f7x\n" +
+                        "QzPgQtH6+wrFHF8frWEGWEh2xOqkJ7LGuDIo59p0QhNrao0rm4JdHpn/xPEwqeqG\n" +
+                        "iMTQWCcb2ffonbLPdoAmUb1xDqRj7UPx1AmgBxMEciMg6P7oRhwKx93s/wKGQqNF\n" +
+                        "MXnvftrMWimZ6LLLbwF8Szj9vIcTAgMBAAECgYBaD4RQKJYqh3dFWymLBrzHR4ev\n" +
+                        "kWAYry9Zj7HIv5bUryFTkiysUkrlYUOKcu3fEcvXLxwJjDNsoD8A1Whq5ZoZGB4G\n" +
+                        "9DKCunxciMvX92bw7p2A0jaSvlDFnS4Wzozwn4ruCezDtMi2lvQGfPFMO0Kw5eij\n" +
+                        "wu1mv9HeO3/06vhusQJBAPUB8OOiOD+O81zpB391s4DHkLp+yaluqEjBupfYAaGb\n" +
+                        "q/jh3s/hDX22eZuYrQ6OD9f22x6M0epA87RRp3FMJJcCQQDxViSwxsE4GIca3yLJ\n" +
+                        "b6nYFUGTJN+UyNMZ5r8BH+eIOmFvYNxqeMlg1wr6SLRjmy1n0eiaZy6WR3V+a7rA\n" +
+                        "3BTlAkALr7oDwZsZPQJSrjLTW5PiUqKOormPwV15ivQRhhYd1UUQrAVquPthwbBv\n" +
+                        "QYsPpKsQzA+Ll3/zwoFdWn+4Ib+lAkA9k+9Us8IFYCzI7Hphz34Uxoeu1c++lOdY\n" +
+                        "Sood7VgUaGEIHDzhZeRsMzJ33ik46RVS0jp5ey5l5eHS2gYSw5UJAkEA4kSNTUnB\n" +
+                        "VrQ+KXT7/KJAze6zY3thHTKT8s9Q4ryX3VEkr1LFTTU3wbfoMpYFAzIrl1bRayET\n" +
+                        "B7POIWeUIE64nw==\n"
+
+            MyApplication.APP_ID_TATAUFO -> {
+                "MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAPay8kgwRFXoBNIw\n" +
+                        "IdIUTRA3YBVfYXT5rNGXqJHfO1wj8N8dzpdwNVUkVpWUjWgkQXjl9AeaYy/5EIBr\n" +
+                        "2lfQB8ohOJlix2rSMvN17/JfuOzMvei394Ua8VVutfC+TyzhFnaQDk5dGjw+oRuD\n" +
+                        "pqhx5nkVJK7Gq77w1mmsovhXmPAvAgMBAAECgYEAp5fFtHjl0559t/Tu5PLZr4yO\n" +
+                        "/7X+VSNQ3kozQHXws5XPCyQKtyKJeL/o+lEjB36p4+IEOC4P+AUxyqx6dnFi9/7G\n" +
+                        "afA+RStHQFIfk5fFb1arDY6fpYSCAumfulkbGuTXG5cWjiFhkelXCWVJLs2WwUbI\n" +
+                        "1T1CF5tyRZi+GXUzbKECQQD9pLIKMki/ssG5IVDsC/SPrWuNrnzev2a9rLqt2EEx\n" +
+                        "AuOHRCvwwJ5TfMDc8k6DK+u747v2itFS4rZZcGvEZTxHAkEA+P27xN1eF8+yFJNC\n" +
+                        "Fi/SL0YTywwjo3qI6GGoRt+1QkleWh3EN1ZMJhXQX8f1Ssy6gvOrNsIDp01WIpyr\n" +
+                        "WlRo2QJBAOLKq2MQmRnHFQ6aqoeVHQSHFL8ngIGO9KeuVXDyB0Byi807+GoZYLfX\n" +
+                        "uX8VrXv9/pcOxtdoQkhxbIjGS6XcuysCQApJ0bxsuTqapm0bOJvaFgFGEANP2Rkk\n" +
+                        "MwwHHQDwtXirt25Z1IXE1xirxhRvGr+gfgRzNRvqIGSFWY3Mk3gEDOECQQD2pKSC\n" +
+                        "+EB0k4OBiuzLu35+d1dSl0OrFUlx6HjmJwIHxCXgo6yYmENc1YKvc/LRfcq9UL48\n" +
+                        "BrgImu50/PtEVdSA"
+
+            }
+
+            else -> ""
         }
     }
 
-    fun getAppId(): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
-            return "TTCMallDemo"
-        } else {
-            return "MeiTuan"
-        }
-    }
+//    fun getAppId(): String {
+//        if (MyApplication.ENV_PROD) {
+//            return "TTCMallDemo"
+//        } else {
+//            return "MeiTuan"
+//        }
+//    }
 
     fun getTTCPublicKey(context: Context): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
+        if (MyApplication.ENV_PROD) {
             return "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDEBR/CV1B37hdOkNDUUaUEmWFvRFZkTue4x9XWCH/kfW+9BHtOTa/Zy" +
                     "+dwYxEvZXTqyfAAZyFU8yvkAJ4oSYy/AZ5Hw0ONli90KVrmfVW+V1SoRVhOmLfQGRf+bD3JD+BgEydwzT4+c" +
                     "+Sjc7GAEbghlhYNhkPCzI47MH2hPR/uOwIDAQAB"
@@ -154,10 +181,15 @@ object Utils {
     }
 
     fun getSymmetricKey(context: Context): String {
-        if (BuildConfig.BUILD_TYPE == "release") {
-            return "6d1b957a8df22a935987b7e761b3d368"
-        } else {
-            return "f0ec9e54bded7d60838f8d39c12e1db2"
+
+        return when (MyApplication.APP_ID) {
+            MyApplication.APP_ID_MEITUAN -> {
+                "f0ec9e54bded7d60838f8d39c12e1db2"
+            }
+            MyApplication.APP_ID_TATAUFO -> {
+                "9d1990b8fc9cf1328d88af73b8f89e4d"
+            }
+            else -> ""
         }
     }
 

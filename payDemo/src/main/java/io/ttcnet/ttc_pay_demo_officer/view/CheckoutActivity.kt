@@ -1,21 +1,19 @@
 package io.ttcnet.ttc_pay_demo_officer.view
 
-import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import io.ttcnet.pay.ExchangeCallback
 import io.ttcnet.pay.PayCallback
 import io.ttcnet.pay.PayUtil
-import io.ttcnet.pay.TTCPay
+import io.ttcnet.pay.MaroPay
 import io.ttcnet.pay.model.Currency
 import io.ttcnet.pay.model.ErrorBean
 import io.ttcnet.pay.model.PayInfo
 import io.ttcnet.pay.model.Token
+import io.ttcnet.ttc_pay_demo_officer.MyApplication
 import io.ttcnet.ttc_pay_demo_officer.R
 import io.ttcnet.ttc_pay_demo_officer.adapter.CheckoutAdapter
 import io.ttcnet.ttc_pay_demo_officer.constant.Constant
@@ -36,6 +34,7 @@ class CheckoutActivity : BaseActivity() {
     private lateinit var adapter: CheckoutAdapter
     private var payChannels: ArrayList<PayChannelModel>? = null
     private var payInfo = PayInfo()
+    private var orderId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +49,7 @@ class CheckoutActivity : BaseActivity() {
 
         payChannels = channelViewModel.channels.value
         adapter = CheckoutAdapter(this, payChannels, channelViewModel)
-        checkout_rv.layoutManager = LinearLayoutManager(this)
+        checkout_rv.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         checkout_rv.adapter = adapter
 
         channelViewModel.channels.observe(this, Observer {
@@ -67,16 +66,16 @@ class CheckoutActivity : BaseActivity() {
                         channel.checked = true;
 //                        selectedChannel = channel
                         checkout_pay_total.setBackgroundResource(channel.checkedBgColorId)
-                    }else {
+                    } else {
                         channel.checked = false;
                     }
                 }
 
                 if (channelId == Constant.PAY_CHANNEL_TTC_ID) {
-                    payInfo.payType = 0
+                    payInfo.payType = PayInfo.PAY_TYPE_TTC
                     getTTCExchangeRate(Token.ID_TTC)
                 } else if (channelId == Constant.PAY_CHANNEL_ACN_ID) {
-                    payInfo.payType = 1
+                    payInfo.payType = PayInfo.PAY_TYPE_ACN
                     getTTCExchangeRate(Token.ID_ACN)
                 }
 
@@ -94,7 +93,7 @@ class CheckoutActivity : BaseActivity() {
     }
 
     fun getTTCExchangeRate(tokenId: Int) {
-        TTCPay.getExchangeRate(this, Currency.dollar, tokenId, object : ExchangeCallback {
+        MaroPay.getExchangeRate(this, Currency.dollar, tokenId, object : ExchangeCallback {
             override fun done(ttcPrice: String) {
                 var goods = cartViewModel.checkedFurniture.value
                 if (goods != null) {
@@ -113,7 +112,7 @@ class CheckoutActivity : BaseActivity() {
                     payInfo.totalTTCWei = PayUtil.ttc2Wei(totalTTC)
                     if (tokenId == Token.ID_TTC) {
                         checkout_pay_total.setText("Pay " + totalTTC + "TTC")
-                    }else if (tokenId == Token.ID_ACN) {
+                    } else if (tokenId == Token.ID_ACN) {
                         checkout_pay_total.setText("Pay " + totalTTC + "ACN")
                     }
                     checkout_pay_total.visibility = View.VISIBLE
@@ -132,31 +131,49 @@ class CheckoutActivity : BaseActivity() {
         payInfo.merchantOrderNo = format.format(now)
         payInfo.orderCreateTime = now
         payInfo.orderExpireTime = now + 3 * 60 * 1000   //3min
-        payInfo.signature = Utils.getSignFromServer(activity, payInfo, Utils.getAppId())
-        TTCPay.pay(activity, payInfo, object : PayCallback {
-            override fun createTTCOrderOver(ttcOrderId: String) {
-                val intent = Intent(activity, PaymentDetailActivity::class.java)
-                intent.putExtra(Constant.TTC_ORDER_ID, ttcOrderId)
-                startActivityForResult(intent, 0)
-                cartViewModel.clear()
-                finish()
+        payInfo.signature = Utils.getSignFromServer(activity, payInfo, MyApplication.APP_ID)
+        MaroPay.pay(activity, payInfo, object : PayCallback {
+            override fun createMaroOrderOver(ttcOrderId: String) {
+//                val intent = Intent(activity, PaymentDetailActivity::class.java)
+//                intent.putExtra(Constant.TTC_ORDER_ID, ttcOrderId)
+//                startActivityForResult(intent, 0)
+//                cartViewModel.clear()
+//                finish()
+
+                this@CheckoutActivity.orderId = ttcOrderId
             }
 
             override fun error(errorBean: ErrorBean) {
                 Utils.toast(activity, errorBean.getErrorMsg())
             }
 
-            override fun payFinish(ttcOrderId: String, txHash: String, orderState: Int) {
+            override fun payFinish(
+                isSuc: Boolean,
+                txHash: String,
+                ttcOrderId: String,
+                orderState: Int
+            ) {
+                PaymentDetailActivity.open(activity, orderId)
+                finish()
             }
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            finish()
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode == Activity.RESULT_OK && data != null) {
+//
+//            val isSuc = data.getBooleanExtra("pay_suc", false)
+//            val txHash = data.getStringExtra("tx_hash")
+//            if (isSuc) {
+//                PaymentDetailActivity.open(activity, orderId)
+//                cartViewModel.clear()
+//                finish()
+//            }
+//
+//        }
+//    }
+
 
     override fun onDestroy() {
         super.onDestroy()

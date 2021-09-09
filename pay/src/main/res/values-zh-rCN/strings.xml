@@ -1,0 +1,4 @@
+<resources>
+    <string name="loading">加载中…</string>
+    <string name="pls_update_acorn_box">请升级AcornBox</string>
+</resources>

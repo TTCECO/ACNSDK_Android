@@ -19,9 +19,9 @@ import com.acn.biz.model.BindSucData;
 
 public class BindActivity extends Activity {
 
-    private TextView tvTitle;
-    private TextView tvWallet;
-    private TextView tvApp;
+//    private TextView tvTitle;
+//    private TextView tvWallet;
+//    private TextView tvApp;
     private TextView tvBind;
     private ImageView ivIconApp;
 
@@ -46,36 +46,43 @@ public class BindActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//
+//        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
     private void initView() {
 
-        tvTitle = findViewById(R.id.tv_title);
-        tvWallet = findViewById(R.id.tv_wallet);
-        tvApp = findViewById(R.id.tv_app);
+//        tvTitle = findViewById(R.id.tv_title);
+//        tvWallet = findViewById(R.id.tv_wallet);
+//        tvApp = findViewById(R.id.tv_app);
         tvBind = findViewById(R.id.btn_bind);
         ivIconApp = findViewById(R.id.iv_icon_app);
 
-        setBold(tvTitle);
-        setBold(tvWallet);
-        setBold(tvApp);
+//        setBold(tvTitle);
+//        setBold(tvWallet);
+//        setBold(tvApp);
         setBold(tvBind);
 
 
-        if (bindReward > 0) {
-            tvTitle.setText(getString(R.string.get_ttc_after_bind, bindReward));
-        }
+//        if (bindReward > 0) {
+//            tvTitle.setText(getString(R.string.get_ttc_after_bind, bindReward));
+//        }
         Drawable drawable = Utils.getApplicationIcon(this);
         ivIconApp.setImageDrawable(drawable);
 
-        tvApp.setText(Utils.getApplicationName(this));
+//        tvApp.setText(Utils.getApplicationName(this));
+
+        tvBind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bind(v);
+            }
+        });
     }
 
     private void initData() {
