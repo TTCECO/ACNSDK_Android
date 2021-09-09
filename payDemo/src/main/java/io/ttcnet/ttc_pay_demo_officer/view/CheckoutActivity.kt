@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import io.ttcnet.pay.ExchangeCallback
 import io.ttcnet.pay.PayCallback
 import io.ttcnet.pay.PayUtil
-import io.ttcnet.pay.TTCPay
+import io.ttcnet.pay.MaroPay
 import io.ttcnet.pay.model.Currency
 import io.ttcnet.pay.model.ErrorBean
 import io.ttcnet.pay.model.PayInfo
@@ -93,7 +93,7 @@ class CheckoutActivity : BaseActivity() {
     }
 
     fun getTTCExchangeRate(tokenId: Int) {
-        TTCPay.getExchangeRate(this, Currency.dollar, tokenId, object : ExchangeCallback {
+        MaroPay.getExchangeRate(this, Currency.dollar, tokenId, object : ExchangeCallback {
             override fun done(ttcPrice: String) {
                 var goods = cartViewModel.checkedFurniture.value
                 if (goods != null) {
@@ -132,8 +132,8 @@ class CheckoutActivity : BaseActivity() {
         payInfo.orderCreateTime = now
         payInfo.orderExpireTime = now + 3 * 60 * 1000   //3min
         payInfo.signature = Utils.getSignFromServer(activity, payInfo, MyApplication.APP_ID)
-        TTCPay.pay(activity, payInfo, object : PayCallback {
-            override fun createTTCOrderOver(ttcOrderId: String) {
+        MaroPay.pay(activity, payInfo, object : PayCallback {
+            override fun createMaroOrderOver(ttcOrderId: String) {
 //                val intent = Intent(activity, PaymentDetailActivity::class.java)
 //                intent.putExtra(Constant.TTC_ORDER_ID, ttcOrderId)
 //                startActivityForResult(intent, 0)

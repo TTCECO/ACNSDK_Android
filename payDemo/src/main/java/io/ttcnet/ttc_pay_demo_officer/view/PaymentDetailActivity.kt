@@ -7,7 +7,7 @@ import android.os.Handler
 import android.os.Message
 import android.widget.TextView
 import io.ttcnet.pay.GetOrderDetailCallback
-import io.ttcnet.pay.TTCPay
+import io.ttcnet.pay.MaroPay
 import io.ttcnet.pay.model.ErrorBean
 import io.ttcnet.pay.model.OrderInfo
 import io.ttcnet.pay.model.OrderState
@@ -66,7 +66,7 @@ class PaymentDetailActivity : BaseActivity() {
             Utils.toast(activity, "order Id is null")
             return
         }
-        TTCPay.getOrderDetail(activity, orderId!!, object : GetOrderDetailCallback {
+        MaroPay.getOrderDetail(activity, orderId!!, object : GetOrderDetailCallback {
             override fun done(orderInfo: OrderInfo) {
                 display(orderInfo)
             }

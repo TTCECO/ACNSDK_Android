@@ -20,7 +20,7 @@ object SPUtil {
 
     @JvmStatic
     fun getAppId(context: Context): String {
-        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(APP_ID, "")
+        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(APP_ID, "") ?: ""
     }
 
 
@@ -30,7 +30,7 @@ object SPUtil {
     }
 
     fun getUserId(context: Context): String {
-        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(USER_ID, "android_ttc_pay")
+        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(USER_ID, "android_ttc_pay") ?: "android_ttc_pay"
     }
 
     fun setTTCPublicKey(context: Context, publicKey: String) {
@@ -39,7 +39,7 @@ object SPUtil {
     }
 
     fun getTTCPublicKey(context: Context): String {
-        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(TTC_PUBLIC_KEY, "")
+        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(TTC_PUBLIC_KEY, "") ?: ""
     }
 
     fun setSymmetricKey(context: Context, symmetricKey: String) {
@@ -49,7 +49,7 @@ object SPUtil {
 
     @JvmStatic
     fun getSymmetricKey(context: Context): String {
-        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(SYMMETRIC_KEY, "")
+        return context.getSharedPreferences(SP_TTC_PAY, Context.MODE_PRIVATE).getString(SYMMETRIC_KEY, "") ?: ""
     }
 
     fun setEnvType(context: Context, isProd:Boolean){

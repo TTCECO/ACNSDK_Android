@@ -1,7 +1,7 @@
 package io.ttcnet.ttc_pay_demo_officer
 
 import android.app.Application
-import io.ttcnet.pay.TTCPay
+import io.ttcnet.pay.MaroPay
 import io.ttcnet.ttc_pay_demo_officer.util.Utils
 
 /**
@@ -20,13 +20,13 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        TTCPay.init(
+        MaroPay.init(
             applicationContext,
             "qi",
             APP_ID,
             Utils.getTTCPublicKey(this),
             Utils.getSymmetricKey(this)
         )
-        TTCPay.setEnvProd(this, ENV_PROD)
+        MaroPay.setEnvProd(this, ENV_PROD)
     }
 }
