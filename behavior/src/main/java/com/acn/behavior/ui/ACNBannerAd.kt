@@ -5,18 +5,15 @@ import android.widget.FrameLayout
 import com.acn.behavior.util.Constants
 import com.acn.behavior.util.Utils
 import com.acn.biz.BizApi
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.*
 
 
 /**
  * Created by lwq on 2019/1/2.
  */
-class ACNAdsBanner {
+class ACNBannerAd {
 
-    private var isTest = false;     //
+    private var isTest = false
     private var callback: ACNAdsCallback? = null
 
     fun init(context: Context, unitId: String, adSize: Int): FrameLayout {
@@ -39,7 +36,8 @@ class ACNAdsBanner {
         var requestBuilder = AdRequest.Builder()
 
         if (isTest) {
-            requestBuilder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+            val configuration = RequestConfiguration.Builder().setTestDeviceIds(listOf(AdRequest.DEVICE_ID_EMULATOR)).build()
+            MobileAds.setRequestConfiguration(configuration)
         }
 
         adView.loadAd(requestBuilder.build())
@@ -50,18 +48,13 @@ class ACNAdsBanner {
                 callback?.onAdImpression()
             }
 
-            override fun onAdLeftApplication() {
-                super.onAdLeftApplication()
-                callback?.onAdLeftApplication()
-                BizApi.getInstance().uploadAdsEvent( adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
-            }
-
             override fun onAdClicked() {
                 super.onAdClicked()
                 callback?.onAdClicked()
+                BizApi.getInstance().uploadAdsEvent( adView.adUnitId, Utils.getLocationCode(context), Constants.TYPE_CLICK)
             }
 
-            override fun onAdFailedToLoad(p0: Int) {
+            override fun onAdFailedToLoad(p0: LoadAdError) {
                 super.onAdFailedToLoad(p0)
                 callback?.onAdFailedToLoad(p0)
             }
@@ -84,7 +77,6 @@ class ACNAdsBanner {
         }
         return container
     }
-
 
     fun setBannerCallback(ACNAdsCallback: ACNAdsCallback) {
         this.callback = ACNAdsCallback

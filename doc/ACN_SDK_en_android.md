@@ -23,7 +23,7 @@ dependencies {
   implementation(name: 'acn_sdk_biz_xxx', ext: 'aar')
  
   //add it if use ad function
-  implementation 'com.google.android.gms:play-services-ads:17.2.0'
+  implementation 'com.google.android.gms:play-services-ads:20.3.0'
 }
 
 ``` 
@@ -228,7 +228,7 @@ Error code [document](./error_code/)
 It is completed in ACNAdsBanner. Method init() must be invoked first, adSize is defined in ACNAdSize. Method setBannerCallback() is optional.
 
 ```
-var banner = ACNAdsBanner()
+var banner = ACNBannerAd()
 var bannerView = banner.init(activity,  Utils.getBannerUnitId(), ACNAdSize.BANNER)
 ads_banner_container_fl.addView(bannerView)
 
@@ -236,11 +236,6 @@ banner.setBannerCallback(object : ACNAdsCallback() {
 
     override fun onAdImpression() {
         super.onAdImpression()
-    }
-
-    override fun onAdLeftApplication() {
-        super.onAdLeftApplication()
-        Toast.makeText(activity, "banner left", Toast.LENGTH_SHORT).show()
     }
 
     override fun onAdClicked() {
@@ -267,103 +262,87 @@ banner.setBannerCallback(object : ACNAdsCallback() {
 });
 ```
 ## show interstitial ad
-Create ACNAdsInterstitial object, and init it with unit id. After requesting ad, then you can show it. 
-
+Create ACNAdsInterstitial object, and init it with unit id. After load ad, then you can show it. 
+The ACNFullScreenContentCallBack handles events related to displaying your ACNInterstitialAd. Before showing ACNInterstitialAd, make sure to set the callback.
 ```
-interstitial = ACNAdsInterstitial()
-interstitial.init(activity, BuildConfig.interstitialUnitId)
+interstitial = ACNInterstitialAd()
+interstitial.load(
+    activity,
+    BuildConfig.interstitialUnitId,
+    object : ACNInterstitialAdLoadedCallBack() {
 
-interstitial.setAdsCallback(object : ACNAdsCallback() {
+        override fun onAdFailedToLoad(p0: LoadAdError) {
+            super.onAdFailedToLoad(p0)
+            Toast.makeText(activity, "interstitial failed loaded:" + p0, Toast.LENGTH_SHORT).show()
+        }
 
-    override fun onAdImpression() {
-        super.onAdImpression()
-        Toast.makeText(activity, "interstitial impression", Toast.LENGTH_SHORT).show()
-    }
+        override fun onAdLoaded() {
+            super.onAdLoaded()
+            //set the callback
+            interstitial.setFullScreenContentCallBack(object :
+                ACNFullScreenContentCallBack() {
+                override fun onAdShowedFullScreenContent() {
+                    // Called when the ad showed the full screen content.
+                }
 
-    override fun onAdLeftApplication() {
-        super.onAdLeftApplication()
-        Toast.makeText(activity, "interstitial left", Toast.LENGTH_SHORT).show()
-    }
+                override fun onAdDismissedFullScreenContent() {
+                    // Called when the ad dismissed full screen content.
+                }
 
-    override fun onAdClicked() {
-        super.onAdClicked()
-    }
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    // Called when the ad failed to show full screen content.
 
-    override fun onAdFailedToLoad(p0: Int) {
-        super.onAdFailedToLoad(p0)
-        Toast.makeText(activity, "interstitial failed loaded:" + p0, Toast.LENGTH_SHORT).show()
-    }
+                }
+            })
+            interstitial.show(this@AdsActivity) //show the ad
 
-    override fun onAdClosed() {
-        super.onAdClosed()
-    }
-
-    override fun onAdOpened() {
-        super.onAdOpened()
-    }
-
-    override fun onAdLoaded() {
-        super.onAdLoaded()
-        interstitial.show()  //加载完成，显示
-        Toast.makeText(activity, "interstitial adLoaded", Toast.LENGTH_SHORT).show() 
-    }
-})
+            Toast.makeText(activity, "interstitial adLoaded", Toast.LENGTH_SHORT).show()
+        }
+    })
 ```
 
 ## Show rewarded ad
-Create ACNAdsRewardVideo object, and init it with unit id. After requesting ad, then you can show it. Also, you can pause and resume it.
+Create ACNRewardedAd object, and load Ad with unit id. After load ad, then you can show it. Also, you can set the OnAcnUserEarnedRewardListener to handle the reward events.
 
 ```
-rewardVideo = ACNAdsRewardVideo()
-rewardVideo.init(activity,  BuildConfig.rewardUnitId)
-rewardVideo.setRewardedCallback(object : ACNRewardCallback() {
-    override fun onRewardedVideoAdClosed() {
-        super.onRewardedVideoAdClosed()
-    }
+rewardAd = ACNRewardedAd()
+rewardAd.load(
+    activity,
+    Utils.getRewardUnitId(),
+    object : ACNRewardedAdLoadedCallBack() {
+        override fun onAdLoaded(p0: ACNRewardedAd) {
+            Toast.makeText(activity, "rewarded ad Loaded", Toast.LENGTH_SHORT).show()
+            // The FullScreenContentCallback handles events related to displaying your ACNRewardedAd. Before you show your ACNRewardedAd, make sure to set the callback like so:
+            rewardAd.setFullScreenContentCallBack(object :
+                ACNFullScreenContentCallBack() {
+                override fun onAdShowedFullScreenContent() {
+                    // Called when ad is shown.
+                }
 
-    override fun onRewardedVideoAdLeftApplication() {
-        super.onRewardedVideoAdLeftApplication()
-        Toast.makeText(activity, "reward left", Toast.LENGTH_SHORT).show()
-    }
+                override fun onAdDismissedFullScreenContent() {
+                    // Called when ad is dismissed.
+                }
 
-    override fun onRewardedVideoAdLoaded() {
-        super.onRewardedVideoAdLoaded()
-        rewardVideo.show()
-        Toast.makeText(activity, "reward loaded", Toast.LENGTH_SHORT).show()
-    }
+                override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                    // Called when ad fails to show.
+                }
+            })
+            // show the rewarded ad, you will use an OnAcnUserEarnedRewardListener object to handle reward events.
+            rewardAd.show(this@AdsActivity, object : OnAcnUserEarnedRewardListener {
+                override fun onAcnUserEarnedReward(p0: RewardItem?) {
+                    Toast.makeText(
+                        activity,
+                        "user has got the rewarded",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-    override fun onRewardedVideoAdOpened() {
-        super.onRewardedVideoAdOpened()
-    }
+            })
+        }
 
-    override fun onRewardedVideoCompleted() {
-        super.onRewardedVideoCompleted()
-        Toast.makeText(activity, "reward complete", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onRewarded(type: String?, amount: Int?) {
-        super.onRewarded(type, amount)
-    }
-
-    override fun onRewardedVideoStarted() {
-        super.onRewardedVideoStarted()
-    }
-
-    override fun onRewardedVideoAdFailedToLoad(p0: Int) {
-        super.onRewardedVideoAdFailedToLoad(p0)
-        Toast.makeText(activity, "reward failed loaded:" + p0, Toast.LENGTH_SHORT).show()
-    }
-})
-
-
-override fun onResume() {
-    super.onResume()
-    rewardVideo.resume(activity)
-}
-
-override fun onPause() {
-    super.onPause()
-    rewardVideo.pause(activity)
-}
+        override fun onAdFailedToLoad(p0: LoadAdError) {
+            Toast.makeText(activity, "failed to loaded", Toast.LENGTH_SHORT).show()
+        }
+    })
 
 ```

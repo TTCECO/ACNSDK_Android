@@ -9,8 +9,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.acn.behavior.ui.ACNAdSize;
-import com.acn.behavior.ui.ACNAdsBanner;
+import com.acn.behavior.ui.ACNBannerAd;
 import com.acn.behavior.ui.ACNAdsCallback;
+import com.google.android.gms.ads.LoadAdError;
+
 import io.ttcnet.sdk.R;
 import io.ttcnet.sdk.utils.Utils;
 
@@ -22,7 +24,7 @@ public class BannerActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private RadioButton radioButton1;
     private int type = ACNAdSize.BANNER;
-    ACNAdsBanner banner;
+    ACNBannerAd banner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class BannerActivity extends AppCompatActivity {
 //        if (banner != null) {
 //            banner.
 //        }
-        banner = new ACNAdsBanner();
+        banner = new ACNBannerAd();
         ViewGroup bannerView = banner.init(activity, Utils.INSTANCE.getBannerUnitId(), type);
         container.removeAllViews();
         container.addView(bannerView);
@@ -56,18 +58,12 @@ public class BannerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onAdLeftApplication() {
-                super.onAdLeftApplication();
-                Toast.makeText(activity, "banner left", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
             public void onAdClicked() {
                 super.onAdClicked();
             }
 
             @Override
-            public void onAdFailedToLoad(int p0) {
+            public void onAdFailedToLoad(LoadAdError p0) {
                 super.onAdFailedToLoad(p0);
 
 //                Constant Value: 0

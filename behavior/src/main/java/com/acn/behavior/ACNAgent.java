@@ -8,19 +8,24 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-
-import androidx.fragment.app.Fragment;
-
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.acn.behavior.db.ACNSp;
-import com.acn.behavior.util.*;
+import com.acn.behavior.util.ACNKey;
+import com.acn.behavior.util.Constants;
+import com.acn.behavior.util.SDKError;
+import com.acn.behavior.util.SDKLogger;
+import com.acn.behavior.util.Utils;
 import com.acn.behavior.web.Client;
 import com.acn.behavior.web.Repo;
 import com.acn.biz.BizApi;
-import com.acn.biz.BizCallback;
 import com.acn.biz.model.BaseInfo;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +79,12 @@ public class ACNAgent {
 
         //init only once
         if (!TextUtils.isEmpty(adMobAppId)) {
-            MobileAds.initialize(context, adMobAppId);
+            MobileAds.initialize(context, new OnInitializationCompleteListener() {
+                @Override
+                public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
+                    SDKLogger.d("MobileAds Initialization Complete");
+                }
+            });
         }
 
         client = new Client(context);

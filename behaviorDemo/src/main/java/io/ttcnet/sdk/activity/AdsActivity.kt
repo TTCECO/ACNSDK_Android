@@ -2,12 +2,12 @@ package io.ttcnet.sdk.activity
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
-import com.acn.behavior.ui.ACNAdsCallback
-import com.acn.behavior.ui.ACNAdsInterstitial
-import com.acn.behavior.ui.ACNAdsRewardVideo
-import com.acn.behavior.ui.ACNRewardCallback
+import androidx.appcompat.app.AppCompatActivity
+import com.acn.behavior.ui.*
+import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.rewarded.RewardItem
 import io.ttcnet.sdk.R
 import io.ttcnet.sdk.utils.Utils
 import kotlinx.android.synthetic.main.activity_ads.*
@@ -15,127 +15,111 @@ import kotlinx.android.synthetic.main.activity_ads.*
 class AdsActivity : AppCompatActivity() {
 
     private var activity = this
+
     //    private var appId = ""
-    private lateinit var interstitial: ACNAdsInterstitial
-    private lateinit var rewardVideo: ACNAdsRewardVideo
+    private lateinit var interstitialAd: ACNInterstitialAd
+    private lateinit var rewardAd: ACNRewardedAd
+    private var interstitialAdLoading = false
+    private var rewardAdLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ads)
 
-
 //        Utils.useProdId = true
-
-        initInterstitial()
-        initRewardVideo()
 
         ads_banner.setOnClickListener {
             startActivity(Intent(activity, BannerActivity::class.java))
         }
 
         ads_interstitial.setOnClickListener {
-            interstitial.requestAd()
+            requestInterstitial()
         }
 
         ads_reward_video.setOnClickListener {
-            rewardVideo.requestAds()
+            initRewardVideo()
         }
     }
 
+    private fun requestInterstitial() {
+        if (!interstitialAdLoading) {
+            interstitialAdLoading = true
+            interstitialAd = ACNInterstitialAd()
+            interstitialAd.load(
+                activity,
+                Utils.getInterstitialUnitId(),
+                object : ACNInterstitialAdLoadedCallBack() {
+                    override fun onAdLoaded(p0: ACNInterstitialAd) {
 
-    private fun initInterstitial() {
-        interstitial = ACNAdsInterstitial()
-        interstitial.init(activity, Utils.getInterstitialUnitId())
+                        Toast.makeText(activity, "interstitial ad Loaded", Toast.LENGTH_SHORT)
+                            .show()
+                        interstitialAd.setFullScreenContentCallBack(object :
+                            ACNFullScreenContentCallBack() {
+                            override fun onAdShowedFullScreenContent() {
 
-        interstitial.setAdsCallback(object : ACNAdsCallback() {
+                            }
 
-            override fun onAdImpression() {
-                super.onAdImpression()
-                Toast.makeText(activity, "interstitial impression", Toast.LENGTH_SHORT).show()
-            }
+                            override fun onAdDismissedFullScreenContent() {
+                                interstitialAdLoading = false
+                            }
 
-            override fun onAdLeftApplication() {
-                super.onAdLeftApplication()
-                Toast.makeText(activity, "interstitial left", Toast.LENGTH_SHORT).show()
-            }
+                            override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                                interstitialAdLoading = false
+                            }
+                        })
+                        interstitialAd.show(this@AdsActivity)
+                    }
 
-            override fun onAdClicked() {
-                super.onAdClicked()
-            }
-
-            override fun onAdFailedToLoad(p0: Int) {
-                super.onAdFailedToLoad(p0)
-                Toast.makeText(activity, "interstitial failed loaded:" + p0, Toast.LENGTH_SHORT).show()
-            }
-
-            override fun onAdClosed() {
-                super.onAdClosed()
-            }
-
-            override fun onAdOpened() {
-                super.onAdOpened()
-            }
-
-            override fun onAdLoaded() {
-                super.onAdLoaded()
-                interstitial.show()
-                Toast.makeText(activity, "interstitial adLoaded", Toast.LENGTH_SHORT).show()
-            }
-        })
+                    override fun onAdFailedToLoad(p0: LoadAdError) {
+                        interstitialAdLoading = false
+                        Toast.makeText(activity, "failed to loaded", Toast.LENGTH_SHORT).show()
+                    }
+                })
+        }
     }
 
     private fun initRewardVideo() {
-        rewardVideo = ACNAdsRewardVideo()
-        rewardVideo.init(activity, Utils.getRewardUnitId())
-        rewardVideo.setRewardedCallback(object : ACNRewardCallback() {
-            override fun onRewardedVideoAdClosed() {
-                super.onRewardedVideoAdClosed()
-            }
+        if (!rewardAdLoading) {
+            rewardAdLoading = true
+            rewardAd = ACNRewardedAd()
+            rewardAd.load(
+                activity,
+                Utils.getRewardUnitId(),
+                object : ACNRewardedAdLoadedCallBack() {
+                    override fun onAdLoaded(p0: ACNRewardedAd) {
+                        Toast.makeText(activity, "rewarded ad Loaded", Toast.LENGTH_SHORT).show()
+                        rewardAd.setFullScreenContentCallBack(object :
+                            ACNFullScreenContentCallBack() {
+                            override fun onAdShowedFullScreenContent() {
 
-            override fun onRewardedVideoAdLeftApplication() {
-                super.onRewardedVideoAdLeftApplication()
-                Toast.makeText(activity, "reward left", Toast.LENGTH_SHORT).show()
-            }
+                            }
 
-            override fun onRewardedVideoAdLoaded() {
-                super.onRewardedVideoAdLoaded()
-                rewardVideo.show()
-                Toast.makeText(activity, "reward loaded", Toast.LENGTH_SHORT).show()
-            }
+                            override fun onAdDismissedFullScreenContent() {
+                                rewardAdLoading = false
+                            }
 
-            override fun onRewardedVideoAdOpened() {
-                super.onRewardedVideoAdOpened()
-            }
+                            override fun onAdFailedToShowFullScreenContent(p0: AdError) {
+                                rewardAdLoading = false
+                            }
+                        })
+                        rewardAd.show(this@AdsActivity, object : OnAcnUserEarnedRewardListener {
+                            override fun onAcnUserEarnedReward(p0: RewardItem?) {
+                                Toast.makeText(
+                                    activity,
+                                    "user has got the rewarded",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
 
-            override fun onRewardedVideoCompleted() {
-                super.onRewardedVideoCompleted()
-                Toast.makeText(activity, "reward complete", Toast.LENGTH_SHORT).show()
-            }
+                        })
+                    }
 
-            override fun onRewarded(type: String?, amount: Int?) {
-                super.onRewarded(type, amount)
-            }
-
-            override fun onRewardedVideoStarted() {
-                super.onRewardedVideoStarted()
-            }
-
-            override fun onRewardedVideoAdFailedToLoad(p0: Int) {
-                super.onRewardedVideoAdFailedToLoad(p0)
-                Toast.makeText(activity, "reward failed loaded:" + p0, Toast.LENGTH_SHORT).show()
-            }
-        })
+                    override fun onAdFailedToLoad(p0: LoadAdError) {
+                        rewardAdLoading = false
+                        Toast.makeText(activity, "failed to loaded", Toast.LENGTH_SHORT).show()
+                    }
+                })
+        }
     }
-
-    override fun onResume() {
-        super.onResume()
-        rewardVideo.resume(activity)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        rewardVideo.pause(activity)
-    }
-
 
 }
